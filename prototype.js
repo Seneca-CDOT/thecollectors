@@ -1,6 +1,6 @@
      
      /*@pjs preload= "assets/car.png,
-                     assets/gasStation.png,
+                     assets/gas.png,
                      assets/fuel.png,
                      assets/points.png
       "*/
@@ -17,7 +17,7 @@
         fill(0);
         textFont(createFont("Arial",fontsize));
         car=loadImage("assets/car.png");
-        gasStation=loadImage("assets/gasStation.png");
+        gasStation=loadImage("assets/gas.png");
         fuel=loadImage("assets/fuel.png");
         points=loadImage("assets/points.png");
         noLoop();
