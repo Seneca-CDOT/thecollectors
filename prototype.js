@@ -29,6 +29,9 @@
         image(gasStation,0,0);
         image(fuel,0,520,width/4,120);
         image(points,720,520,width/4,120);
+        var check=new mapPoint(0,0);
+        var check2=new mapPoint(1,0);
+        check.equals(check2);       
         //String textstring = "inline example";
         //float twidth = textWidth(textstring);
         //text(textstring, (width-twidth)/2, height/2);
