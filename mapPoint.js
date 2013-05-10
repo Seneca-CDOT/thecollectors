@@ -30,6 +30,9 @@
 	  else {retval=-1;}
 		return retval;
 	}
+	mapPoint.prototype.clone=function(){
+		return new mapPoint(this.x,this.y);
+	}
 	//check if this point equals other point
 	mapPoint.prototype.equals = function(other){
 	  
