@@ -1,14 +1,15 @@
-    function car(graphic, dest) {
-        this.cargraphic = graphic;
-        this.destination = dest;
-        this.speed = 2;
-    }
-
-    car.prototype.draw = function() {
-        // draw the car with pjs
-    }
-
-    car.prototype.driveTo(dest) {
-        this.dest = dest;
-        // more stuff to do
-    }
+function car(img, topLeft, bottomRight, heading){
+	this.topLeft=topLeft;
+	this.botRight=bottomRight;
+	this.image=img;
+	this.heading=heading;
+}
+car.prototype.translate=function(x,y){
+	this.topLeft.x+=x;
+	this.topLeft.y+=y;
+	this.botRight.x+=x;
+	this.botRight.y+=y;	
+}
+car.prototype.rotate=function(angle){
+	this.heading+=angle;
+}
