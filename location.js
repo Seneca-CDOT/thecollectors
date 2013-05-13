@@ -1,12 +1,18 @@
 function gameLocation(img,labelIn,topleft,bottomRight,points) {
-	this.topLeft=topleft; //the map Location of the Location
-	this.botRight=bottomRight;
-	this.points=points; //the points value of the Location
+	if(topleft instanceof mapPoint){
+		this.topLeft=topleft; //the map Location of the Location
+	}
+	if(bottomRight instanceof mapPoint){
+		this.botRight=bottomRight;
+	}
+	if(getType(points)=="Number"){
+		this.points=points; //the points value of the Location
+	}
 	this.image=img;
 	//this.labelClip=null;
 	this.labelText=labelIn;
-	this.len=bottomRight.y-this.topLeft.y;
-	this.wid=bottomRight.x-this.topLeft.x;
+	this.len=this.botRight.y-this.topLeft.y;
+	this.wid=this.botRight.x-this.topLeft.x;
 }
 //set the location
 gameLocation.prototype.setLoc=function(p,bottomRight) {
@@ -45,6 +51,12 @@ gameLocation.prototype.arrived=function() {
 	this.points = 0; //then set it to 0, so it can't be used again.
 	return retVal;		
 };
+gameLocation.prototype.setGasStation=function(fracIn){
+	if(fracIn instanceof fraction){
+		this.gasFraction=fracIn;
+		this.gas=true;
+	}
+}
 
 //make a little graphic show up, displaying the points value when the user mouses over
 //the location

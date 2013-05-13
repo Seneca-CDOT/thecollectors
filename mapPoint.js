@@ -1,6 +1,8 @@
 function mapPoint(xin, yin) {
-	this.x = Math.round(xin);
-	this.y = Math.round(yin);
+	if(getType(xin)=="Number" && getType(yin)=="Number"){
+		this.x = Math.round(xin);
+		this.y = Math.round(yin);
+	}
 }
 
 //returns the distance between pt1 and pt2
@@ -54,8 +56,10 @@ mapPoint.prototype.inverse=function(){
 	return new mapPoint(-this.x,-this.y);
 }
 mapPoint.prototype.applyRotation=function(angle){
-	this.x=this.x*Math.cos(angle)-this.y*Math.sin(angle);
-	this.y=this.x*Math.sin(angle)+this.y*Math.cos(angle);	
+	if(getType(angle)=="Number"){
+		this.x=this.x*Math.cos(angle)-this.y*Math.sin(angle);
+		this.y=this.x*Math.sin(angle)+this.y*Math.cos(angle);
+	}	
 }
 mapPoint.prototype.applyOffset=function(offset){
 	if(offset instanceof mapPoint){		
