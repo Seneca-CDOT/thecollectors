@@ -5,6 +5,8 @@ function gameLocation(img,labelIn,topleft,bottomRight,points) {
 	this.image=img;
 	//this.labelClip=null;
 	this.labelText=labelIn;
+	this.len=bottomRight.y-this.topLeft.y;
+	this.wid=bottomRight.x-this.topLeft.x;
 }
 //set the location
 gameLocation.prototype.setLoc=function(p,bottomRight) {

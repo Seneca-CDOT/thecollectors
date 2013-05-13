@@ -50,3 +50,16 @@ mapPoint.prototype.slope=function(other){
 	var ydiff = -1 * (other.y - this.y);
 	return ydiff/xdiff;
 }
+mapPoint.prototype.inverse=function(){
+	return new mapPoint(-this.x,-this.y);
+}
+mapPoint.prototype.applyRotation=function(angle){
+	this.x=this.x*Math.cos(angle)-this.y*Math.sin(angle);
+	this.y=this.x*Math.sin(angle)+this.y*Math.cos(angle);	
+}
+mapPoint.prototype.applyOffset=function(offset){
+	if(offset instanceof mapPoint){		
+		this.x+=offset.x;
+		this.y+=offset.y;
+	}
+}
