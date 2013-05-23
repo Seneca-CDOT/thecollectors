@@ -7,42 +7,83 @@ StructureEnum = {
 
 function NodeGraph() {
     this.nodeList = [];
-    this.edgeList = [];
-    this.nodeLength = 0;
-    this.edgeLength = 0;
+    this.nodeListLength = 0;
 
-    // hash table of Node ID/index pairs
+    // Hash table of Node ID/index pairs
     this.nodeHashTable = {};
 }
 
-NodeGraph.prototype.addNode = function(node, connectionIdList) [
+NodeGraph.prototype.addNode = function(node, connectionIdList) {
+    if (this.nodeHashTable[node.id] != undefined) {
+        console.warn("Node already exists in the graph. Duplicate attempt to add node terminated.");
+        return;
+    }
+    if (connectionIdList && connectionIdList.indexOf(node.id) > -1) {
+        console.warn("Attempt to add node to itself terminated.");
+        return;
+    }
     if (node instanceof Node) {
         this.nodeList.push([node]);
-        this.nodeHashTable[node.id] = this.nodeLength;
-        this.nodeLength += 1;
+        this.nodeHashTable[node.id] = this.nodeListLength;
+        this.nodeListLength += 1;
 
-        var len = connectionIdList.length;
+        var len = connectionIdList ? connectionIdList.length : 0;
         for (i = 0; i < len; i++) {
             // Push the new node into its connections' lists
-            NodeGraph.addConnections(connectionIdList[i], node);
+            this.addConnections(connectionIdList[i], node);
 
             // Push the existing node connections into the new node's list
-            NodeGraph.addConnections(node.id, NodeGraph.findNodeArray(connectionIdList[i])[0]);
+            this.addConnections(node.id, this.findNodeArray(connectionIdList[i])[0]);
         }
     }
 }
 
-NodeGraph.prototype.addConnections = function(nodeID, nodesToConnect) {
-    var nodeArray = NodeGraph.findNodeArray(nodeID);
+NodeGraph.prototype.addEdge = function(edge) {
+    var nodeArray = this.findNodeArray(edge.vertexOneID);
+    nodeArray.push(edge);
+    nodeArray = this.findNodeArray(edge.vertexTwoID);
+    nodeArray.push(edge);
+}
+
+NodeGraph.prototype.clearGraph = function() {
+    this.nodeList = [];
+    this.nodeListLength = 0;
+    this.nodeHashTable = {};
+}
+
+NodeGraph.prototype.addConnections = function(nodeID, nodeToConnect) {
+    var nodeArray = this.findNodeArray(nodeID);
 
     if (nodeArray != undefined) {
-        var len = nodesToConnect.length;
-        for (i = 0; i < len; i++) {
-            nodeArray.push(nodesToConnect[i]);
-        }
+        nodeArray.push(nodeToConnect);
+    } else {
+        console.error("Cannot add node connections. Node array not found!");
     }
 }
 
 NodeGraph.prototype.findNodeArray = function(nodeID) {
     return this.nodeList[this.nodeHashTable[nodeID]];
+}
+
+NodeGraph.prototype.areNodesConnected(nodeID, nodeIDToMatch) {
+    if (nodeID == nodeIDToMatch) {
+        console.warn("Node cannot be connected to itself.");
+        return false;
+    }
+
+    var nodeArray = this.findNodeArray(nodeID);
+
+    if (nodeArray != undefined) {
+        var len = nodeArray.length;
+
+        for (i = 1; i < len; i++) {
+            if (nodeArray[i].id == nodeIDToMatch) {
+                return true;
+            }
+        }
+
+        return false;
+    } else {
+        console.error("Invalid NodeID. Node does not exist.");
+    }
 }

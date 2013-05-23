@@ -13,6 +13,6 @@ Node.prototype.containsStructure = function() {
     return this.structure > 0 ? true : false;
 }
 
-Node.prototype.structure = function() [
+Node.prototype.structure = function() {
     return this.structure;
 }
