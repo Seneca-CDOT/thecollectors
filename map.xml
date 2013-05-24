@@ -1,0 +1,1089 @@
+<maps>
+	<level>
+		<map>
+			<fuel numerator="7" denominator="7"></fuel>
+			<point x="250" y="200"></point>
+			<roads>
+				<road numerator="1" denominator="7">
+					<point x="100" y="100"></point>
+					<point x="150" y="100"></point>
+				</road>
+				<road numerator="2" denominator="7">
+					<point x="150" y="100"></point>
+					<point x="250" y="100"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="300" y="150"></point>
+					<point x="350" y="150"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="100" y="150"></point>
+					<point x="150" y="150"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="200" y="150"></point>
+					<point x="250" y="150"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="250" y="200"></point>
+					<point x="300" y="200"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="300" y="200"></point>
+					<point x="350" y="200"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="50" y="250"></point>
+					<point x="100" y="250"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="100" y="250"></point>
+					<point x="150" y="250"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="150" y="250"></point>
+					<point x="200" y="250"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="200" y="250"></point>
+					<point x="250" y="250"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="350" y="250"></point>
+					<point x="400" y="250"></point>
+				</road>
+				<road numerator="2" denominator="7">
+					<point x="50" y="300"></point>
+					<point x="150" y="300"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="250" y="300"></point>
+					<point x="300" y="300"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="50" y="250"></point>
+					<point x="50" y="300"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="100" y="50"></point>
+					<point x="100" y="100"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="150" y="100"></point>
+					<point x="150" y="150"></point>
+				</road>
+				<road numerator="2" denominator="7">
+					<point x="150" y="150"></point>
+					<point x="150" y="250"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="150" y="250"></point>
+					<point x="150" y="300"></point>
+				</road>
+				<road numerator="2" denominator="7">
+					<point x="200" y="150"></point>
+					<point x="200" y="250"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="250" y="100"></point>
+					<point x="250" y="150"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="250" y="150"></point>
+					<point x="250" y="200"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="250" y="200"></point>
+					<point x="250" y="250"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="250" y="250"></point>
+					<point x="250" y="300"></point>
+				</road>
+				<road numerator="2" denominator="7">
+					<point x="300" y="200"></point>
+					<point x="300" y="300"></point>
+				</road>
+				
+				<road numerator="1" denominator="7">
+					<point x="350" y="150"></point>
+					<point x="350" y="200"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="350" y="200"></point>
+					<point x="350" y="250"></point>
+				</road>
+				<road numerator="3" denominator="7">
+					<point x="400" y="100"></point>
+					<point x="400" y="250"></point>
+				</road>
+				<road numerator="1" denominator="7">
+					<point x="400" y="250"></point>
+					<point x="400" y="300"></point>
+				</road>
+			</roads>
+			<places>
+				<place type="Silo" caption="Beans" value="850">
+					<point x="100" y="50"></point>
+				</place>
+				<place type="GrainElevator" caption="Grain" value="1500">
+					<point x="100" y="150"></point>
+				</place>
+				<place type="Barn" caption="Barn" value="750">
+					<point x="50" y="300"></point>
+				</place>
+				<place type="Field" caption="More Beans" value="850">
+					<point x="300" y="150"></point>
+				</place>
+				<place type="Silo" caption="Silo" value="850">
+					<point x="400" y="100"></point>
+				</place>
+				<place type="Field" caption="Corn" value="850">
+					<point x="400" y="300"></point>
+				</place>
+				<place type="WaterTower" caption="Water" value="850">
+					<point x="200" y="150"></point>
+				</place>
+				<place type="School" caption="School" value="1100">
+					<point x="300" y="300"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="-1">
+					<point x="400" y="250"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="-1">
+					<point x="150" y="250"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="-1">
+					<point x="150" y="100"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="-1">
+					<point x="300" y="200"></point>
+				</place>
+				
+			</places>
+		</map>
+		<map>
+			<fuel numerator="6" denominator="6"></fuel>
+			<point x="100" y="50"></point>
+			<roads>
+				<road numerator="2" denominator="6">
+					<point x="50" y="50"></point>
+					<point x="50" y="150"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="50" y="150"></point>
+					<point x="50" y="200"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="50" y="200"></point>
+					<point x="50" y="250"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="50" y="250"></point>
+					<point x="50" y="300"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="50" y="200"></point>
+					<point x="100" y="200"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="50" y="250"></point>
+					<point x="100" y="250"></point>
+				</road>
+				<road numerator="3" denominator="6">
+					<point x="100" y="50"></point>
+					<point x="100" y="200"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="100" y="200"></point>
+					<point x="100" y="250"></point>
+				</road>
+				<road numerator="2" denominator="6">
+					<point x="100" y="50"></point>
+					<point x="200" y="50"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="100" y="200"></point>
+					<point x="150" y="200"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="150" y="100"></point>
+					<point x="200" y="100"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="150" y="150"></point>
+					<point x="200" y="150"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="150" y="150"></point>
+					<point x="150" y="200"></point>
+				</road>
+				<road numerator="2" denominator="6">
+					<point x="150" y="200"></point>
+					<point x="250" y="200"></point>
+				</road>
+				<road numerator="3" denominator="6">
+					<point x="100" y="250"></point>
+					<point x="250" y="250"></point>
+				</road>
+				<road numerator="2" denominator="6">
+					<point x="200" y="50"></point>
+					<point x="300" y="50"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="200" y="100"></point>
+					<point x="250" y="100"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="250" y="100"></point>
+					<point x="300" y="100"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="300" y="50"></point>
+					<point x="300" y="100"></point>
+				</road>
+				<road numerator="2" denominator="6">
+					<point x="250" y="100"></point>
+					<point x="250" y="200"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="250" y="200"></point>
+					<point x="250" y="250"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="250" y="250"></point>
+					<point x="250" y="300"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="250" y="300"></point>
+					<point x="300" y="300"></point>
+				</road>
+				<road numerator="4" denominator="6">
+					<point x="300" y="300"></point>
+					<point x="300" y="100"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="200" y="50"></point>
+					<point x="200" y="100"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="200" y="100"></point>
+					<point x="200" y="150"></point>
+				</road>
+			</roads>
+			<places>
+				<place type="Apartments" caption="Apartments" value="800">
+					<point x="50" y="50"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="1">
+					<point x="50" y="150"></point>
+				</place>
+				<place type="Factory" caption="Factory" value="750">
+					<point x="50" y="300"></point>
+				</place>
+				<place type="Condos" caption="Condominium" value="1000">
+					<point x="100" y="200"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="0">
+					<point x="100" y="250"></point>
+				</place>
+				<place type="Factory" caption="Lofts" value="500">
+					<point x="150" y="100"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="0">
+					<point x="150" y="200"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="0">
+					<point x="250" y="300"></point>
+				</place>
+				<place type="Apartments" caption="Apartments" value="1400">
+					<point x="300" y="300"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="0">
+					<point x="250" y="100"></point>
+				</place>
+				<place type="Condos" caption="Condos" value="1200">
+					<point x="300" y="50"></point>
+				</place>
+			</places>
+		</map>
+		<map>
+			<fuel numerator="8" denominator="8"></fuel>
+			<point x="250" y="300"></point>
+			<roads>
+				<road numerator="2" denominator="8">
+					<point x="50" y="50"></point>
+					<point x="150" y="50"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="150" y="50"></point>
+					<point x="200" y="50"></point>
+				</road>
+				<road numerator="2" denominator="8">
+					<point x="200" y="50"></point>
+					<point x="300" y="50"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="200" y="100"></point>
+					<point x="250" y="100"></point>
+				</road>
+				<road numerator="2" denominator="8">
+					<point x="150" y="150"></point>
+					<point x="250" y="150"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="250" y="150"></point>
+					<point x="300" y="150"></point>
+				</road>
+				<road numerator="2" denominator="8">
+					<point x="50" y="200"></point>
+					<point x="150" y="200"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="150" y="200"></point>
+					<point x="200" y="200"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="200" y="200"></point>
+					<point x="250" y="200"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="250" y="200"></point>
+					<point x="300" y="200"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="50" y="250"></point>
+					<point x="100" y="250"></point>
+				</road>
+				<road numerator="2" denominator="8">
+					<point x="100" y="250"></point>
+					<point x="200" y="250"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="200" y="250"></point>
+					<point x="250" y="250"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="50" y="300"></point>
+					<point x="100" y="300"></point>
+				</road>
+				<road numerator="2" denominator="8">
+					<point x="100" y="300"></point>
+					<point x="200" y="300"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="200" y="300"></point>
+					<point x="250" y="300"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="250" y="300"></point>
+					<point x="300" y="300"></point>
+				</road>
+				<road numerator="3" denominator="8">
+					<point x="50" y="50"></point>
+					<point x="50" y="200"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="50" y="200"></point>
+					<point x="50" y="250"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="50" y="250"></point>
+					<point x="50" y="300"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="100" y="250"></point>
+					<point x="100" y="300"></point>
+				</road>
+				<road numerator="2" denominator="8">
+					<point x="150" y="50"></point>
+					<point x="150" y="150"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="150" y="150"></point>
+					<point x="150" y="200"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="200" y="50"></point>
+					<point x="200" y="100"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="200" y="200"></point>
+					<point x="200" y="250"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="200" y="250"></point>
+					<point x="200" y="300"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="250" y="100"></point>
+					<point x="250" y="150"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="250" y="150"></point>
+					<point x="250" y="200"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="250" y="250"></point>
+					<point x="250" y="300"></point>
+				</road>
+				<road numerator="3" denominator="8">
+					<point x="300" y="50"></point>
+					<point x="300" y="150"></point>
+				</road>
+				<road numerator="2" denominator="8">
+					<point x="300" y="200"></point>
+					<point x="300" y="300"></point>
+				</road>
+			</roads>
+			<places>
+				<place type="Condos" caption="Condos" value="700">
+					<point x="50" y="50"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="0">
+					<point x="50" y="200"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="0">
+					<point x="150" y="50"></point>
+				</place>
+				<place type="Apartments" caption="Apartments" value="1100">
+					<point x="300" y="50"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="0">
+					<point x="250" y="200"></point>
+				</place>
+				<place type="Factory" caption="Factory" value="300">
+					<point x="200" y="200"></point>
+				</place>
+				<place type="Condos" caption="Condos" value="500">
+					<point x="300" y="200"></point>
+				</place>
+				<place type="Apartments" caption="Office Building" value="850">
+					<point x="100" y="250"></point>
+				</place>
+			</places>
+		</map>
+	</level>
+	<level>
+		<map>
+			<fuel numerator="12" denominator="12"></fuel>
+			<point x="400" y="450"></point>
+			<roads>
+				<road numerator="2" denominator="12">
+					<point x="250" y="50"></point>
+					<point x="350" y="50"></point>
+				</road>
+				<road numerator="7" denominator="12">
+					<point x="350" y="50"></point>
+					<point x="700" y="50"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="100" y="150"></point>
+					<point x="200" y="150"></point>
+				</road>
+				<road numerator="2" denominator="12">
+					<point x="600" y="150"></point>
+					<point x="700" y="150"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="250" y="200"></point>
+					<point x="300" y="200"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="300" y="200"></point>
+					<point x="350" y="200"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="50" y="250"></point>
+					<point x="100" y="250"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="600" y="250"></point>
+					<point x="700" y="250"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="50" y="300"></point>
+					<point x="100" y="300"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="100" y="300"></point>
+					<point x="150" y="300"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="150" y="300"></point>
+					<point x="200" y="300"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="200" y="300"></point>
+					<point x="300" y="300"></point>
+				</road>
+				<road numerator="2" denominator="12">
+					<point x="300" y="300"></point>
+					<point x="400" y="300"></point>
+				</road>
+				<road numerator="2" denominator="12">
+					<point x="400" y="300"></point>
+					<point x="500" y="300"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="500" y="300"></point>
+					<point x="600" y="300"></point>
+				</road>
+				<road numerator="2" denominator="12">
+					<point x="600" y="300"></point>
+					<point x="700" y="300"></point>
+				</road>
+				<road numerator="2" denominator="12">
+					<point x="150" y="350"></point>
+					<point x="250" y="350"></point>
+				</road>
+				<road numerator="2" denominator="12">
+					<point x="400" y="350"></point>
+					<point x="500" y="350"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="500" y="350"></point>
+					<point x="600" y="350"></point>
+				</road>
+				<road numerator="2" denominator="12">
+					<point x="400" y="400"></point>
+					<point x="500" y="400"></point>
+				</road>
+				<road numerator="1" denominator="3">
+					<point x="50" y="450"></point>
+					<point x="250" y="450"></point>
+				</road>
+				<road numerator="2" denominator="8">
+					<point x="250" y="450"></point>
+					<point x="400" y="450"></point>
+				</road>
+				<road numerator="2" denominator="12">
+					<point x="400" y="450"></point>
+					<point x="500" y="450"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="650" y="450"></point>
+					<point x="700" y="450"></point>
+				</road>
+				<road numerator="2" denominator="6">
+					<point x="400" y="500"></point>
+					<point x="600" y="500"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="350" y="550"></point>
+					<point x="400" y="550"></point>
+				</road>
+				<road numerator="5" denominator="12">
+					<point x="400" y="600"></point>
+					<point x="650" y="600"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="50" y="250"></point>
+					<point x="50" y="300"></point>
+				</road>
+				<road numerator="3" denominator="12">
+					<point x="50" y="300"></point>
+					<point x="50" y="450"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="100" y="150"></point>
+					<point x="100" y="250"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="100" y="250"></point>
+					<point x="100" y="300"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="150" y="300"></point>
+					<point x="150" y="350"></point>
+				</road>
+				<road numerator="2" denominator="8">
+					<point x="200" y="150"></point>
+					<point x="200" y="300"></point>
+				</road>
+				<road numerator="1" denominator="4">
+					<point x="250" y="50"></point>
+					<point x="250" y="200"></point>
+				</road>
+				<road numerator="2" denominator="12">
+					<point x="250" y="350"></point>
+					<point x="250" y="450"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="300" y="200"></point>
+					<point x="300" y="300"></point>
+				</road>
+				<road numerator="3" denominator="12">
+					<point x="350" y="50"></point>
+					<point x="350" y="200"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="400" y="300"></point>
+					<point x="400" y="350"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="400" y="350"></point>
+					<point x="400" y="400"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="400" y="400"></point>
+					<point x="400" y="450"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="400" y="450"></point>
+					<point x="400" y="500"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="400" y="500"></point>
+					<point x="400" y="550"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="400" y="550"></point>
+					<point x="400" y="600"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="500" y="300"></point>
+					<point x="500" y="350"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="500" y="350"></point>
+					<point x="500" y="400"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="500" y="400"></point>
+					<point x="500" y="450"></point>
+				</road>
+				<road numerator="2" denominator="12">
+					<point x="600" y="150"></point>
+					<point x="600" y="250"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="600" y="250"></point>
+					<point x="600" y="300"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="600" y="300"></point>
+					<point x="600" y="350"></point>
+				</road>
+				<road numerator="1" denominator="4">
+					<point x="600" y="350"></point>
+					<point x="600" y="500"></point>
+				</road>
+				<road numerator="3" denominator="12">
+					<point x="650" y="450"></point>
+					<point x="650" y="600"></point>
+				</road>
+				<road numerator="2" denominator="12">
+					<point x="700" y="50"></point>
+					<point x="700" y="150"></point>
+				</road>
+				<road numerator="1" denominator="6">
+					<point x="700" y="150"></point>
+					<point x="700" y="250"></point>
+				</road>
+				<road numerator="1" denominator="12">
+					<point x="700" y="250"></point>
+					<point x="700" y="300"></point>
+				</road>
+				<road numerator="2" denominator="8">
+					<point x="700" y="300"></point>
+					<point x="700" y="450"></point>
+				</road>
+
+			</roads>
+			<places>
+				<place type="Apartments" caption="Apartments" value="850">
+					<point x="250" y="50"></point>
+				</place>
+				<place type="Condos" caption="Condos" value="900">
+					<point x="200" y="150"></point>
+				</place>
+				<place type="Factory" caption="Factory" value="1200">
+					<point x="50" y="250"></point>
+				</place>
+				<place type="Apartments" caption="Apartments" value="700">
+					<point x="50" y="450"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="-1">
+					<point x="150" y="300"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="-1">
+					<point x="300" y="200"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="-1">
+					<point x="700" y="50"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="-1">
+					<point x="400" y="500"></point>
+				</place>
+				<place type="Factory" caption="Factory" value="650">
+					<point x="350" y="550"></point>
+				</place>
+				<place type="Condos" caption="Condos" value="1000">
+					<point x="500" y="400"></point>
+				</place>
+				<place type="Factory" caption="Factory" value="800">
+					<point x="400" y="300"></point>
+				</place>
+				<place type="Apartments" caption="Apartments" value="500">
+					<point x="600" y="150"></point>
+				</place>
+				<place type="Condos" caption="Condos" value="500">
+					<point x="700" y="250"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="-1">
+					<point x="600" y="300"></point>
+				</place>
+				<place type="Factory" caption="Factory" value="850">
+					<point x="600" y="500"></point>
+				</place>
+				<place type="Apartments" caption="Apartments" value="900">
+					<point x="650" y="600"></point>
+				</place>
+				<place type="Gas Station" caption="Chuck's Gas 'n Go" value="-1">
+					<point x="700" y="450"></point>
+				</place>
+			</places>
+		</map>
+		<map>
+			<fuel numerator="16" denominator="16"></fuel>
+			<point x="1050" y="650"></point>
+			<roads>
+				<road numerator="2" denominator="16">
+					<point x="150" y="50"></point>
+					<point x="250" y="50"></point>
+				</road>
+				<road numerator="2" denominator="4">
+					<point x="250" y="50"></point>
+					<point x="650" y="50"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="650" y="50"></point>
+					<point x="750" y="50"></point>
+				</road>
+				<road numerator="5" denominator="16">
+					<point x="750" y="50"></point>
+					<point x="1000" y="50"></point>
+				</road>
+				<road numerator="2" denominator="16">
+					<point x="50" y="200"></point>
+					<point x="150" y="200"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="150" y="200"></point>
+					<point x="250" y="200"></point>
+				</road>
+				<road numerator="6" denominator="12">
+					<point x="250" y="200"></point>
+					<point x="650" y="200"></point>
+				</road>
+				<road numerator="2" denominator="16">
+					<point x="650" y="200"></point>
+					<point x="750" y="200"></point>
+				</road>
+				<road numerator="3" denominator="16">
+					<point x="300" y="400"></point>
+					<point x="450" y="400"></point>
+				</road>
+				<road numerator="3" denominator="12">
+					<point x="450" y="400"></point>
+					<point x="650" y="400"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="650" y="400"></point>
+					<point x="750" y="400"></point>
+				</road>
+				<road numerator="6" denominator="16">
+					<point x="750" y="400"></point>
+					<point x="1050" y="400"></point>
+				</road>
+				<road numerator="3" denominator="16">
+					<point x="300" y="500"></point>
+					<point x="450" y="500"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="450" y="500"></point>
+					<point x="550" y="500"></point>
+				</road>
+				<road numerator="2" denominator="16">
+					<point x="550" y="500"></point>
+					<point x="650" y="500"></point>
+				</road>
+				<road numerator="2" denominator="16">
+					<point x="450" y="600"></point>
+					<point x="550" y="600"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="550" y="600"></point>
+					<point x="650" y="600"></point>
+				</road>
+				<road numerator="4" denominator="16">
+					<point x="50" y="650"></point>
+					<point x="250" y="650"></point>
+				</road>
+				<road numerator="1" denominator="16">
+					<point x="250" y="650"></point>
+					<point x="300" y="650"></point>
+				</road>
+				<road numerator="3" denominator="16">
+					<point x="300" y="650"></point>
+					<point x="450" y="650"></point>
+				</road>
+				<road numerator="2" denominator="16">
+					<point x="450" y="650"></point>
+					<point x="550" y="650"></point>
+				</road>
+				<road numerator="2" denominator="16">
+					<point x="550" y="650"></point>
+					<point x="650" y="650"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="650" y="650"></point>
+					<point x="750" y="650"></point>
+				</road>
+				<road numerator="6" denominator="16">
+					<point x="750" y="650"></point>
+					<point x="1050" y="650"></point>
+				</road>
+				<road numerator="5" denominator="16">
+					<point x="250" y="850"></point>
+					<point x="500" y="850"></point>
+				</road>
+				<road numerator="3" denominator="8">
+					<point x="500" y="850"></point>
+					<point x="800" y="850"></point>
+				</road>
+				<road numerator="2" denominator="8">
+					<point x="300" y="950"></point>
+					<point x="500" y="950"></point>
+				</road>
+				<road numerator="4" denominator="16">
+					<point x="300" y="1200"></point>
+					<point x="500" y="1200"></point>
+				</road>
+				<road numerator="7" denominator="16">
+					<point x="500" y="1200"></point>
+					<point x="850" y="1200"></point>
+				</road>
+				<road numerator="5" denominator="16">
+					<point x="250" y="1250"></point>
+					<point x="500" y="1250"></point>
+				</road>
+				<road numerator="7" denominator="16">
+					<point x="500" y="1250"></point>
+					<point x="850" y="1250"></point>
+				</road>
+				<road numerator="5" denominator="16">
+					<point x="50" y="200"></point>
+					<point x="50" y="450"></point>
+				</road>
+				<road numerator="3" denominator="12">
+					<point x="50" y="450"></point>
+					<point x="50" y="650"></point>
+				</road>
+				<road numerator="3" denominator="16">
+					<point x="150" y="50"></point>
+					<point x="150" y="200"></point>
+				</road>
+				<road numerator="3" denominator="16">
+					<point x="250" y="50"></point>
+					<point x="250" y="200"></point>
+				</road>
+				<road numerator="4" denominator="16">
+					<point x="250" y="200"></point>
+					<point x="250" y="400"></point>
+				</road>
+				<road numerator="5" denominator="16">
+					<point x="250" y="400"></point>
+					<point x="250" y="650"></point>
+				</road>
+				<road numerator="1" denominator="4">
+					<point x="250" y="650"></point>
+					<point x="250" y="850"></point>
+				</road>
+				<road numerator="3" denominator="6">
+					<point x="250" y="850"></point>
+					<point x="250" y="1250"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="300" y="400"></point>
+					<point x="300" y="500"></point>
+				</road>
+				<road numerator="3" denominator="16">
+					<point x="300" y="500"></point>
+					<point x="300" y="650"></point>
+				</road>
+				<road numerator="5" denominator="16">
+					<point x="300" y="950"></point>
+					<point x="300" y="1200"></point>
+				</road>
+				<road numerator="2" denominator="16">
+					<point x="450" y="400"></point>
+					<point x="450" y="500"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="450" y="500"></point>
+					<point x="450" y="600"></point>
+				</road>
+				<road numerator="1" denominator="16">
+					<point x="450" y="600"></point>
+					<point x="450" y="650"></point>
+				</road>
+				<road numerator="2" denominator="16">
+					<point x="500" y="850"></point>
+					<point x="500" y="950"></point>
+				</road>
+				<road numerator="5" denominator="16">
+					<point x="500" y="950"></point>
+					<point x="500" y="1200"></point>
+				</road>
+				<road numerator="1" denominator="16">
+					<point x="500" y="1200"></point>
+					<point x="500" y="1250"></point>
+				</road>
+				<road numerator="2" denominator="16">
+					<point x="550" y="500"></point>
+					<point x="550" y="600"></point>
+				</road>
+				<road numerator="1" denominator="16">
+					<point x="550" y="600"></point>
+					<point x="550" y="650"></point>
+				</road>
+				<road numerator="3" denominator="16">
+					<point x="650" y="50"></point>
+					<point x="650" y="200"></point>
+				</road>
+				<road numerator="1" denominator="8">
+					<point x="650" y="400"></point>
+					<point x="650" y="500"></point>
+				</road>
+				<road numerator="2" denominator="16">
+					<point x="650" y="500"></point>
+					<point x="650" y="600"></point>
+				</road>
+				<road numerator="1" denominator="16">
+					<point x="650" y="600"></point>
+					<point x="650" y="650"></point>
+				</road>
+				<road numerator="3" denominator="16">
+					<point x="750" y="50"></point>
+					<point x="750" y="200"></point>
+				</road>
+				<road numerator="5" denominator="16">
+					<point x="750" y="400"></point>
+					<point x="750" y="650"></point>
+				</road>
+				<road numerator="2" denominator="16">
+					<point x="850" y="1100"></point>
+					<point x="850" y="1200"></point>
+				</road>
+				<road numerator="1" denominator="16">
+					<point x="850" y="1200"></point>
+					<point x="850" y="1250"></point>
+				</road>
+				<road numerator="5" denominator="16">
+					<point x="1050" y="400"></point>
+					<point x="1050" y="650"></point>
+				</road>
+				<road numerator="1" denominator="16">
+					<point x="1050" y="650"></point>
+					<point x="1050" y="700"></point>
+				</road>
+				<road numerator="3" denominator="16">
+					<point x="1050" y="700"></point>
+					<point x="1050" y="850"></point>
+				</road>
+				<road numerator="3" denominator="12">
+					<point x="1150" y="400"></point>
+					<point x="1150" y="600"></point>
+				</road>
+				<road numerator="4" denominator="16">
+					<point x="50" y="450"></point>
+					<point x="250" y="400"></point>
+				</road>
+				<road numerator="2" denominator="8">
+					<point x="650" y="200"></point>
+					<point x="750" y="400"></point>
+				</road>
+				<road numerator="5" denominator="10">
+					<point x="1000" y="50"></point>
+					<point x="1150" y="400"></point>
+				</road>
+				<road numerator="2" denominator="16">
+					<point x="1050" y="650"></point>
+					<point x="1150" y="600"></point>
+				</road>
+				<road numerator="6" denominator="16">
+					<point x="1050" y="700"></point>
+					<point x="800" y="850"></point>
+				</road>
+				<road numerator="7" denominator="16">
+					<point x="1050" y="850"></point>
+					<point x="850" y="1100"></point>
+				</road>
+			</roads>
+			<places>
+				<place type="Grocery" caption="Multi-Mart" value="750">
+					<point x="1050" y="400"></point>
+				</place>
+				<place type="Apartments" caption="Apartments" value="600">
+					<point x="650" y="500"></point>
+				</place>
+				<place type="Condos" caption="Office" value="400">
+					<point x="450" y="600"></point>
+				</place>
+				<place type="Apartments" caption="Condos" value="950">
+					<point x="300" y="400"></point>
+				</place>
+				<place type="School" caption="School" value="1100">
+					<point x="50" y="450"></point>
+				</place>
+				<place type="Grocery" caption="Groceries" value="900">
+					<point x="150" y="50"></point>
+				</place>
+				<place type="FastFood" caption="Eat 'n Run" value="800">
+					<point x="750" y="200"></point>
+				</place>
+				<place type="Factory" caption="Auto Plant" value="1200">
+					<point x="1150" y="400"></point>
+				</place>
+				<place type="WaterTower" caption="Water Tower" value="800">
+					<point x="1050" y="850"></point>
+				</place>
+				<place type="Field" caption="Farm" value="500">
+					<point x="300" y="950"></point>
+				</place>
+				<place type="GrainElevator" caption="Mill" value="1150">
+					<point x="500" y="1250"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="-1">
+					<point x="1050" y="700"></point>
+				</place>
+				<place type="Gas Station" caption="Sag" value="-1">
+					<point x="1000" y="50"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="-1">
+					<point x="850" y="1200"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="-1">
+					<point x="250" y="1250"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="-1">
+					<point x="500" y="850"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="-1">
+					<point x="300" y="650"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="-1">
+					<point x="750" y="400"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="-1">
+					<point x="150" y="200"></point>
+				</place>
+				<place type="Gas Station" caption="Gas" value="-1">
+					<point x="650" y="50"></point>
+				</place>
+			</places>
+		</map>
+	</level>
+</maps>

@@ -1,6 +1,8 @@
 function fraction(num,denom){
-	this.numerator=Math.round(num);
-	this.denominator=Math.round(denom);
+	if (getType(num)=="Number" && getType(denom)=="Number"){
+		this.numerator=num;
+		this.denominator=denom;
+	}
 }
 fraction.prototype.toString= function(){
 	return this.numerator+"/"+this.denominator;

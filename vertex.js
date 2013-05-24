@@ -1,14 +1,13 @@
-function mapPoint(xin, yin) {
-	if(getType(xin)=="Number" && getType(yin)=="Number"){
-		this.x = Math.round(xin);
-		this.y = Math.round(yin);
-	}
+function vertex(xin, yin) {	
+	this.x = Math.round(xin);
+	this.y = Math.round(yin);
+	this.empty=true;
 }
 
 //returns the distance between pt1 and pt2
 function distance(pt1, pt2) {
   	var retval = 0;
-  	if(pt1 instanceof mapPoint && pt2 instanceof mapPoint){
+  	if(pt1 instanceof vertex && pt2 instanceof vertex){
 		if (pt1.x == pt2.x) {
 	  		if (pt1.y == pt2.y) {
         		retval = 0;
@@ -32,14 +31,14 @@ function distance(pt1, pt2) {
   	else {retval=-1;}
 	return retval;
 }
-mapPoint.prototype.clone=function(){
-	return new mapPoint(this.x,this.y);
+vertex.prototype.clone=function(){
+	return new vertex(this.x,this.y);
 }
 //check if this point equals other point
-mapPoint.prototype.equals = function(other){
+vertex.prototype.equals = function(other){
   
     var retval = false;
-    if(other instanceof mapPoint){
+    if(other instanceof vertex){
 		if (other.x == this.x && other.y == this.y) {
 			retval = true;
 		}
@@ -47,22 +46,22 @@ mapPoint.prototype.equals = function(other){
 	return retval;
 };
 //calculate the slope between this point and other point
-mapPoint.prototype.slope=function(other){
-     var xdiff = other.x - this.x;
+vertex.prototype.slope=function(other){
+    var xdiff = other.x - this.x;
 	var ydiff = -1 * (other.y - this.y);
 	return ydiff/xdiff;
 }
-mapPoint.prototype.inverse=function(){
-	return new mapPoint(-this.x,-this.y);
+vertex.prototype.inverse=function(){
+	return new vertex(-this.x,-this.y);
 }
-mapPoint.prototype.applyRotation=function(angle){
+vertex.prototype.applyRotation=function(angle){
 	if(getType(angle)=="Number"){
 		this.x=this.x*Math.cos(angle)-this.y*Math.sin(angle);
 		this.y=this.x*Math.sin(angle)+this.y*Math.cos(angle);
 	}	
 }
-mapPoint.prototype.applyOffset=function(offset){
-	if(offset instanceof mapPoint){		
+vertex.prototype.applyOffset=function(offset){
+	if(offset instanceof vertex){		
 		this.x+=offset.x;
 		this.y+=offset.y;
 	}
