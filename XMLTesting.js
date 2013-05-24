@@ -1,6 +1,6 @@
 var xmldoc=loadXML("map.xml");
-var map1= new map();
 
-map1.initEdges(xmlDoc);
-map1.initNodes(xmlDoc);
+var map1= new map(xmldoc);
+
+
 //console.log(map1);

@@ -1,9 +1,10 @@
-function map(){
+function map(xmldoc){
 	this.vertexBuffer=new vertexIndex();
 	this.edgeBuffer=new edgeIndex();
 	this.nodeBuffer=new nodeIndex();
-	//this.edges=new Array();
-	//this.nodes=new Array();
+	
+	this.initEdges(xmlDoc);
+	this.initNodes(xmlDoc);
 }
 map.prototype.initEdges=function(xmldoc){
 	var roads=xmlDoc.getElementsByTagName("map")[0].getElementsByTagName("road");
