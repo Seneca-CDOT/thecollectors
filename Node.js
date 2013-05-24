@@ -1,12 +1,10 @@
-function Node(id, x, y, struct) {
-    this.id = id;
-    this.x = x;
-    this.y = y;
+function Node(struct, vertexID) {
+    this.vertexID=vertexID;
     this.structure = struct;
 }
 
 Node.prototype.position = function() {
-    return [this.x, this.y];
+    return this.vertexID;
 }
 
 Node.prototype.containsStructure = function() {
@@ -15,4 +13,10 @@ Node.prototype.containsStructure = function() {
 
 Node.prototype.structure = function() {
     return this.structure;
+}
+Node.prototype.equals = function(node){
+	var rv=false;
+	if (this.vertexID==node.vertexID)
+		rv=true;
+	return rv;
 }

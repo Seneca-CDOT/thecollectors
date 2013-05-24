@@ -65,7 +65,7 @@ NodeGraph.prototype.findNodeArray = function(nodeID) {
     return this.nodeList[this.nodeHashTable[nodeID]];
 }
 
-NodeGraph.prototype.areNodesConnected(nodeID, nodeIDToMatch) {
+NodeGraph.prototype.areNodesConnected = function(nodeID, nodeIDToMatch) {
     if (nodeID == nodeIDToMatch) {
         console.warn("Node cannot be connected to itself.");
         return false;
