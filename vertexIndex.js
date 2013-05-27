@@ -6,7 +6,7 @@ vertexIndex.prototype.add = function(vert) {
     var check = this.getIndex(vert);
 
     if (check >= 0) {
-		return check;
+        return check;
     } else {
         return this.vertexList.push(vert) - 1;
     }
