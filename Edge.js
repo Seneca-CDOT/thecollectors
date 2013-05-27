@@ -1,4 +1,4 @@
-function Edge(id, vOne, vTwo, weight) {
+function edge(id, vOne, vTwo, weight) {
     if (vOne == undefined || vTwo == undefined) {
         console.error("NodeIDs are undefined. Edge cannot be created.");
     }
@@ -15,10 +15,11 @@ function Edge(id, vOne, vTwo, weight) {
     this.vertexTwoID = vTwo;
     this.weight = weight;
 }
-Edge.prototype.equals=function(edge){
-	var rv=false;	
-	if(this.vertexOneID==edge.vertexOneID&&this.vertexTwoID==edge.vertexTwoID)
-		//&&this.weight==edge.weight)
-		rv = true;
-	return rv;
+edge.prototype.equals = function(edge) {
+    var rv = false;
+    if (this.vertexOneID == edge.vertexOneID && this.vertexTwoID == edge.vertexTwoID) {
+        //&&this.weight==edge.weight)
+        rv = true;
+    }
+    return rv;
 }

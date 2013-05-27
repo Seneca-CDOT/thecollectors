@@ -5,7 +5,7 @@ Structure = {
     SCHOOL : 3
 }
 
-function NodeGraph() {
+function nodeGraph() {
     this.nodeList = [];
     this.nodeListLength = 0;
 
@@ -13,7 +13,7 @@ function NodeGraph() {
     this.nodeDictionary = {};
 }
 
-NodeGraph.prototype.addNode = function(node, connectionIdList) {
+nodeGraph.prototype.addNode = function(node, connectionIdList) {
     if (this.nodeDictionary[node.id] != undefined) {
         console.warn("Node already exists in the graph. Duplicate attempt to add node terminated.");
         return;
@@ -38,7 +38,7 @@ NodeGraph.prototype.addNode = function(node, connectionIdList) {
     }
 }
 
-NodeGraph.prototype.addEdge = function(edge) {
+nodeGraph.prototype.addEdge = function(edge) {
     if (edge instanceof Edge) {
         var nodeArray = this.findNodeArray(edge.vertexOneID);
         nodeArray.push(edge);
@@ -47,13 +47,13 @@ NodeGraph.prototype.addEdge = function(edge) {
     }
 }
 
-NodeGraph.prototype.clearGraph = function() {
+nodeGraph.prototype.clearGraph = function() {
     this.nodeList = [];
     this.nodeListLength = 0;
     this.nodeDictionary = {};
 }
 
-NodeGraph.prototype.addConnections = function(nodeID, nodeToConnect) {
+nodeGraph.prototype.addConnections = function(nodeID, nodeToConnect) {
     var nodeArray = this.findNodeArray(nodeID);
 
     if (nodeArray != undefined) {
@@ -63,11 +63,11 @@ NodeGraph.prototype.addConnections = function(nodeID, nodeToConnect) {
     }
 }
 
-NodeGraph.prototype.findNodeArray = function(nodeID) {
+nodeGraph.prototype.findNodeArray = function(nodeID) {
     return this.nodeList[this.nodeDictionary[nodeID]];
 }
 
-NodeGraph.prototype.areNodesConnected = function(nodeID, nodeIDToMatch) {
+nodeGraph.prototype.areNodesConnected = function(nodeID, nodeIDToMatch) {
     if (nodeID == nodeIDToMatch) {
         console.warn("Node cannot be connected to itself.");
         return false;
@@ -90,7 +90,7 @@ NodeGraph.prototype.areNodesConnected = function(nodeID, nodeIDToMatch) {
     }
 }
 
-NodeGraph.prototype.getEdgeConnections = function(nodeID) {
+nodeGraph.prototype.getEdgeConnections = function(nodeID) {
     var nodeArray = this.findNodeArray(nodeID);
 
     if (nodeArray != undefined) {
