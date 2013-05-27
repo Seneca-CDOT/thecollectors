@@ -1,4 +1,4 @@
-StructureEnum = {
+Structure = {
     NONE : 0,
     FUEL_STN : 1,
     OFFICE : 2,
@@ -9,12 +9,12 @@ function NodeGraph() {
     this.nodeList = [];
     this.nodeListLength = 0;
 
-    // Hash table of Node ID/index pairs
-    this.nodeHashTable = {};
+    // Dictionary of Node ID/index pairs
+    this.nodeDictionary = {};
 }
 
 NodeGraph.prototype.addNode = function(node, connectionIdList) {
-    if (this.nodeHashTable[node.id] != undefined) {
+    if (this.nodeDictionary[node.id] != undefined) {
         console.warn("Node already exists in the graph. Duplicate attempt to add node terminated.");
         return;
     }
@@ -24,7 +24,7 @@ NodeGraph.prototype.addNode = function(node, connectionIdList) {
     }
     if (node instanceof Node) {
         this.nodeList.push([node]);
-        this.nodeHashTable[node.id] = this.nodeListLength;
+        this.nodeDictionary[node.id] = this.nodeListLength;
         this.nodeListLength += 1;
 
         var len = connectionIdList ? connectionIdList.length : 0;
@@ -39,16 +39,18 @@ NodeGraph.prototype.addNode = function(node, connectionIdList) {
 }
 
 NodeGraph.prototype.addEdge = function(edge) {
-    var nodeArray = this.findNodeArray(edge.vertexOneID);
-    nodeArray.push(edge);
-    nodeArray = this.findNodeArray(edge.vertexTwoID);
-    nodeArray.push(edge);
+    if (edge instanceof Edge) {
+        var nodeArray = this.findNodeArray(edge.vertexOneID);
+        nodeArray.push(edge);
+        nodeArray = this.findNodeArray(edge.vertexTwoID);
+        nodeArray.push(edge);
+    }
 }
 
 NodeGraph.prototype.clearGraph = function() {
     this.nodeList = [];
     this.nodeListLength = 0;
-    this.nodeHashTable = {};
+    this.nodeDictionary = {};
 }
 
 NodeGraph.prototype.addConnections = function(nodeID, nodeToConnect) {
@@ -62,7 +64,7 @@ NodeGraph.prototype.addConnections = function(nodeID, nodeToConnect) {
 }
 
 NodeGraph.prototype.findNodeArray = function(nodeID) {
-    return this.nodeList[this.nodeHashTable[nodeID]];
+    return this.nodeList[this.nodeDictionary[nodeID]];
 }
 
 NodeGraph.prototype.areNodesConnected = function(nodeID, nodeIDToMatch) {
@@ -85,5 +87,26 @@ NodeGraph.prototype.areNodesConnected = function(nodeID, nodeIDToMatch) {
         return false;
     } else {
         console.error("Invalid NodeID. Node does not exist.");
+    }
+}
+
+NodeGraph.prototype.getEdgeConnections = function(nodeID) {
+    var nodeArray = this.findNodeArray(nodeID);
+
+    if (nodeArray != undefined) {
+        var edgeList = [];
+        var len = nodeArray.length;
+
+        for (i = 1; i < len; i++) {
+            var element = nodeArray[i];
+
+            if (element instanceof Edge) {
+                edgeList.push(element);
+            }
+        }
+
+        return edgeList;
+    } else {
+        console.error("Cannot find edge connections. Invalid nodeID.");
     }
 }

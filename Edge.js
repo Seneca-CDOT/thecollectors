@@ -1,7 +1,19 @@
-function Edge(frac, vOne, vTwo) {
+function Edge(id, vOne, vTwo, weight) {
+    if (vOne == undefined || vTwo == undefined) {
+        console.error("NodeIDs are undefined. Edge cannot be created.");
+    }
+    if (vOne == vTwo) {
+        console.error("NodeIDs supplied are identical.");
+    }
+    if (weight < 0) {
+        console.warn("Edge weight cannot be negative. Taking the absolute value.");
+        weight = Math.abs(weight);
+    }
+
+    this.id = id;
     this.vertexOneID = vOne;
     this.vertexTwoID = vTwo;
-    this.weight = frac;
+    this.weight = weight;
 }
 Edge.prototype.equals=function(edge){
 	var rv=false;	
