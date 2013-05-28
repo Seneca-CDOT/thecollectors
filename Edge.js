@@ -15,10 +15,11 @@ function Edge(id, vOne, vTwo, weight) {
     this.vertexTwoID = vTwo;
     this.weight = id;
 }
-Edge.prototype.equals=function(edge){
-	var rv=false;	
-	if(this.vertexOneID==edge.vertexOneID&&this.vertexTwoID==edge.vertexTwoID)
-		//&&this.weight==edge.weight)
-		rv = true;
-	return rv;
+Edge.prototype.equals = function(edge) {
+    var rv = false;
+    if (this.vertexOneID == edge.vertexOneID && this.vertexTwoID == edge.vertexTwoID) {
+        //&&this.weight==edge.weight)
+        rv = true;
+    }
+    return rv;
 }
