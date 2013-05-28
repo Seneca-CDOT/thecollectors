@@ -13,7 +13,7 @@ function Edge(id, vOne, vTwo, weight) {
     this.id = id;
     this.vertexOneID = vOne;
     this.vertexTwoID = vTwo;
-    this.weight = weight;
+    this.weight = id;
 }
 Edge.prototype.equals=function(edge){
 	var rv=false;	

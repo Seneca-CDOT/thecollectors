@@ -66,3 +66,7 @@ vertex.prototype.applyOffset=function(offset){
 		this.y+=offset.y;
 	}
 }
+vertex.prototype.scale=function(factor){
+	var rv=new vertex(this.x*factor,this.y*factor);
+	return rv;
+}

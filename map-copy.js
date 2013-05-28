@@ -1,12 +1,14 @@
-function Map(fileName){
+function map(xmldoc){
+	console.log("start map constructor");
 	this.vertexBuffer=new vertexIndex();
 	this.edgeBuffer=new edgeIndex();
-	this.StructureBuffer=new StructureIndex();
-	var xmlDoc=loadXML(fileName);
+	this.nodeBuffer=new nodeIndex();
+	console.log("before init:" + this);
 	this.initEdges(xmlDoc);
-	this.initStructures(xmlDoc);
+	this.initNodes(xmlDoc);
+
 }
-Map.prototype.initEdges=function(xmlDoc){
+map.prototype.initEdges=function(xmldoc){
 	var roads=xmlDoc.getElementsByTagName("map")[0].getElementsByTagName("road");
 	var len=roads.length;
 	for (var i = 0;i<len;i++){
@@ -16,10 +18,10 @@ Map.prototype.initEdges=function(xmlDoc){
 							roads[i].getElementsByTagName("point")[1].getAttribute("y"));
 		var frac=new fraction(roads[i].getAttribute("numerator"), roads[i].getAttribute("denominator"));
 		this.edgeBuffer.add(new Edge(frac,this.vertexBuffer.add(pos1),this.vertexBuffer.add(pos2)));
-    }
+	}
 
 }
-Map.prototype.initStructures=function(xmlDoc){
+map.prototype.initNodes=function(xmlDoc){
 	var places=xmlDoc.getElementsByTagName("map")[0].getElementsByTagName("place");
 	var len=places.length;
 
@@ -29,9 +31,8 @@ Map.prototype.initStructures=function(xmlDoc){
 							places[i].getElementsByTagName("point")[0].getAttribute("y"));
 
 		places[i].getElementsByTagName("point")[0];
-		var z=this.StructureBuffer.add(new structure(places[i].getAttribute("type"), this.vertexBuffer.add(pos)));
-	
-		z=this.StructureBuffer.getStructure(z).position();
+		var z=this.nodeBuffer.add(new Node(places[i].getAttribute("type"), this.vertexBuffer.add(pos)));
+		z=this.nodeBuffer.getNode(z).position();
 		this.vertexBuffer.getVertex(z).empty=false;
 	};
 }

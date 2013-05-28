@@ -27,3 +27,6 @@ edgeIndex.prototype.getIndex = function(edge){
 	}
 	return -1;
 }
+edgeIndex.prototype.getLength = function(){
+	return this.edgeList.length;
+}
