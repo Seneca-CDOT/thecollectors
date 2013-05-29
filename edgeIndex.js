@@ -1,8 +1,8 @@
-function edgeIndex() {
+function EdgeIndex() {
     this.edgeList = [];
 }
 
-edgeIndex.prototype.add = function(edge) {
+EdgeIndex.prototype.add = function(edge) {
     var check = this.getIndex(edge);
 
     if (check >= 0) {
@@ -12,17 +12,17 @@ edgeIndex.prototype.add = function(edge) {
     }
 }
 
-edgeIndex.prototype.remove = function(edge) {
+EdgeIndex.prototype.remove = function(edge) {
     var check = this.getIndex(edge);
     if (check >= 0) {
         this.edgeList.splice(check, 1);
     }
 }
 
-edgeIndex.prototype.getEdge = function(index) {
+EdgeIndex.prototype.getEdge = function(index) {
     return this.edgeList[index];
 }
-edgeIndex.prototype.getIndex = function(edge){
+EdgeIndex.prototype.getIndex = function(edge){
 	var len=this.edgeList.length;
 	for(var i=0; i < len; i++){
 		if(this.edgeList[i].equals(edge))
@@ -30,6 +30,6 @@ edgeIndex.prototype.getIndex = function(edge){
 	}
 	return -1;
 }
-edgeIndex.prototype.getLength = function(){
+EdgeIndex.prototype.getLength = function(){
 	return this.edgeList.length;
 }

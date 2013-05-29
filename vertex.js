@@ -1,4 +1,4 @@
-function vertex(xin, yin) {	
+function Vertex(xin, yin) {	
     this.x = Math.round(xin);
     this.y = Math.round(yin);
     this.empty = true;
@@ -28,14 +28,14 @@ function distance(pt1, pt2) {
     return retval;
 }
 
-vertex.prototype.clone = function() {
+Vertex.prototype.clone = function() {
     return new vertex(this.x, this.y);
 }
 
 // Check if this point equals other point
-vertex.prototype.equals = function(other) {
+Vertex.prototype.equals = function(other) {
     var retval = false;
-    if (other instanceof vertex) {
+    if (other instanceof Vertex) {
         if (other.x == this.x && other.y == this.y) {
             retval = true;
         }
@@ -44,30 +44,30 @@ vertex.prototype.equals = function(other) {
 }
 
 // Calculate the slope between this point and other point
-vertex.prototype.slope = function(other) {
+Vertex.prototype.slope = function(other) {
     var xdiff = other.x - this.x;
     var ydiff = -1 * (other.y - this.y);
     return ydiff / xdiff;
 }
 
-vertex.prototype.inverse = function() {
+Vertex.prototype.inverse = function() {
     return new vertex(-this.x, -this.y);
 }
 
-vertex.prototype.applyRotation = function(angle) {
+Vertex.prototype.applyRotation = function(angle) {
     if (getType(angle) == "Number") {
         this.x = this.x*Math.cos(angle) - this.y*Math.sin(angle);
         this.y = this.x*Math.sin(angle) + this.y*Math.cos(angle);
     }
 }
 
-vertex.prototype.applyOffset = function(offset) {
+Vertex.prototype.applyOffset = function(offset) {
     if (offset instanceof vertex) {
         this.x += offset.x;
         this.y += offset.y;
     }
 }
-vertex.prototype.scale=function(factor){
+Vertex.prototype.scale=function(factor){
 	var rv=new vertex(this.x*factor,this.y*factor);
 	return rv;
 }

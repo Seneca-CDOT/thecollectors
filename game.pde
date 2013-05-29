@@ -3,7 +3,7 @@
 final int screenWidth=960;
 final int screenHeight=640;
 
-float zoomLevel=0.5;
+float zoomLevel=1;
 //line width
 strokeWeight(4);
 
@@ -62,7 +62,7 @@ class Driver extends Player{
 			zoomLevel-=1/3/10;
 	}
 	void mouseDragged(int mx, int my, int button){
-		//cahnge view port here
+		//cahnge view port here //called viewbox
 		//console.log(mx+" : " + my + "button: "+button); //37 left - 39 right
 	}
 }
