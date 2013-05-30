@@ -1,0 +1,10 @@
+// This file describes the function prototypes for the Vertex JavaScript class
+function Vertex(xIn, yIn)
+function distance(pointOne, pointTwo)
+Vertex.prototype.clone = function()
+Vertex.prototype.equals = function(vertex)
+Vertex.prototype.slope = function(vertex)
+Vertex.prototype.inverse = function()
+Vertex.prototype.applyRotation = function(angle)
+Vertex.prototype.move = function(offset)
+Vertex.prototype.scale = function(factor)
