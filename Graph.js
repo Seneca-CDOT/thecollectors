@@ -1,7 +1,5 @@
 function Graph() {
-    this.nodeList = [];
-
-    // Dictionary of Node ID/index pairs
+    // Dictionary of Node ID/Node Connection List pairs
     this.nodeDictionary = {};
 }
 
@@ -15,8 +13,7 @@ Graph.prototype.addNode = function(node, connectionIdList) {
         return;
     }
     if (node instanceof Node) {
-        this.nodeList.push([node]);
-        this.nodeDictionary[node.id] = this.nodeList.length;
+        this.nodeDictionary[node.id].push([node]);
 
         var len = connectionIdList ? connectionIdList.length : 0;
         for (i = 0; i < len; i++) {
@@ -24,29 +21,27 @@ Graph.prototype.addNode = function(node, connectionIdList) {
             this.addConnections(connectionIdList[i], node);
 
             // Push the existing node connections into the new node's list
-            this.addConnections(node.id, this.findNodeArray(connectionIdList[i])[0]);
+            this.addConnection(node.id, this.findNodeArray(connectionIdList[i])[0]);
         }
     }
 }
 
 Graph.prototype.clearGraph = function() {
-    this.nodeList = [];
-    this.nodeListLength = 0;
     this.nodeDictionary = {};
 }
 
-Graph.prototype.addConnections = function(nodeID, nodeToConnect) {
+Graph.prototype.addConnection = function(nodeID, nodeToConnect) {
     var nodeArray = this.findNodeArray(nodeID);
 
     if (nodeArray != undefined) {
         nodeArray.push(nodeToConnect);
     } else {
-        console.error("Cannot add node connections. Node array not found!");
+        console.error("Cannot add node connection. Node array not found!");
     }
 }
 
 Graph.prototype.findNodeArray = function(nodeID) {
-    return this.nodeList[this.nodeDictionary[nodeID]];
+    return this.nodeDictionary[nodeID];
 }
 
 Graph.prototype.areNodesConnected = function(nodeID, nodeIDToMatch) {
