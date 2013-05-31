@@ -1,20 +1,12 @@
-StructureEnum = {
-    NONE : 0,
-    FUEL_STN : 1,
-    OFFICE : 2,
-    SCHOOL : 3
-}
-
-function NodeGraph() {
+function Graph() {
     this.nodeList = [];
-    this.nodeListLength = 0;
 
-    // Hash table of Node ID/index pairs
-    this.nodeHashTable = {};
+    // Dictionary of Node ID/index pairs
+    this.nodeDictionary = {};
 }
 
-NodeGraph.prototype.addNode = function(node, connectionIdList) {
-    if (this.nodeHashTable[node.id] != undefined) {
+Graph.prototype.addNode = function(node, connectionIdList) {
+    if (this.nodeDictionary[node.id] != undefined) {
         console.warn("Node already exists in the graph. Duplicate attempt to add node terminated.");
         return;
     }
@@ -24,8 +16,7 @@ NodeGraph.prototype.addNode = function(node, connectionIdList) {
     }
     if (node instanceof Node) {
         this.nodeList.push([node]);
-        this.nodeHashTable[node.id] = this.nodeListLength;
-        this.nodeListLength += 1;
+        this.nodeDictionary[node.id] = this.nodeList.length;
 
         var len = connectionIdList ? connectionIdList.length : 0;
         for (i = 0; i < len; i++) {
@@ -38,20 +29,13 @@ NodeGraph.prototype.addNode = function(node, connectionIdList) {
     }
 }
 
-NodeGraph.prototype.addEdge = function(edge) {
-    var nodeArray = this.findNodeArray(edge.vertexOneID);
-    nodeArray.push(edge);
-    nodeArray = this.findNodeArray(edge.vertexTwoID);
-    nodeArray.push(edge);
-}
-
-NodeGraph.prototype.clearGraph = function() {
+Graph.prototype.clearGraph = function() {
     this.nodeList = [];
     this.nodeListLength = 0;
-    this.nodeHashTable = {};
+    this.nodeDictionary = {};
 }
 
-NodeGraph.prototype.addConnections = function(nodeID, nodeToConnect) {
+Graph.prototype.addConnections = function(nodeID, nodeToConnect) {
     var nodeArray = this.findNodeArray(nodeID);
 
     if (nodeArray != undefined) {
@@ -61,11 +45,11 @@ NodeGraph.prototype.addConnections = function(nodeID, nodeToConnect) {
     }
 }
 
-NodeGraph.prototype.findNodeArray = function(nodeID) {
-    return this.nodeList[this.nodeHashTable[nodeID]];
+Graph.prototype.findNodeArray = function(nodeID) {
+    return this.nodeList[this.nodeDictionary[nodeID]];
 }
 
-NodeGraph.prototype.areNodesConnected = function(nodeID, nodeIDToMatch) {
+Graph.prototype.areNodesConnected = function(nodeID, nodeIDToMatch) {
     if (nodeID == nodeIDToMatch) {
         console.warn("Node cannot be connected to itself.");
         return false;
