@@ -1,18 +1,24 @@
-function structure(struct, vertexID) {
-    this.vertexID=vertexID;
-    this.struct = struct;
+function Structure(nodeID, StructType, StructCaption, Points) {
+    this.nodeID=nodeID;
+    this.StructType=StructType;
+    this.StructCaption=StructCaption;
+    this.Points=Points;
 }
-
-structure.prototype.position = function() {
-    return this.vertexID;
+Structure.prototype.position = function() {
+    return this.nodeID;
 }
-
-structure.prototype.structure = function() {
-    return this.struct;
+Structure.prototype.getType = function() {
+    return this.StructType;
 }
-structure.prototype.equals = function(struct){
+Structure.prototype.getCaption = function(){
+	return this.StructCaption;
+}
+Structure.prototype.pointsString = function(){
+	return this.Points.toString();
+}
+Structure.prototype.equals = function(struct){
 	var rv=false;
-	if (this.vertexID==struct.vertexID)
+	if (this.nodeID==struct.nodeID)
 		rv=true;
 	return rv;
 }
