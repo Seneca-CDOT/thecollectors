@@ -4,6 +4,8 @@ final int screenWidth=960;
 final int screenHeight=640;
 
 float zoomLevel=1;
+int arrowSpeed=10;
+int dragSpeed=10;
 //line width
 strokeWeight(4);
 
@@ -12,19 +14,10 @@ void initialize() {
 	addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map("map.xml")));
 }
 class XMLLevel extends Level{
-	Player driver;
 	XMLLevel(float levelWidth,float levelHeight,var mapIn){
 		super(levelWidth,levelHeight)
-		driver= new Driver();
 		addLevelLayer("",new XMLLevelLayer(this,mapIn));
 		setViewBox(0,0,screenHeight, screenHeight);
-	}
-	void draw(){
-		super.draw();
-		viewbox.track(this,driver);
-	}
-	Player getDriver(){
-		return driver;
 	}
 }
 class XMLLevelLayer extends LevelLayer{
@@ -48,31 +41,41 @@ class XMLLevelLayer extends LevelLayer{
 			Struct temp= new Struct(vert);
 			addInteractor(temp);
 		}
-		//Driver p1=new Driver();
-		Player driver=owner.getDriver();
-		driver.setPosition(0, 0)
+		Driver driver=new Driver();
 		addPlayer(driver);
+		/* Boundaries not necessary at the moment. Leaving this here just in case
 		addBoundary(new Boundary(0,height,width,height));
 		addBoundary(new Boundary(width,height,width,0));
 		addBoundary(new Boundary(width,0,0,0));
 		addBoundary(new Boundary(0,0,0,height));
+		*/
 	}
 }
 class Driver extends Player{
 	Driver(){
 		super("Driver");
-		setStates();
 		handleKey('+');
 		handleKey('-');
-		setImpulseCoefficients(0.9,0.9);		
-	}
-	void setStates(){
-		addState(new State("idle","assets/gas.png"));
-		setCurrentState("idle");
 	}
 	void handleInput(){
-		
-		//console.log(keyDown[65]);
+		if (keyCode){
+			ViewBox box=layer.parent.viewbox;
+			int _x=0, _y=0;
+			if(keyCode==UP){
+				_y-=arrowSpeed;	
+			}
+			if(keyCode==DOWN){
+				_y+=arrowSpeed;
+			}
+			if(keyCode==LEFT){
+				_x-=arrowSpeed;		
+			}
+			if(keyCode==RIGHT){
+				_x+=arrowSpeed;		
+			}
+			box.translate(_x,_y,layer.parent);	
+			keyCode=undefined;
+		}			
 		if(mouseScroll!=0){
 			zoomLevel+= mouseScroll/10;
 			mouseScroll=0;
@@ -83,13 +86,13 @@ class Driver extends Player{
 			zoomLevel-=1/3/10;
 	}
 	void mouseDragged(int mx, int my, int button){
-		if(mx-pmouseX >0) addImpulse(-1,0);
-		else if (mx-pmouseX < 0) addImpulse (1,0);
-		if(my-pmouseY <0) addImpulse(0,1);
-		else if (my-pmouseY>0) addImpulse(0,-1);
-		//console.log(x+":"+y);
-		//cahnge view port here //called viewbox
-		//console.log(mx+" : " + my + "button: "+button); //37 left - 39 right
+		ViewBox box=layer.parent.viewbox;
+		int _x=0, _y=0;
+		if(mx-pmouseX >0) _x-=dragSpeed;
+		else if (mx-pmouseX < 0) _x+=dragSpeed;
+		if(my-pmouseY <0) _y+=dragSpeed;
+		else if (my-pmouseY>0) _y-=dragSpeed;
+		box.translate(_x,_y,layer.parent);
 	}
 }
 class Road extends Interactor{
