@@ -1,10 +1,10 @@
-function Node(uID, vPosition) {
+function Node(uID, vertex) {
     this.id = uID;
-    this.vertexPosition = vPosition;
+    this.vertex = vertex;
 }
 
 Node.prototype.position = function() {
-    return this.vertexPosition;
+    return this.vertex;
 }
 
 Node.prototype.equals = function(node) {
@@ -12,6 +12,9 @@ Node.prototype.equals = function(node) {
 
     if (this.id == node.id) {
         rv = true;
+    }
+    if (this.vertex.equals(node.vertex)){
+    	rv = true;
     }
     return rv;
 }
