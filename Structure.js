@@ -3,6 +3,7 @@ function Structure(nodeID, StructType, StructCaption, Points) {
     this.StructType=StructType;
     this.StructCaption=StructCaption;
     this.Points=Points;
+    this.visited=false;
 }
 Structure.prototype.position = function() {
     return this.nodeID;
