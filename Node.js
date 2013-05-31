@@ -1,9 +1,7 @@
-function Node(uID, vertex) {
+function Node(uID, x ,y){
     this.id = uID;
-    if(vertex instanceof Vertex)
-    	this.vertex = vertex;
+    this.vertex=new Vertex(x,y);
 }
-
 Node.prototype.position = function() {
     return this.vertex;
 }
