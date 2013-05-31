@@ -9,12 +9,22 @@ strokeWeight(4);
 
 
 void initialize() {
-	addScreen("testing",new XMLLevel(screenWidth,screenHeight,new Map("map.xml")));
+	addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map("map.xml")));
 }
 class XMLLevel extends Level{
+	Player driver;
 	XMLLevel(float levelWidth,float levelHeight,var mapIn){
 		super(levelWidth,levelHeight)
+		driver= new Driver();
 		addLevelLayer("",new XMLLevelLayer(this,mapIn));
+		setViewBox(0,0,screenHeight, screenHeight);
+	}
+	void draw(){
+		super.draw();
+		viewbox.track(this,driver);
+	}
+	Player getDriver(){
+		return driver;
 	}
 }
 class XMLLevelLayer extends LevelLayer{
@@ -38,16 +48,27 @@ class XMLLevelLayer extends LevelLayer{
 			Struct temp= new Struct(vert);
 			addInteractor(temp);
 		}
-		Driver p1=new Driver();
-		addPlayer(p1);
+		//Driver p1=new Driver();
+		Player driver=owner.getDriver();
+		driver.setPosition(0, 0)
+		addPlayer(driver);
+		addBoundary(new Boundary(0,height,width,height));
+		addBoundary(new Boundary(width,height,width,0));
+		addBoundary(new Boundary(width,0,0,0));
+		addBoundary(new Boundary(0,0,0,height));
 	}
 }
 class Driver extends Player{
 	Driver(){
 		super("Driver");
-		//setStates();
+		setStates();
 		handleKey('+');
 		handleKey('-');
+		setImpulseCoefficients(0.9,0.9);		
+	}
+	void setStates(){
+		addState(new State("idle","assets/gas.png"));
+		setCurrentState("idle");
 	}
 	void handleInput(){
 		
@@ -62,6 +83,11 @@ class Driver extends Player{
 			zoomLevel-=1/3/10;
 	}
 	void mouseDragged(int mx, int my, int button){
+		if(mx-pmouseX >0) addImpulse(-1,0);
+		else if (mx-pmouseX < 0) addImpulse (1,0);
+		if(my-pmouseY <0) addImpulse(0,1);
+		else if (my-pmouseY>0) addImpulse(0,-1);
+		//console.log(x+":"+y);
 		//cahnge view port here //called viewbox
 		//console.log(mx+" : " + my + "button: "+button); //37 left - 39 right
 	}
