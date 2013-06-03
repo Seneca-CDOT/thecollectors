@@ -27,7 +27,6 @@ Map.prototype.initStructures=function(xmlDoc){
 		places[i].getElementsByTagName("point")[0];
 		var z=this.StructureBuffer.add(new Structure(this.vertexBuffer.add(pos),places[i].getAttribute("type")));
 		z=this.StructureBuffer.getStructure(z).position();
-		//this.vertexBuffer.getVertex(z).empty=false;
 	}
 }
 

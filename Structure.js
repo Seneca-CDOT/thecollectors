@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 function Structure(nodeID, StructType, StructCaption, Points) {
     this.nodeID=nodeID;
     this.StructType=StructType;
