@@ -33,6 +33,14 @@
 	</style>
   </head>
   <body>
+    <script type="text/javascript">
+      var canvasHasFocus = false;
+      document.addEventListener("DOMMouseScroll", function(e) {
+        if (canvasHasFocus) {
+          e.preventDefault();
+        }
+      }, false);
+    </script>
     <canvas data-processing-sources="codebase.pde game.pde"></canvas>
   </body>  
 </html>
