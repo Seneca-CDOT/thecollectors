@@ -63,6 +63,7 @@ class Driver extends Player{
     Driver(){
         super("Driver");
         handleKey('+');
+        handleKey('='); // For the =/+ combination key
         handleKey('-');
     }
     void handleInput(){
@@ -89,7 +90,7 @@ class Driver extends Player{
                 zoomLevel+= mouseScroll/10;
                 mouseScroll=0;
             }
-            if(isKeyDown('+'))
+            if(isKeyDown('+') || isKeyDown('='))
                 zoomLevel+=1/3/10;
             if(isKeyDown('-'))
                 zoomLevel-=1/3/10;
