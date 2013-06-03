@@ -1,4 +1,4 @@
-function MapGenerator(difficulty, map){
+function MapGenerator(difficulty){ 	//returns a map object
 	var mapGraph= new Graph();
 	var structureList= {};
 }
