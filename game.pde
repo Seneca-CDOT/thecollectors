@@ -19,7 +19,9 @@ void mouseOut() {
 }
 
 void initialize() {
-    addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map("map.xml")));
+
+	addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(0,0,"map.xml")));
+
 }
 class XMLLevel extends Level{
     XMLLevel(float levelWidth,float levelHeight,var mapIn){
@@ -29,35 +31,35 @@ class XMLLevel extends Level{
     }
 }
 class XMLLevelLayer extends LevelLayer{
-    XMLLevelLayer(Level owner, mapIn){
-        super(owner);
-        color bgcolor=color(243,233,178);
-        setBackgroundColor(bgcolor);
-        int ln=mapIn.edgeBuffer.getLength();
-        for (int i=0;i<ln;i++){
-            var road=mapIn.edgeBuffer.getEdge(i);
-
-            var vert1=mapIn.vertexBuffer.getVertex(road.vertexOneID);
-            var vert2=mapIn.vertexBuffer.getVertex(road.vertexTwoID);
-            Road temp= new Road(vert1,vert2);
-            addInteractor(temp);
-        }
-        ln=mapIn.StructureBuffer.getLength();
-        for(int i=0;i<ln;i++){
-            var struct=mapIn.StructureBuffer.getStructure(i);
-            var vert=mapIn.vertexBuffer.getVertex(struct.position());
-            Struct temp= new Struct(vert);
-            addInteractor(temp);
-        }
-        Driver driver=new Driver();
-        addPlayer(driver);
-        /* Boundaries not necessary at the moment. Leaving this here just in case
-           addBoundary(new Boundary(0,height,width,height));
-           addBoundary(new Boundary(width,height,width,0));
-           addBoundary(new Boundary(width,0,0,0));
-           addBoundary(new Boundary(0,0,0,height));
-         */
-    }
+	XMLLevelLayer(Level owner, mapIn){
+		super(owner);
+		color bgcolor=color(243,233,178);
+		setBackgroundColor(bgcolor);
+		/*int ln=mapIn.edgeBuffer.getLength();
+		for (int i=0;i<ln;i++){
+			var road=mapIn.edgeBuffer.getEdge(i);
+	
+			var vert1=mapIn.vertexBuffer.getVertex(road.vertexOneID);
+			var vert2=mapIn.vertexBuffer.getVertex(road.vertexTwoID);
+			Road temp= new Road(vert1,vert2);
+			addInteractor(temp);
+		}*/
+		ln=mapIn.structureList.length;
+		for(int i=0;i<ln;i++){
+			var struct=mapIn.structureList[i];
+			var vert=mapIn.mapGraph.findNodeArray(struct.nodeID).vertex;
+			Struct temp= new Struct(vert);
+			addInteractor(temp);
+		}
+		Driver driver=new Driver();
+		addPlayer(driver);
+		/* Boundaries not necessary at the moment. Leaving this here just in case
+		addBoundary(new Boundary(0,height,width,height));
+		addBoundary(new Boundary(width,height,width,0));
+		addBoundary(new Boundary(width,0,0,0));
+		addBoundary(new Boundary(0,0,0,height));
+		*/
+	}
 }
 class Driver extends Player{
     Driver(){
