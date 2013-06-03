@@ -11,7 +11,7 @@ strokeWeight(4);
 
 
 void initialize() {
-	addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map("map.xml")));
+	addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(0,0,"map.xml")));
 }
 class XMLLevel extends Level{
 	XMLLevel(float levelWidth,float levelHeight,var mapIn){
@@ -25,7 +25,7 @@ class XMLLevelLayer extends LevelLayer{
 		super(owner);
 		color bgcolor=color(243,233,178);
 		setBackgroundColor(bgcolor);
-		int ln=mapIn.edgeBuffer.getLength();
+		/*int ln=mapIn.edgeBuffer.getLength();
 		for (int i=0;i<ln;i++){
 			var road=mapIn.edgeBuffer.getEdge(i);
 	
@@ -33,11 +33,11 @@ class XMLLevelLayer extends LevelLayer{
 			var vert2=mapIn.vertexBuffer.getVertex(road.vertexTwoID);
 			Road temp= new Road(vert1,vert2);
 			addInteractor(temp);
-		}
-		ln=mapIn.StructureBuffer.getLength();
+		}*/
+		ln=mapIn.structureList.length;
 		for(int i=0;i<ln;i++){
-			var struct=mapIn.StructureBuffer.getStructure(i);
-			var vert=mapIn.vertexBuffer.getVertex(struct.position());
+			var struct=mapIn.structureList[i];
+			var vert=mapIn.mapGraph.findNodeArray(struct.nodeID).vertex;
 			Struct temp= new Struct(vert);
 			addInteractor(temp);
 		}
