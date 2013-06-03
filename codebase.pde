@@ -4420,6 +4420,14 @@ class ViewBox {
     x = min( max(0,idealx), level.width - w );
     y = min( max(0,idealy), level.height - h );
   }
+  void translate(int _x, int _y, Level level){
+    if(x+_x < 0) x=0; 
+    else if (x+_x > level.width) x=level.width;
+    else x+=_x;
+    if(y+_y < 0) y=0;
+    else if(y+_y > level.height) y=level.height;
+    else y+=_y;
+  }
 }
 
 
