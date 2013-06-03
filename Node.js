@@ -1,22 +1,16 @@
-function node(struct, vertexID) {
-    this.vertexID = vertexID;
-    this.structure = struct;
+function Node(uID, x ,y){
+    this.id = uID;
+    this.vertex=new Vertex(x,y);
+}
+Node.prototype.position = function() {
+    return this.vertex;
 }
 
-node.prototype.position = function() {
-    return this.vertexID;
-}
-
-node.prototype.containsStructure = function() {
-    return this.structure > 0 ? true : false;
-}
-
-node.prototype.structure = function() {
-    return this.structure;
-}
-node.prototype.equals = function(node) {
+Node.prototype.equals = function(node) {
     var rv = false;
-    if (this.vertexID == node.vertexID)
+
+    if (this.id == node.id) {
         rv = true;
+    }
     return rv;
 }
