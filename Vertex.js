@@ -1,13 +1,13 @@
-function Vertex(xin, yin) {	
-    this.x = Math.round(xin);
-    this.y = Math.round(yin);
+function Vertex(xIn, yIn) {
+    this.x = Math.round(xIn);
+    this.y = Math.round(yIn);
     this.empty = true;
 }
 
 // Returns the distance between pt1 and pt2
 function distance(pt1, pt2) {
     var retval = 0;
-    if (pt1 instanceof vertex && pt2 instanceof vertex) {
+    if (pt1 instanceof Vertex && pt2 instanceof Vertex) {
         if (pt1.x == pt2.x) {
             if (pt1.y == pt2.y) {
                 retval = 0;
@@ -29,14 +29,14 @@ function distance(pt1, pt2) {
 }
 
 Vertex.prototype.clone = function() {
-    return new vertex(this.x, this.y);
+    return new Vertex(this.x, this.y);
 }
 
 // Check if this point equals other point
-Vertex.prototype.equals = function(other) {
+Vertex.prototype.equals = function(vertex) {
     var retval = false;
-    if (other instanceof Vertex) {
-        if (other.x == this.x && other.y == this.y) {
+    if (vertex instanceof Vertex) {
+        if (vertex.x == this.x && vertex.y == this.y) {
             retval = true;
         }
     }
@@ -44,14 +44,14 @@ Vertex.prototype.equals = function(other) {
 }
 
 // Calculate the slope between this point and other point
-Vertex.prototype.slope = function(other) {
-    var xdiff = other.x - this.x;
-    var ydiff = -1 * (other.y - this.y);
+Vertex.prototype.slope = function(vertex) {
+    var xdiff = vertex.x - this.x;
+    var ydiff = -1 * (vertex.y - this.y);
     return ydiff / xdiff;
 }
 
 Vertex.prototype.inverse = function() {
-    return new vertex(-this.x, -this.y);
+    return new Vertex(-this.x, -this.y);
 }
 
 Vertex.prototype.applyRotation = function(angle) {
@@ -61,13 +61,13 @@ Vertex.prototype.applyRotation = function(angle) {
     }
 }
 
-Vertex.prototype.applyOffset = function(offset) {
-    if (offset instanceof vertex) {
+Vertex.prototype.move = function(offset) {
+    if (offset instanceof Vertex) {
         this.x += offset.x;
         this.y += offset.y;
     }
 }
-Vertex.prototype.scale=function(factor){
-	var rv=new vertex(this.x*factor,this.y*factor);
+Vertex.prototype.scale = function(factor) {
+	var rv = new Vertex(this.x*factor, this.y*factor);
 	return rv;
 }
