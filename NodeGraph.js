@@ -1,10 +1,3 @@
-Structure = {
-    NONE : 0,
-    FUEL_STN : 1,
-    OFFICE : 2,
-    SCHOOL : 3
-}
-
 function nodeGraph() {
     this.nodeList = [];
     this.nodeListLength = 0;

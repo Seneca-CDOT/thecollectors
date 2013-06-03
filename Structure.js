@@ -1,16 +1,16 @@
-function structure(struct, vertexID) {
+function Structure(struct, vertexID) {
     this.vertexID=vertexID;
     this.struct = struct;
 }
 
-structure.prototype.position = function() {
+Structure.prototype.position = function() {
     return this.vertexID;
 }
 
-structure.prototype.structure = function() {
+Structure.prototype.structure = function() {
     return this.struct;
 }
-structure.prototype.equals = function(struct){
+Structure.prototype.equals = function(struct){
 	var rv=false;
 	if (this.vertexID==struct.vertexID)
 		rv=true;

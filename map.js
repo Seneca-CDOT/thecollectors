@@ -25,9 +25,11 @@ Map.prototype.initStructures=function(xmlDoc){
         var pos = new Vertex(places[i].getElementsByTagName("point")[0].getAttribute("x"),
         places[i].getElementsByTagName("point")[0].getAttribute("y"));
 		places[i].getElementsByTagName("point")[0];
-		var z=this.StructureBuffer.add(new structure(places[i].getAttribute("type"), this.vertexBuffer.add(pos)));
+		console.log(Structure);
+		var z=this.StructureBuffer.add(new Structure(places[i].getAttribute("type"), this.vertexBuffer.add(pos)));
 		z=this.StructureBuffer.getStructure(z).position();
 		this.vertexBuffer.getVertex(z).empty=false;
 	}
 }
+
 
