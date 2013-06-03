@@ -37,7 +37,7 @@ class XMLLevelLayer extends LevelLayer{
 		ln=mapIn.StructureBuffer.getLength();
 		for(int i=0;i<ln;i++){
 			var struct=mapIn.StructureBuffer.getStructure(i);
-			var vert=mapIn.vertexBuffer.getVertex(struct.vertexID);
+			var vert=mapIn.vertexBuffer.getVertex(struct.position());
 			Struct temp= new Struct(vert);
 			addInteractor(temp);
 		}
