@@ -1,3 +1,4 @@
+/*************			Legacy XML Reading Code to be Updated for Graph Implementation 			**********/
 function Map(fileName){
 	this.vertexBuffer=new VertexIndex();
 	this.edgeBuffer=new EdgeIndex();
