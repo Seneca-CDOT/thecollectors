@@ -12,8 +12,5 @@ Node.prototype.equals = function(node) {
     if (this.id == node.id) {
         rv = true;
     }
-    if (this.vertex.equals(node.vertex)){
-    	rv = true;
-    }
     return rv;
 }
