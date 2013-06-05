@@ -19,11 +19,8 @@ Graph.prototype.addNode = function(node, connectionIdList) {
         this.nodeDictionary[node.id]=node;
         var len = connectionIdList ? connectionIdList.length : 0;
         for (i = 0; i < len; i++) {
-            // Push the new node into its connections' lists
-            this.addConnections(connectionIdList[i], node);
-
             // Push the existing node connections into the new node's list
-            this.addConnection(node.id, this.findNodeArray(connectionIdList[i])[0]);
+            this.addConnection(node.id, connectionIdList[i]);
         }
         this.length++;
         return node.id;
