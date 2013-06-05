@@ -29,7 +29,7 @@
     <script type="text/javascript" src="processing.js"></script>
     <script type="text/javascript" src="processing-lazyload.js"></script>
 	<style>
-	  canvas {width:960px;height:640px;}
+	  canvas {outline:none;width:960px;height:640px;}
 	</style>
   </head>
   <body>
@@ -40,8 +40,8 @@
           e.preventDefault();
         }
       }, false);
-    </script>
-    <canvas onmouseenter="$('canvas').focus()" data-processing-sources="codebase.pde game.pde"></canvas>
 
+    </script>
+    <canvas onmouseleave="$('canvas').focus()" onmouseenter="$('canvas').focus()" data-processing-sources="codebase.pde game.pde"></canvas>
   </body>  
 </html>
