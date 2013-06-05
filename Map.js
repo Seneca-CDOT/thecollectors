@@ -5,7 +5,6 @@ function Map(mapGraph,structureList,filename){
 		var xmlDoc=loadXML(filename);
 		this.initNodes(xmlDoc);
 		this.initStructures(xmlDoc);
-		console.log(this.mapGraph);
 	}
 	else{
 		this.mapGraph=mapGraph;
@@ -14,8 +13,16 @@ function Map(mapGraph,structureList,filename){
 }
 
 Map.prototype.getEdgeList=function(){
-	var matrix={};
-
+	var matrix= {};
+	var graphList=this.mapGraph.nodeDictionary;	
+	for (index in graphList) {
+		matrix[index]= [];
+		var ln=graphList[index].connections.length;
+		for (var i=0;i<ln;i++){
+			if(!matrix[graphList[index].connections[i]])
+				matrix[index].push(graphList[index].connections[i]);
+		}
+	};
 	return matrix;
 }
 
