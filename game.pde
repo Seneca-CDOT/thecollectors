@@ -35,15 +35,16 @@ class XMLLevelLayer extends LevelLayer{
 		super(owner);
 		color bgcolor=color(243,233,178);
 		setBackgroundColor(bgcolor);
-		/*int ln=mapIn.edgeBuffer.getLength();
-		for (int i=0;i<ln;i++){
-			var road=mapIn.edgeBuffer.getEdge(i);
-	
-			var vert1=mapIn.vertexBuffer.getVertex(road.vertexOneID);
-			var vert2=mapIn.vertexBuffer.getVertex(road.vertexTwoID);
-			Road temp= new Road(vert1,vert2);
-			addInteractor(temp);
-		}*/
+		var edgeList=mapIn.getEdgeList();
+		
+		for (index in edgeList){
+			var vert1=mapIn.mapGraph.findNodeArray(index).vertex;
+			for (var i = edgeList[index].length - 1; i >= 0; i--) {
+				var vert2=mapIn.mapGraph.findNodeArray(edgeList[index][i]).vertex;
+				Road temp= new Road(vert1,vert2);
+				addInteractor(temp);
+			};
+		}
 		ln=mapIn.structureList.length;
 		for(int i=0;i<ln;i++){
 			var struct=mapIn.structureList[i];
