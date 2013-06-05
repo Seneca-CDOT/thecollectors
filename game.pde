@@ -85,17 +85,17 @@ class Driver extends Player{
                     _x+=arrowSpeed;
                 }
                 box.translate(_x,_y,layer.parent);
-                keyCode=undefined;
             }
             if(mouseScroll!=0){
                 zoomLevel+= mouseScroll/10;
-                mouseScroll=0;
             }
             if(isKeyDown('+') || isKeyDown('='))
                 zoomLevel+=1/3/10;
             if(isKeyDown('-'))
                 zoomLevel-=1/3/10;
         }
+        mouseScroll=0;
+        keyCode=undefined;
     }
     void mouseDragged(int mx, int my, int button){
         ViewBox box=layer.parent.viewbox;
@@ -110,6 +110,7 @@ class Driver extends Player{
 class Road extends Interactor{
     var vertex1;
     var vertex2;
+
     Road(vert1,vert2){
         super("Road");
         vertex1=vert1;
