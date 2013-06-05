@@ -1,7 +1,6 @@
 function Vertex(xIn, yIn) {
     this.x = Math.round(xIn);
     this.y = Math.round(yIn);
-    this.empty = true;
 }
 
 // Returns the distance between pt1 and pt2
