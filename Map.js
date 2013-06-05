@@ -46,8 +46,8 @@ Map.prototype.initNodes=function(xmlDoc){
 							roads[i].getElementsByTagName("point")[1].getAttribute("y"));
 		var frac=new Fraction(roads[i].getAttribute("numerator"), roads[i].getAttribute("denominator"));
 		
-		var tmp=this.mapGraph.addNode(new Node(this.mapGraph.Length().toString(),pos1.x,pos1.y));
-		var tmp2=this.mapGraph.addNode(new Node(this.mapGraph.Length().toString(),pos2.x,pos2.y));
+		var tmp=this.mapGraph.addNode(new Node(this.mapGraph.length.toString(),pos1.x,pos1.y));
+		var tmp2=this.mapGraph.addNode(new Node(this.mapGraph.length.toString(),pos2.x,pos2.y));
 		this.mapGraph.addConnection(tmp,tmp2);
     }
 }

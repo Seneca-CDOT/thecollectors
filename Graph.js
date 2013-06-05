@@ -1,6 +1,7 @@
 function Graph() {
     // Dictionary of Node ID/Node Connection List pairs
     this.nodeDictionary = {};
+    this.length=0;
 }
 
 Graph.prototype.addNode = function(node, connectionIdList) {
@@ -24,6 +25,7 @@ Graph.prototype.addNode = function(node, connectionIdList) {
             // Push the existing node connections into the new node's list
             this.addConnection(node.id, this.findNodeArray(connectionIdList[i])[0]);
         }
+        this.length++;
         return node.id;
     }
     else{
@@ -73,14 +75,9 @@ Graph.prototype.areNodesConnected = function(nodeID, nodeIDToMatch) {
         console.error("Invalid NodeID. Node does not exist.");
     }
 }
-Graph.prototype.getEdgeList=function(){
-    var rvList={};
-    for (index in this.nodeDictionary){
-
-    }
-}
 Graph.prototype.vertexExists=function(vert){
     var rv=false;
+    
     for (var index in this.nodeDictionary){
         if(this.nodeDictionary[index].vertex.equals(vert))
             rv=index;
@@ -88,9 +85,10 @@ Graph.prototype.vertexExists=function(vert){
     return rv;
 }
 Graph.prototype.Length=function(){
-    var i=0;
+    /*var i=0;
     for (tmp in this.nodeDictionary){
         i++;
     }
-    return i;
+    return i;*/
+    return this.length;
 }
