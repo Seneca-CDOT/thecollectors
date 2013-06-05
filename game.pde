@@ -19,9 +19,7 @@ void mouseOut() {
 }
 
 void initialize() {
-
 	addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(0,0,"map.xml")));
-
 }
 class XMLLevel extends Level{
     XMLLevel(float levelWidth,float levelHeight,var mapIn){
