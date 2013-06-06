@@ -106,6 +106,7 @@ class XMLLevelLayer extends LevelLayer{
 		addBoundary(new Boundary(width,0,0,0));
 		addBoundary(new Boundary(0,0,0,height));
 		*/
+        mapIn.exportToXML();
 	}
     void zoom(float s){
         if(xScale+s < 0)

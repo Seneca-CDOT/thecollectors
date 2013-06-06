@@ -4,4 +4,4 @@ function Map(){
 }
 getEdgeMatrix(){}
 importXML(){}
-exportXML(){}
+exportToXML(){}
