@@ -2210,6 +2210,10 @@ abstract class LevelLayer {
   void mouseClicked(int mx, int my, int button) {
     for(Player a: players) {
       a.mouseClicked(mx,my,button); }}
+  void setScale(int sa){
+    xScale=sa;
+    yScale=sa;
+  }
 }
 /**
  * Pickups!
@@ -2409,8 +2413,8 @@ class Position {
 
     float dx = xmid2 - xmid1;
     float dy = ymid2 - ymid1;
-    float dw = (w + ow)/2;
-    float dh = (h + oh)/2;
+    float dw = (w*sx + ow)/2;
+    float dh = (h*sy + oh)/2;
 
     // no overlap if the midpoint distance is greater
     // than the dimension half-distances put together.
