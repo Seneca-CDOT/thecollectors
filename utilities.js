@@ -20,3 +20,6 @@ xmlDoc=xmlhttp.responseXML;
 return xmlDoc;
 }
 //end of XML Document setup
+function rng(min,max){
+	return Math.floor(Math.random()*max+1)+min
+}
