@@ -34,14 +34,10 @@ MapGenerator.prototype.generateRoads = function(){
 		}
 		var node2=new Node(this.index,x,y);
 
-		check=this.mapGraph.addNode(node2,[check])
+		var tmp=this.mapGraph.addNode(node2);
+		this.mapGraph.addConnection(node2,check);
+		check=tmp;
 		this.index++;
-		
-			console.log(node);
-			console.log("INDEX"+this.index);
-			console.log(node2)
-			console.log("==============");
 		node=node2;
 	}
-	
 }
