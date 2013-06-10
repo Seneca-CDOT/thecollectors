@@ -26,7 +26,6 @@ Graph.prototype.clearGraph = function() {
 Graph.prototype.addConnection = function(nodeID, nodeToConnect, weight) {
     var nodeArray = this.findNodeArray(nodeID);
     var nodeArray2= this.findNodeArray(nodeToConnect);
-    console.log(nodeID+"&&"+nodeToConnect);
     if (nodeArray != undefined && nodeArray2 != undefined) {
         nodeArray.push(nodeToConnect,weight);
         nodeArray2.push(nodeID,weight);
