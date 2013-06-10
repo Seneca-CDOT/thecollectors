@@ -35,7 +35,7 @@ MapGenerator.prototype.generateRoads = function(){
 			case 1:
 				x=node.vertex.x;
 				y=node.vertex.y-distance;
-				if(y<0)
+				if(y<35)
 					heading=rng(2,4);
 				else	
 					break;
@@ -48,7 +48,7 @@ MapGenerator.prototype.generateRoads = function(){
 			case 3:
 				x=node.vertex.x-distance;
 				y=node.vertex.y;
-				if(x<0){
+				if(x<35){
 					heading=4;
 					
 				}
