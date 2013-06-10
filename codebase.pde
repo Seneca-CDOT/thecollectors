@@ -160,8 +160,8 @@ abstract class Actor extends Positionable {
    * on the currently active state.
    */
   void updatePositioningInformation() {
-    width  = active.sprite.width;
-    height = active.sprite.height;
+    width  = active.sprite.width *sx;
+    height = active.sprite.height *sy;
     halign = active.sprite.halign;
     valign = active.sprite.valign;
   }
@@ -367,8 +367,8 @@ abstract class Actor extends Positionable {
   void drawObject() {
     if(active!=null) {
       active.draw(disabledCounter>0);
-      /*
-      if(debug) {
+      
+      if(true) {
         noFill();
         stroke(255,0,0);
         float[] bounds = getBoundingBox();
@@ -379,7 +379,7 @@ abstract class Actor extends Positionable {
         vertex(bounds[6]-x,bounds[7]-y);
         endShape(CLOSE);
       }
-      */
+      
     }
   }
 
@@ -430,9 +430,8 @@ abstract class Actor extends Positionable {
   }
 
   // handle key presses
-  void keyPressed(char key, int keyCode) { 
+  void keyPressed(char key, int keyCode) {  
     for(int i=0;i<keyCodes.length;i++){
-      //setIfTrue(keyCode,keyCodes[i]);
       setIfTrue(int(key),keyCodes[i]);
     }
   }
@@ -440,7 +439,6 @@ abstract class Actor extends Positionable {
   // handle key releases
   void keyReleased(char key, int keyCode) {
     for(int i=0;i<keyCodes.length;i++){
-      //unsetIfTrue(keyCode,keyCodes[i]);
       unsetIfTrue(int(key),keyCodes[i]);
     }
   }
@@ -450,7 +448,7 @@ abstract class Actor extends Positionable {
    */
   boolean over(float _x, float _y) {
     if (active == null) return false;
-    return active.over(_x - getX(), _y - getY());
+    return active.over(_x - getX(), _y - getY(),sx,sy);
   }
 
   void mouseMoved(int mx, int my) {}
@@ -2399,7 +2397,7 @@ class Position {
    * overlap using midpoint distance.
    */
   float[] overlap(Position other) {
-    float w=width, h=height, ow=other.width, oh=other.height;
+    float w=width*sx, h=height*sy, ow=other.width*other.sx, oh=other.height*other.sy;
     float[] bounds = getBoundingBox();
     float[] obounds = other.getBoundingBox();
     if(bounds==null || obounds==null) return null;
@@ -2706,6 +2704,8 @@ abstract class Positionable extends Position implements Drawable {
   void setScale(float s) {
     sx = s;
     sy = s;
+    width*=s;
+    height*=s;
     jsupdate();
   }
 
@@ -2715,6 +2715,8 @@ abstract class Positionable extends Position implements Drawable {
   void setScale(float x, float y) {
     sx = x;
     sy = y;
+    width*=sx;
+    height*=sy;
     jsupdate();
   }
 
@@ -3531,10 +3533,12 @@ class Sprite extends Positionable {
   }
 
   // check if coordinate overlaps the sprite.
-  boolean over(float _x, float _y) {
-    _x -= ox - halfwidth;
-    _y -= oy - halfheight;
-    return x <= _x && _x <= x+width && y <= _y && _y <= y+height;
+  boolean over(float _x, float _y, float scalex, float scaley) {
+    int tmpWidth=width*scalex;
+    int tmpHeight=height*scaley;
+    _x -= ox - tmpWidth/2;
+    _y -= oy - tmpHeight/2;
+    return x <= _x && _x <= x+tmpWidth && y <= _y && _y <= y+tmpHeight;
   }
   
 // -- pathing informmation
@@ -4203,8 +4207,8 @@ class State {
   }
   
   // check if coordinate is in sprite
-  boolean over(float _x, float _y) {
-    return sprite.over(_x,_y);
+  boolean over(float _x, float _y,float sx,float sy) {
+    return sprite.over(_x,_y,sx,sy);
   }
   
   // set sprite's animation
