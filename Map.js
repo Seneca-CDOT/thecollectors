@@ -1,6 +1,8 @@
 function Map(mapGraph,structureList,filename){
 	this.mapGraph=new Graph();
 	this.structureList=[];
+	this.fuel;
+	this.startPoint;
 	if(filename){
 		var xmlDoc=loadXML(filename);
 		this.initNodes(xmlDoc);
@@ -11,7 +13,6 @@ function Map(mapGraph,structureList,filename){
 		this.structureList=structureList;
 	}
 }
-
 Map.prototype.getEdgeList=function(){
 	var matrix= {};
 	var graphList=this.mapGraph.nodeDictionary;	
@@ -19,36 +20,37 @@ Map.prototype.getEdgeList=function(){
 		matrix[index]= [];
 		var ln=graphList[index].connections.length;
 		for (var i=0;i<ln;i++){
-			if(!matrix[graphList[index].connections[i]])
+			if(!matrix[graphList[index].connections[i]]){
 				matrix[index].push(graphList[index].connections[i]);
+			}
 		}
 	};
 	return matrix;
 }
-
-
-/*************			Legacy XML Reading Code to be Updated for Graph Implementation 			**********/
-/*function Map(filename){
-	this.vertexBuffer=new VertexIndex();
-	this.edgeBuffer=new EdgeIndex();
-	this.StructureBuffer=new StructureIndex();
-	var xmlDoc=loadXML(fileName);
-	this.initEdges(xmlDoc);
-	this.initStructures(xmlDoc);
-}*/
 Map.prototype.initNodes=function(xmlDoc){
-	var roads=xmlDoc.getElementsByTagName("map")[0].getElementsByTagName("road");
+	map=xmlDoc.getElementsByTagName("map")[0];
+	var fuel=map.getElementsByTagName("fuel")[0];
+	var num=fuel.getAttribute("numerator");
+	var denom=fuel.getAttribute("denominator");
+	this.fuel=new Fraction(num,denom);
+	var start=map.getElementsByTagName("point")[0];
+	var pos1=start.getAttribute("x");
+	var pos2=start.getAttribute("y");
+	this.startPoint=new Vertex(pos1,pos2);
+	var roads=map.getElementsByTagName("road");
 	var len=roads.length;
 	for (var i = 0;i<len;i++){
-		var pos1=new Vertex(roads[i].getElementsByTagName("point")[0].getAttribute("x"),
+		num=roads[i].getAttribute("numerator");
+		denom=roads[i].getAttribute("denominator");
+		pos1=new Vertex(roads[i].getElementsByTagName("point")[0].getAttribute("x"),
 							roads[i].getElementsByTagName("point")[0].getAttribute("y"));
-		var pos2=new Vertex(roads[i].getElementsByTagName("point")[1].getAttribute("x"),
+		pos2=new Vertex(roads[i].getElementsByTagName("point")[1].getAttribute("x"),
 							roads[i].getElementsByTagName("point")[1].getAttribute("y"));
 		var frac=new Fraction(roads[i].getAttribute("numerator"), roads[i].getAttribute("denominator"));
 		
 		var tmp=this.mapGraph.addNode(new Node(this.mapGraph.length.toString(),pos1.x,pos1.y));
 		var tmp2=this.mapGraph.addNode(new Node(this.mapGraph.length.toString(),pos2.x,pos2.y));
-		this.mapGraph.addConnection(tmp,tmp2);
+		this.mapGraph.addConnection(tmp,tmp2,new Fraction(num,denom));
     }
 }
 Map.prototype.initStructures=function(xmlDoc){

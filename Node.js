@@ -2,6 +2,7 @@ function Node(uID, x ,y){
     this.id = uID;
     this.vertex=new Vertex(x,y);
     this.connections=[];
+    this.connectionWeights=[];
 }
 Node.prototype.position = function() {
     return this.vertex;
@@ -15,9 +16,11 @@ Node.prototype.equals = function(node) {
     }
     return rv;
 }
-Node.prototype.push=function(nodeId){
-	if(!this.existingConnection(nodeId))
+Node.prototype.push=function(nodeId, weight){
+	if(!this.existingConnection(nodeId)){
 		this.connections.push(nodeId);
+        this.connectionWeights.push(weight);
+    }
 }
 Node.prototype.existingConnection=function(nodeId){
 	var ln=this.connections.length;
