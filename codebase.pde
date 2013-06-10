@@ -206,7 +206,6 @@ abstract class Actor extends Positionable {
     bounds[6] += x+ox; bounds[7] += y+oy;  // bottom left
 
     // done
-        //console.log(bounds);
     return bounds;
   }
 
@@ -936,7 +935,7 @@ static class CollisionDetection {
       if(debug) sketch.println(sketch.frameCount +">   this boundary is not involved in collisions for this frame (out of range).");
       return null;
     }
-    //debug=true;
+
     // if the force goes against the border's permissible direction, but
     // both previous and current frame actor boxes are above the boundary,
     // then we don't have to bother with intersection detection.
