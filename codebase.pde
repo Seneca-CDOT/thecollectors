@@ -160,8 +160,8 @@ abstract class Actor extends Positionable {
    * on the currently active state.
    */
   void updatePositioningInformation() {
-    width  = active.sprite.width *sx;
-    height = active.sprite.height *sy;
+    width  = active.sprite.width;
+    height = active.sprite.height;
     halign = active.sprite.halign;
     valign = active.sprite.valign;
   }
@@ -367,8 +367,8 @@ abstract class Actor extends Positionable {
   void drawObject() {
     if(active!=null) {
       active.draw(disabledCounter>0);
-      
-      if(true) {
+      /*
+      if(debug) {
         noFill();
         stroke(255,0,0);
         float[] bounds = getBoundingBox();
@@ -379,7 +379,7 @@ abstract class Actor extends Positionable {
         vertex(bounds[6]-x,bounds[7]-y);
         endShape(CLOSE);
       }
-      
+      */
     }
   }
 
