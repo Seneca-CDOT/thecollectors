@@ -7,7 +7,6 @@ final int screenHeight=640;
 
 float zoomLevel=1;
 int arrowSpeed=10;
-int dragSpeed=10;
 int gameDifficulty = 0;
 //line width
 strokeWeight(4);
@@ -122,16 +121,16 @@ class Driver extends Player{
                 ViewBox box=layer.parent.viewbox;
                 int _x=0, _y=0;
                 if(keyCode==UP){
-                    _y-=arrowSpeed;
-                }
-                if(keyCode==DOWN){
                     _y+=arrowSpeed;
                 }
+                if(keyCode==DOWN){
+                    _y-=arrowSpeed;
+                }
                 if(keyCode==LEFT){
-                    _x-=arrowSpeed;
+                    _x+=arrowSpeed;
                 }
                 if(keyCode==RIGHT){
-                    _x+=arrowSpeed;
+                    _x-=arrowSpeed;
                 }
                 box.translate(_x,_y,layer.parent);
                 keyCode=undefined;
@@ -146,14 +145,20 @@ class Driver extends Player{
                 zoomLevel-=1/3/10;
         }
     }
-    void mouseDragged(int mx, int my, int button){
-        ViewBox box=layer.parent.viewbox;
-        int _x=0, _y=0;
-        if(mx-pmouseX >0) _x-=dragSpeed;
-        else if (mx-pmouseX < 0) _x+=dragSpeed;
-        if(my-pmouseY <0) _y+=dragSpeed;
-        else if (my-pmouseY>0) _y-=dragSpeed;
-        box.translate(_x,_y,layer.parent);
+    void mouseDragged(int mx, int my, int button) {
+        ViewBox box = layer.parent.viewbox;
+        int _x = 0, _y = 0;
+        int deltaX = mx - pmouseX;
+        int deltaY = my - pmouseY;
+        if (deltaX > 0) _x -= Math.abs(deltaX);
+        else if (deltaX < 0) _x += Math.abs(deltaX);
+        if (deltaY < 0) _y += Math.abs(deltaY);
+        else if (deltaY > 0) _y -= Math.abs(deltaY);
+        box.translate(_x, _y, layer.parent);
+    }
+    void mouseClicked(int mx, int my) {
+        pmouseX = mx;
+        pmouseY = my;
     }
 }
 class Road extends Interactor{
