@@ -25,6 +25,7 @@ void mouseOver() {
 void mouseOut() {
     canvasHasFocus = false;
 }
+
 void loadDifficulty(diffVal, gameMode) {
     gameDifficulty = diffVal;
 
@@ -32,6 +33,7 @@ void loadDifficulty(diffVal, gameMode) {
         if (diffVal == 1) {
             // Change to correct screen later
             addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map("map.xml")));
+            addScreen("testing", new CampaignMap(screenWidth * 2, screenHeight * 2));
             setActiveScreen("testing");
         } else if (diffVal == 2) {
             // Change to correct screen later
@@ -79,6 +81,71 @@ class TitleScreenLayer extends LevelLayer {
         super(owner);
         addBackgroundSprite(new TilingSprite(
             new Sprite("assets/titleScreenTest.jpg"), 0, 0, screenWidth, screenHeight));
+    }
+}
+
+class CampaignMap extends Level {
+    CampaignMap(float mWidth, float mHeight) {
+        super(mWidth, mHeight);
+        setViewBox(0, 0, screenWidth, screenHeight);
+        generateMap();
+    }
+    void generateMap() {
+        var map = null;
+        var numDeliveries = 2 * currentLevel + 2;
+        var simpleMultiples = true;
+/*
+        map = new MapGenerator(gameDifficulty);
+            //numDeliveries = int,fractionModChance = float,simpleMultiples = bool
+
+        //TODO:This check may be unneccesary if it is called internally in the map generator
+        var validMap = map.validateMap();
+        if (validMap) {
+            renerMap(map);
+        } else {
+            generateMap();
+        }
+*/      renderMap(null);
+    }
+    void renderMap(generatedMap) {
+        addLevelLayer("Level", new MapLevel(this, generatedMap));
+    }
+}
+
+class MapLevel extends LevelLayer {
+    var generatedMap = null;
+
+    MapLevel(Level owner, map) {
+        super(owner);
+        generatedMap = map;
+		setBackgroundColor(color(255, 0, 0)); // for testing, replace with texture for final product
+        //initializeRoads();
+    }
+    void initializeRoads() {
+        var edgeList = generatedMap.getEdgeList();
+        for (index in edgeList) {
+            var vert1 = generatedMap.mapGraph.findNodeArray(index).vertex;
+            for (var i = edgeList[index].length - 1; i >= 0; i--) {
+                var vert2 = generatedMap.mapGraph.findNodeArray(edgeList[index][i]).vertex;
+                Road roadSegment = new Road(vert1, vert2);
+                addInteractor(roadSegment);
+            }
+        }
+        initializeStructures();
+    }
+    void initializeStructures() {
+		var structureListLength = generatedMap.structureList.length;
+		for(var i = 0; i < structureListLength; i++) {
+			var structObject = generatedMap.structureList[i];
+			var vert = generatedMap.mapGraph.findNodeArray(struct.nodeID).vertex;
+			Struct structure = new Struct(vert);
+			addInteractor(structure);
+		}
+        initializePlayer();
+    }
+    void initializePlayer() {
+		Driver playerAvatar = new Driver();
+		addPlayer(playerAvatar);
     }
 }
 
@@ -202,11 +269,11 @@ class Driver extends Player{
         }   
     }
 }
-class Road extends Interactor{
+class Road extends Interactor {
     var vertex1;
     var vertex2;
 
-    Road(vert1,vert2){
+    Road(vert1, vert2) {
         super("Road");
         vertex1=vert1;
         vertex2=vert2;
@@ -219,15 +286,15 @@ class Road extends Interactor{
         line(vertex1.x, vertex1.y, vertex2.x, vertex2.y);
     }
 }
-class Struct extends Interactor{
+class Struct extends Interactor {
     var vertex;
-    Struct(vert){
+    Struct(vert) {
         super("Desc");
-        setPosition(vert.x,vert.y);
-        vertex=vert;
+        setPosition(vert.x, vert.y);
+        vertex = vert;
         setStates();
     }
-    void setStates(){
+    void setStates() {
         addState(new State("default","assets/gas.png"));
     }
     void draw(float v1x,float v1y,float v2x, float v2y){
