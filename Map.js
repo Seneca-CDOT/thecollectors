@@ -14,18 +14,7 @@ function Map(mapGraph,structureList,filename){
 	}
 }
 Map.prototype.getEdgeList=function(){
-	var matrix= {};
-	var graphList=this.mapGraph.nodeDictionary;	
-	for (index in graphList) {
-		matrix[index]= [];
-		var ln=graphList[index].connections.length;
-		for (var i=0;i<ln;i++){
-			if(!matrix[graphList[index].connections[i]]){
-				matrix[index].push(graphList[index].connections[i]);
-			}
-		}
-	};
-	return matrix;
+	this.mapGraph.getEdgeList();
 }
 Map.prototype.initNodes=function(xmlDoc){
 	map=xmlDoc.getElementsByTagName("map")[0];

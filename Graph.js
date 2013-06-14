@@ -72,6 +72,20 @@ Graph.prototype.vertexExists=function(vert){
 Graph.prototype.edgeIntersects=function(x1,y1,x2,y2){
     
 }
+Graph.prototype.getEdgeList=function(){
+    var matrix= {};
+    var graphList=this.nodeDictionary; 
+    for (index in graphList) {
+        matrix[index]= [];
+        var ln=graphList[index].connections.length;
+        for (var i=0;i<ln;i++){
+            if(!matrix[graphList[index].connections[i]]){
+                matrix[index].push(graphList[index].connections[i]);
+            }
+        }
+    }
+    return matrix;
+}
 Graph.prototype.Length=function(){
     return this.length;
 }
