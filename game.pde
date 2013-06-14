@@ -121,16 +121,16 @@ class Driver extends Player{
                 ViewBox box=layer.parent.viewbox;
                 int _x=0, _y=0;
                 if(keyCode==UP){
-                    _y+=arrowSpeed;
-                }
-                if(keyCode==DOWN){
                     _y-=arrowSpeed;
                 }
+                if(keyCode==DOWN){
+                    _y+=arrowSpeed;
+                }
                 if(keyCode==LEFT){
-                    _x+=arrowSpeed;
+                    _x-=arrowSpeed;
                 }
                 if(keyCode==RIGHT){
-                    _x-=arrowSpeed;
+                    _x+=arrowSpeed;
                 }
                 box.translate(_x,_y,layer.parent);
                 keyCode=undefined;
