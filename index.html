@@ -30,18 +30,65 @@
     <script type="text/javascript" src="processing-lazyload.js"></script>
 	<style>
 	  canvas {outline:none;width:960px;height:640px;}
+    button {width:120px;}
 	</style>
   </head>
   <body>
     <script type="text/javascript">
+      var sketch;
+      var gameMode = null;
       var canvasHasFocus = false;
       document.addEventListener("DOMMouseScroll", function(e) {
         if (canvasHasFocus) {
           e.preventDefault();
         }
       }, false);
-
+      function buttonClick(buttonVal) {
+        switch (buttonVal) {
+          case 1:
+            menuDiv.style.display = "none";
+            difficultyDiv.style.display = "block";
+            gameMode = "Campaign";
+            break;
+          case 2:
+            menuDiv.style.display = "none";
+            difficultyDiv.style.display = "block";
+            gameMode = "Quick Play";
+            break;
+          case 3:
+            //TODO: make options menu screen
+            break;
+          case 4:
+            difficultyDiv.style.display = "none";
+            sketch = Processing.instances[0];
+            sketch.loadDifficulty(1, gameMode);
+            break;
+          case 5:
+            difficultyDiv.style.display = "none";
+            sketch = Processing.instances[0];
+            sketch.loadDifficulty(2, gameMode);
+            break;
+          case 6:
+            difficultyDiv.style.display = "none";
+            sketch = Processing.instances[0];
+            sketch.loadDifficulty(3, gameMode);
+            break;
+          default:
+            alert("Invalid button value!");
+            break;
+        }
+      }
     </script>
-    <canvas onmouseleave="$('canvas').focus()" onmouseenter="$('canvas').focus()" data-processing-sources="codebase.pde game.pde"></canvas>
+    <canvas onmouseenter="$('canvas').focus()" data-processing-sources="codebase.pde game.pde"></canvas>
+    <div id="menuDiv" style="display:block;position:fixed;top:650px;left:0px;">
+        <button id="campaignButton" onclick="buttonClick(1)">Campaign</button><br />
+        <button id="quickPlayButton" onclick="buttonClick(2)">Quick Play</button><br />
+        <button id="optionsButton" onclick="buttonClick(3)">Options</button>
+    </div>
+    <div id="difficultyDiv" style="display:none;position:fixed;top:100px;left:250px;">
+        <button id="easyButton"onclick="buttonClick(4)">Easy</button><br />
+        <button id="mediumButton"onclick="buttonClick(5)">Normal</button><br />
+        <button id="hardButton"onclick="buttonClick(6)">Hard</button><br />
+    </div>
   </body>  
 </html>

@@ -1,4 +1,6 @@
-/* @pjs preload="assets/gas.png" */
+/* @pjs preload="assets/gas.png,
+                 assets/titleScreenTest.jpg";
+ */
 
 final int screenWidth=960;
 final int screenHeight=640;
@@ -6,6 +8,7 @@ final int screenHeight=640;
 float zoomLevel=1;
 int arrowSpeed=10;
 int dragSpeed=10;
+int gameDifficulty = 0;
 //line width
 strokeWeight(4);
 debug=true;
@@ -17,12 +20,62 @@ void mouseOver() {
 void mouseOut() {
     canvasHasFocus = false;
 }
+void loadDifficulty(diffVal, gameMode) {
+    gameDifficulty = diffVal;
+
+    if (gameMode == "Campaign") {
+        if (diffVal == 1) {
+            // Change to correct screen later
+            addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(0,0,"map.xml")));
+            setActiveScreen("testing");
+        } else if (diffVal == 2) {
+            // Change to correct screen later
+            addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(0,0,"map.xml")));
+            setActiveScreen("testing");
+        } else if (diffVal == 3) {
+            // Change to correct screen later
+            addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(0,0,"map.xml")));
+            setActiveScreen("testing");
+        } else {
+            console.error("Invalid difficulty! Cannot load map.");
+        }
+    } else if (gameMode == "Quick Play") {
+        alert("Not implemented yet!");
+    } else {
+        console.error("Undefined game mode!");
+    }
+}
 
 void initialize() {
+    clearScreens(); // reset the screen
+    /*  title sequence/ main menu
+    addScreen("Title Screen", new TitleScreen(screenWidth, screenHeight));
+    setActiveScreen("Title Screen"); // useful for when more screens are added
+    */
+
+    /*adds level using XML file*/
+    addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(0,0,"map.xml")));
+
+    /*adds level using MapGenerator*/
     var gen=new MapGenerator(0);
     addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(gen.mapGraph,gen.structureList)));
-	//addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(0,0,"map.xml")));
 }
+
+class TitleScreen extends Level {
+    TitleScreen(int sWidth, int sHeight) {
+        super(sWidth, sHeight);
+        addLevelLayer("Title Screen Layer", new TitleScreenLayer(this));
+    }
+}
+
+class TitleScreenLayer extends LevelLayer {
+    TitleScreenLayer(Level owner) {
+        super(owner);
+        addBackgroundSprite(new TilingSprite(
+            new Sprite("assets/titleScreenTest.jpg"), 0, 0, screenWidth, screenHeight));
+    }
+}
+
 class XMLLevel extends Level{
     XMLLevel(float levelWidth,float levelHeight,var mapIn){
         super(levelWidth,levelHeight)
