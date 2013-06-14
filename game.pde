@@ -48,8 +48,11 @@ void loadDifficulty(diffVal, gameMode) {
 
 void initialize() {
     clearScreens(); // reset the screen
+    /*  title sequence/ main menu
     addScreen("Title Screen", new TitleScreen(screenWidth, screenHeight));
     setActiveScreen("Title Screen"); // useful for when more screens are added
+    */
+    addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(0,0,"map.xml")));
 }
 
 class TitleScreen extends Level {
