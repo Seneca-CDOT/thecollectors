@@ -70,7 +70,20 @@ Graph.prototype.vertexExists=function(vert){
     return rv;
 }
 Graph.prototype.edgeIntersects=function(x1,y1,x2,y2){
-    
+    var rvList=[];
+    var edges=this.getEdgeList();
+
+    for(index in edges){
+        var vert1=this.nodeDictionary[index].vertex;
+        for (var i = edges[index].length - 1; i >= 0; i--) {
+            var vert2=this.nodeDictionary[edges[index][i]].vertex;
+            var check=segIntersection(vert1.x,vert1.y,vert2.x,vert2.y,x1,y1,x2,y2);
+            if(check){
+                rvList.push(check);
+            }
+        }
+    }
+    return rvList;//segIntersection(x1, y1, x2, y2, x3, y3, x4, y4) ;
 }
 Graph.prototype.getEdgeList=function(){
     var matrix= {};

@@ -59,7 +59,8 @@ MapGenerator.prototype.generateRoads = function(){
 				break;
 		}
 		var node2=new Node(this.index,x,y);
-
+		var intersectCheck=this.mapGraph.edgeIntersects(node.vertex.x,node.vertex.y,node2.vertex.x,node2.vertex.y);
+		console.log(intersectCheck);
 		var tmp=this.mapGraph.addNode(node2);
 		if(tmp!= i)
 			cap++;

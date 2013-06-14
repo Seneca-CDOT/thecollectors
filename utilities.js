@@ -46,6 +46,10 @@ function segIntersection(x1, y1, x2, y2, x3, y3, x4, y4)
   var dx = x4 - x3; 
   var dy = y4 - y3;
   var b_dot_d_perp = bx * dy - by * dx;
+  var check=getDotProduct(bx,by,dx,dy);
+  if(check==1){
+      return null;
+  }
   if(b_dot_d_perp == 0) {
     return null;
   }
@@ -59,5 +63,6 @@ function segIntersection(x1, y1, x2, y2, x3, y3, x4, y4)
   if(u < 0 || u > 1) { 
     return null;
   }
-  return new point{x1+t*bx, y1+t*by};
+  var point={x:x1+t*bx, y:y1+t*by};
+  return point;
 }

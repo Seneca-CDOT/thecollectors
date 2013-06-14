@@ -14,7 +14,7 @@ function Map(mapGraph,structureList,filename){
 	}
 }
 Map.prototype.getEdgeList=function(){
-	this.mapGraph.getEdgeList();
+	return this.mapGraph.getEdgeList();
 }
 Map.prototype.initNodes=function(xmlDoc){
 	map=xmlDoc.getElementsByTagName("map")[0];

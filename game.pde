@@ -13,7 +13,7 @@ int gameDifficulty = 0;
 strokeWeight(4);
 
 /*debugging tools*/
-var mapType="xml"; //change between "xml" or "gen"
+var mapType="gen"; //change between "xml" or "gen"
 var showMenus=false;
 
 boolean debugging=true;
@@ -105,7 +105,7 @@ class XMLLevelLayer extends LevelLayer{
 				var vert2=mapIn.mapGraph.findNodeArray(edgeList[index][i]).vertex;
 				Road temp= new Road(vert1,vert2);
 				addInteractor(temp);
-			};
+			}
 		}
 		ln=mapIn.structureList.length;
 		for(int i=0;i<ln;i++){
@@ -178,6 +178,11 @@ class Driver extends Player{
         if(my-pmouseY <0) _y+=dragSpeed;
         else if (my-pmouseY>0) _y-=dragSpeed;
         box.translate(_x,_y,layer.parent);
+    }
+    void mouseClicked(int mx, int my, int button){
+        if(layer.debug){
+            println("x:"+mx+" || "+"y:"+my);
+        }   
     }
 }
 class Road extends Interactor{
