@@ -11,7 +11,13 @@ int dragSpeed=10;
 int gameDifficulty = 0;
 //line width
 strokeWeight(4);
-debug=true;
+
+/*debugging tools*/
+var mapType="xml"; //change between "xml" or "gen"
+var showMenus=false;
+
+boolean debugging=true;
+
 
 void mouseOver() {
     canvasHasFocus = true;
@@ -48,17 +54,18 @@ void loadDifficulty(diffVal, gameMode) {
 
 void initialize() {
     clearScreens(); // reset the screen
-    /*  title sequence/ main menu
-    addScreen("Title Screen", new TitleScreen(screenWidth, screenHeight));
-    setActiveScreen("Title Screen"); // useful for when more screens are added
-    */
-
-    /*adds level using XML file*/
-    addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(0,0,"map.xml")));
-
-    /*adds level using MapGenerator*/
-    var gen=new MapGenerator(0);
-    addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(gen.mapGraph,gen.structureList)));
+    if(showMenus){
+        addScreen("Title Screen", new TitleScreen(screenWidth, screenHeight));
+        setActiveScreen("Title Screen"); // useful for when more screens are added
+    }
+    if(mapType=="xml"){
+        addScreen("XMLLevel",new XMLLevel(screenWidth*2,screenHeight*2,new Map(0,0,"map.xml")));
+        setActiveScreen("XMLLevel");
+    }
+    else{
+        var gen=new MapGenerator(0);
+        addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(gen.mapGraph,gen.structureList)));
+    }
 }
 
 class TitleScreen extends Level {
@@ -86,6 +93,8 @@ class XMLLevel extends Level{
 class XMLLevelLayer extends LevelLayer{
 	XMLLevelLayer(Level owner, mapIn){
 		super(owner);
+        debug=debugging;
+
 		color bgcolor=color(243,233,178);
 		setBackgroundColor(bgcolor);
 		var edgeList=mapIn.getEdgeList();
@@ -185,7 +194,10 @@ class Road extends Interactor{
         pushMatrix();
         //translate(vertex1.x,vertex1.y);
         scale(zoomLevel);
-        stroke(0,0,255);
+        if(debugging)
+            stroke(0,0,255);
+        else
+            stroke(0,0,0);
         line(vertex1.x, vertex1.y, vertex2.x, vertex2.y);
         popMatrix();
     }

@@ -43,15 +43,12 @@ MapGenerator.prototype.generateRoads = function(){
 			case 2:
 				x=node.vertex.x;
 				y=node.vertex.y+distance;
-				//if(y>=sizey)
-				//	y-=distance*2;
 				break;
 			case 3:
 				x=node.vertex.x-distance;
 				y=node.vertex.y;
 				if(x<35){
 					heading=4;
-					
 				}
 				else
 					break;
@@ -86,8 +83,6 @@ MapGenerator.prototype.cleanNodes = function(){
 									node2.vertex.x-tmpNode.vertex.x,
 									node2.vertex.y-tmpNode.vertex.y);
 			if(dot==1){
-				console.log(tmpNode);
-				tmpNode.flag=true;
 				/*var weight=tmpNode.connectionWeights[0] + tmpNode.connectionWeights[1] ; //this may be changed if they are fractions
 				node1.push(nodeindex2,weight);
 				node2.push(nodeindex1,weight);

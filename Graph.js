@@ -69,6 +69,9 @@ Graph.prototype.vertexExists=function(vert){
     }
     return rv;
 }
+Graph.prototype.edgeIntersects=function(x1,y1,x2,y2){
+    
+}
 Graph.prototype.Length=function(){
     return this.length;
 }
