@@ -23,3 +23,14 @@ return xmlDoc;
 function rng(min,max){
 	return Math.floor(Math.random()*max+1)+min
 }
+function getDotProduct(dx1, dy1, dx2, dy2) {
+    // normalise both vectors
+    var l1 = Math.sqrt(dx1*dx1 + dy1*dy1),
+          l2 = Math.sqrt(dx2*dx2 + dy2*dy2);
+    if (l1==0 || l2==0) return 0;
+    dx1 /= l1;
+    dy1 /= l1;
+    dx2 /= l2;
+    dy2 /= l2;
+    return dx1*dx2 + dy1*dy2;
+  }

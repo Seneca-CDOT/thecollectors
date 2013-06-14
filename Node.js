@@ -18,7 +18,7 @@ Node.prototype.equals = function(node) {
 }
 Node.prototype.push=function(nodeId, weight){
 	if(!this.existingConnection(nodeId)){
-		this.connections.push(nodeId);
+		this.connections.push(nodeId.toString());
         this.connectionWeights.push(weight);
     }
 }

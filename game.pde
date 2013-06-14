@@ -8,7 +8,7 @@ int arrowSpeed=10;
 int dragSpeed=10;
 //line width
 strokeWeight(4);
-
+debug=true;
 
 void mouseOver() {
     canvasHasFocus = true;
@@ -54,6 +54,15 @@ class XMLLevelLayer extends LevelLayer{
 		}
 		Driver driver=new Driver();
 		addPlayer(driver);
+        if(debug){
+
+            for(index in mapIn.mapGraph.nodeDictionary){
+                var x=mapIn.mapGraph.nodeDictionary[index].vertex.x;
+                var y=mapIn.mapGraph.nodeDictionary[index].vertex.y;
+                NodeDebug tmp = new NodeDebug(new Vertex(x,y),mapIn.mapGraph.nodeDictionary[index].flag);
+                addInteractor(tmp);
+            }
+        }
 		/* Boundaries not necessary at the moment. Leaving this here just in case
 		addBoundary(new Boundary(0,height,width,height));
 		addBoundary(new Boundary(width,height,width,0));
@@ -123,10 +132,7 @@ class Road extends Interactor{
         pushMatrix();
         //translate(vertex1.x,vertex1.y);
         scale(zoomLevel);
-        //translate(-vertex1.x,-vertex1.y);
-        //setScale(zoomLevel);
-        //var v1=vertex1.scale(zoomLevel);
-        //var v2=vertex2.scale(zoomLevel);
+        stroke(0,0,255);
         line(vertex1.x, vertex1.y, vertex2.x, vertex2.y);
         popMatrix();
     }
@@ -151,5 +157,23 @@ class Struct extends Interactor{
         super.draw(v1x,v1y,v2x,v2y);
         popMatrix();
 
+    }
+}
+class NodeDebug extends Interactor{
+    var vertex,flag;
+    NodeDebug(vert,flagin){
+        super("Node");
+        vertex=vert;
+        flag=flagin;
+    }
+    void draw(float v1x,float v1y,float v2x, float v2y){
+        pushMatrix();
+        scale(zoomLevel);
+        if(flag)
+            stroke(0,255,0);
+        else
+            stroke(255,0,0);
+        ellipse(vertex.x,vertex.y,8,8);
+        popMatrix();
     }
 }

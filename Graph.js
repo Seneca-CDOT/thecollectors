@@ -10,7 +10,7 @@ Graph.prototype.addNode = function(node) {
     }
     var check=this.vertexExists(node.vertex);
     if (node instanceof Node && check===false) {
-        this.nodeDictionary[node.id]=node;
+        this.nodeDictionary[node.id.toString()]=node;
         this.length++;
         return node.id;
     }
