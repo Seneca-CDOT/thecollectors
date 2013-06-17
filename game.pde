@@ -85,10 +85,29 @@ class TitleScreenLayer extends LevelLayer {
 }
 
 class CampaignMap extends Level {
+    var denominator = 0;
+
     CampaignMap(float mWidth, float mHeight) {
         super(mWidth, mHeight);
         setViewBox(0, 0, screenWidth, screenHeight);
-        generateMap();
+
+        if (gameDifficulty == 1 && currentLevel == 1) {
+            generateTutorial();
+        } else {
+            generateMap();
+        }
+    }
+    // Generate the tutorial map. The map is static except for the denominator, and is
+    // imported from an XML file.
+    void generateTutorial() {
+        var map = null;
+        map = new Map(null, null, "tutorial.xml");
+        renderMap(map);
+        //overlayTutorialInterface();
+    }
+    // For the tutorial, we need to enable a custom overlay that shows the player
+    // the parts of the game in a certain order and guides them through the gameplay.
+    void overlayTutorialInterface() {
     }
     void generateMap() {
         var map = null;
@@ -97,14 +116,9 @@ class CampaignMap extends Level {
 /*
         map = new MapGenerator(gameDifficulty);
             //numDeliveries = int,fractionModChance = float,simpleMultiples = bool
+        denominator = 0; // extract the denominator to pass back into future map generations
 
-        //TODO:This check may be unneccesary if it is called internally in the map generator
-        var validMap = map.validateMap();
-        if (validMap) {
-            renerMap(map);
-        } else {
-            generateMap();
-        }
+        renderMap(map);
 */      renderMap(null);
     }
     void renderMap(generatedMap) {
@@ -118,8 +132,8 @@ class MapLevel extends LevelLayer {
     MapLevel(Level owner, map) {
         super(owner);
         generatedMap = map;
-		setBackgroundColor(color(255, 0, 0)); // for testing, replace with texture for final product
-        //initializeRoads();
+		setBackgroundColor(color(0, 255, 0)); // for testing, replace with texture for final product
+        initializeRoads();
     }
     void initializeRoads() {
         var edgeList = generatedMap.getEdgeList();
@@ -137,7 +151,7 @@ class MapLevel extends LevelLayer {
 		var structureListLength = generatedMap.structureList.length;
 		for(var i = 0; i < structureListLength; i++) {
 			var structObject = generatedMap.structureList[i];
-			var vert = generatedMap.mapGraph.findNodeArray(struct.nodeID).vertex;
+			var vert = generatedMap.mapGraph.findNodeArray(structObject.nodeID).vertex;
 			Struct structure = new Struct(vert);
 			addInteractor(structure);
 		}
