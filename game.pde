@@ -138,10 +138,18 @@ class MapLevel extends LevelLayer {
     void initializeRoads() {
         var edgeList = generatedMap.getEdgeList();
         for (index in edgeList) {
-            var vert1 = generatedMap.mapGraph.findNodeArray(index).vertex;
+            var primaryNode = generatedMap.mapGraph.nodeDictionary[index];
+
             for (var i = edgeList[index].length - 1; i >= 0; i--) {
-                var vert2 = generatedMap.mapGraph.findNodeArray(edgeList[index][i]).vertex;
-                Road roadSegment = new Road(vert1, vert2);
+                var connectedNode = generatedMap.mapGraph.findNodeArray(edgeList[index][i]);
+                var fraction = null;
+
+                for (var w = 0; w < primaryNode.connections.length; w++) {
+                    if (primaryNode.connections[w] == edgeList[index][i]) {
+                        fraction = primaryNode.connectionWeights[w];
+                    }
+                }
+                Road roadSegment = new Road(primaryNode.vertex, connectedNode.vertex, fraction);
                 addInteractor(roadSegment);
             }
         }
@@ -182,7 +190,7 @@ class XMLLevelLayer extends LevelLayer{
 			var vert1=mapIn.mapGraph.findNodeArray(index).vertex;
 			for (var i = edgeList[index].length - 1; i >= 0; i--) {
 				var vert2=mapIn.mapGraph.findNodeArray(edgeList[index][i]).vertex;
-				Road temp= new Road(vert1,vert2);
+				Road temp= new Road(vert1,vert2, new Fraction(1, 7));
 				addInteractor(temp);
 			}
 		}
@@ -288,9 +296,16 @@ class Road extends Interactor {
     var vertex2;
 
     Road(vert1, vert2) {
+    PFont fracFont;
+    var fracText = "";
+    Road(vert1, vert2, frac) {
         super("Road");
-        vertex1=vert1;
-        vertex2=vert2;
+        vertex1 = vert1;
+        vertex2 = vert2;
+        fracFont = loadFont("EurekaMonoCond-Bold.ttf");
+        textFont(fracFont, 14);
+        textLeading(9);
+        fracText = frac.numerator.toString() + "\n--\n" + frac.denominator.toString();
     }
     void draw(float v1x,float v1y,float v2x, float v2y){
         if(debugging)
@@ -298,6 +313,9 @@ class Road extends Interactor {
 		else
             stroke(0,0,0);
         line(vertex1.x, vertex1.y, vertex2.x, vertex2.y);
+        fill(126);
+        text(fracText, (vertex1.x - vertex2.x) == 0 ? vertex1.x + 5 : ((vertex1.x + vertex2.x) * 0.5),
+            (vertex1.y - vertex2.y) == 0 ? vertex1.y - 30 : ((vertex1.y + vertex2.y) * 0.5));
     }
 }
 class Struct extends Interactor {
