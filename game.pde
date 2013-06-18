@@ -1,15 +1,19 @@
 /* @pjs preload="assets/gas.png,
+                 assets/car.png,
                  assets/titleScreenTest.jpg";
  */
 
 final int screenWidth=960;
 final int screenHeight=640;
 
+PGraphics shadowMap = null;
+float VEHICLE_SPEED = 1.5;
 float zoomLevel=1;
 int arrowSpeed=10;
 int gameDifficulty = 0;
 //line width
 strokeWeight(4);
+var debugFlag = true;
 
 /*debugging tools*/
 var mapType="gen"; //change between "xml" or "gen"
@@ -60,9 +64,11 @@ void initialize() {
         setActiveScreen("Title Screen"); // useful for when more screens are added
     }
     if(mapType=="xml"){
-        addScreen("XMLLevel",new XMLLevel(screenWidth*2,screenHeight*2,new Map("map.xml")));
+        /*addScreen("XMLLevel",new XMLLevel(screenWidth*2,screenHeight*2,new Map("map.xml")));
         if(!showMenus)
             setActiveScreen("XMLLevel");
+            */
+        addScreen("testing", new CampaignMap(screenWidth * 2, screenHeight * 2));
     }
     else{
         addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map()));
@@ -91,7 +97,7 @@ class CampaignMap extends Level {
         super(mWidth, mHeight);
         setViewBox(0, 0, screenWidth, screenHeight);
 
-        if (gameDifficulty == 1 && currentLevel == 1) {
+        if (debugFlag || (gameDifficulty == 1 && currentLevel == 1)) {
             generateTutorial();
         } else {
             generateMap();
@@ -128,31 +134,63 @@ class CampaignMap extends Level {
 
 class MapLevel extends LevelLayer {
     var generatedMap = null;
+    var shadowMapColorDictionary = null;
+    var r = 0, g = 0, b = 0;
 
     MapLevel(Level owner, map) {
         super(owner);
+        shadowMap = null;
+        shadowMapColorDictionary = {};
+        shadowMap = createGraphics(screenWidth * 2, screenHeight * 2, JAVA2D);
         generatedMap = map;
 		setBackgroundColor(color(0, 255, 0)); // for testing, replace with texture for final product
         initializeRoads();
     }
+    void zoom(float s) {
+        if (xScale + s < 0) {
+            setScale(0);
+        } else {
+            setScale(xScale + s);
+        }
+    }
     void initializeRoads() {
         var edgeList = generatedMap.getEdgeList();
+
+        shadowMap.beginDraw();
+        shadowMap.background(255);
+        shadowMap.strokeWeight(25);
         for (index in edgeList) {
             var primaryNode = generatedMap.mapGraph.nodeDictionary[index];
 
             for (var i = edgeList[index].length - 1; i >= 0; i--) {
                 var connectedNode = generatedMap.mapGraph.findNodeArray(edgeList[index][i]);
-                var fraction = null;
+                var fraction = primaryNode.connections[edgeList[index][i]];
 
-                for (var w = 0; w < primaryNode.connections.length; w++) {
-                    if (primaryNode.connections[w] == edgeList[index][i]) {
-                        fraction = primaryNode.connectionWeights[w];
-                    }
-                }
                 Road roadSegment = new Road(primaryNode.vertex, connectedNode.vertex, fraction);
                 addInteractor(roadSegment);
+
+                // Generate a new colour for the road segment, then draw the segment in that colour
+                color shadowColor = color(r, g, b);
+                shadowMap.stroke(shadowColor);
+                shadowMap.line(primaryNode.vertex.x, primaryNode.vertex.y, connectedNode.vertex.x,
+                        connectedNode.vertex.y);
+
+                // Store the coordinates that make up the edge using its color as the ID
+                var colorID = hex(shadowColor);
+                shadowMapColorDictionary[colorID] = [];
+                shadowMapColorDictionary[colorID].push(primaryNode.vertex);
+                shadowMapColorDictionary[colorID].push(connectedNode.vertex);
+
+                // Increment color values; stay within bounds
+                if (r >= 255) { r = 0; g++; }
+                else { r++; }
+                if (g > 255) { r = 0; g = 0; b++; }
+                // If the blue component goes beyond 255, we have run out of unique colours to
+                // identify road segments
+                if (b > 255) { console.error("Ran out of colours for road segments!"); }
             }
         }
+        shadowMap.endDraw();
         initializeStructures();
     }
     void initializeStructures() {
@@ -166,7 +204,7 @@ class MapLevel extends LevelLayer {
         initializePlayer();
     }
     void initializePlayer() {
-		Driver playerAvatar = new Driver();
+		playerAvatar = new Driver(generatedMap.startPoint, shadowMapColorDictionary);
 		addPlayer(playerAvatar);
     }
 }
@@ -201,7 +239,7 @@ class XMLLevelLayer extends LevelLayer{
 			Struct temp= new Struct(vert);
 			addInteractor(temp);
 		}
-		Driver driver=new Driver();
+		Driver driver=new Driver(mapIn.startPoint);
 		addPlayer(driver);
         if(debug){
             for(index in mapIn.mapGraph.nodeDictionary){
@@ -227,12 +265,24 @@ class XMLLevelLayer extends LevelLayer{
     }
 }
 class Driver extends Player{
-    Driver(){
+    var currentPosition, previousPosition, destination;
+    var stopFlag, colorDictionary;
+    var edgeDelta, roadDeltaX = 0, roadDeltaY = 0, direction = 0;
+    Driver(startPoint, cd){
         super("Driver");
+        setStates();
         handleKey('+');
         handleKey('='); // For the =/+ combination key
         handleKey('-');
         handleKey(' ');
+        colorDictionary = null;
+        colorDictionary = cd;
+        currentPosition = startPoint;
+        setPosition(currentPosition.x, currentPosition.y);
+        previousPosition = new Vertex(getPrevX(), getPrevY());
+        destination = new Vertex(0, 0); // for initialization
+        setScale(zoomLevel*0.8);
+        stopFlag = true;
     }
     void handleInput(){
         if (canvasHasFocus) {
@@ -271,6 +321,56 @@ class Driver extends Player{
         mouseScroll=0;
         keyCode=undefined;
     }
+    void driveToDestination() {
+        stopFlag = true;
+        var impulseX = 0, impulseY = 0;
+
+        if (roadDeltaX != 0 && !roadDeltaY) {
+            if (roadDeltaX > 0) {
+                direction = HALF_PI;
+                impulseX = VEHICLE_SPEED;
+            } else if (roadDeltaX < 0) {
+                direction = -HALF_PI;
+                impulseX = -VEHICLE_SPEED;
+            }
+        }
+        if (roadDeltaY != 0 && !roadDeltaX) {
+            if (roadDeltaY > 0) {
+                direction = PI;
+                impulseY = VEHICLE_SPEED;
+            } else if (roadDeltaY < 0) {
+                direction = 0;
+                impulseY = -VEHICLE_SPEED;
+            }
+        }
+        setRotation(direction);
+        setImpulse(impulseX, impulseY);
+        edgeDelta = distance(previousPosition, destination);
+    }
+    void drawObject() {
+        currentPosition.x = getX();
+        currentPosition.y = getY();
+        var vehicleDelta = distance(currentPosition, previousPosition);
+
+        /* If the vehicle has travelled a greater distance than the distance from its
+         * starting location to its destination, stop the vehicle and re-position it
+         * on the destination
+         */
+        if (stopFlag && edgeDelta > 0 && vehicleDelta > 0 && vehicleDelta > edgeDelta) {
+            stopVehicle();
+            setPosition(destination.x, destination.y);
+            previousPosition.x = getX();
+            previousPosition.y = getY();
+
+            // Reset deltas
+            roadDeltaX = 0;
+            roadDeltaY = 0;
+
+            stopFlag = false;
+        }
+        // Draw the vehicle
+        super.drawObject();
+    }
     void mouseDragged(int mx, int my, int button) {
         ViewBox box = layer.parent.viewbox;
         int _x = 0, _y = 0;
@@ -282,8 +382,27 @@ class Driver extends Player{
         else if (deltaY > 0) _y -= Math.abs(deltaY);
         box.translate(_x, _y, layer.parent);
     }
-    void mouseClicked(int mx, int my) {
-        
+    void mouseClicked(int mx, int my, int button) {
+        color c = shadowMap.get(pmouseX, pmouseY);
+        c = hex(c);
+        //console.log(c);
+        if (colorDictionary[c] != null && button == LEFT) {
+            if (colorDictionary[c][0].equals(currentPosition)) {
+                destination = colorDictionary[c][1];
+            } else if (colorDictionary[c][1].equals(currentPosition)) {
+                destination = colorDictionary[c][0];
+            } else {
+                console.log("Registered click on invalid road");
+            }
+            roadDeltaX = destination.x - currentPosition.x;
+            roadDeltaY = destination.y - currentPosition.y;
+        }
+    }
+    void setStates() {
+        addState(new State("Player", "assets/car.png"));
+    }
+    void stopVehicle() {
+        stop();
     }
     void mouseClicked(int mx, int my, int button){
         if(layer.debug){
@@ -316,6 +435,7 @@ class Road extends Interactor {
         fill(126);
         text(fracText, (vertex1.x - vertex2.x) == 0 ? vertex1.x + 5 : ((vertex1.x + vertex2.x) * 0.5),
             (vertex1.y - vertex2.y) == 0 ? vertex1.y - 30 : ((vertex1.y + vertex2.y) * 0.5));
+        //image(shadowMap, 0, 0);
     }
 }
 class Struct extends Interactor {
