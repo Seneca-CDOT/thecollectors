@@ -46,23 +46,25 @@ function segIntersection(x1, y1, x2, y2, x3, y3, x4, y4)
   var dx = x4 - x3; 
   var dy = y4 - y3;
   var b_dot_d_perp = bx * dy - by * dx;
-  var check=getDotProduct(bx,by,dx,dy);
-  if(check==1){
+  //var check=getDotProduct(bx,by,dx,dy);
+    var cx = x3 - x1;
+    var cy = y3 - y1;
+        //console.log((cx * dy - cy * dx));
+  if(b_dot_d_perp != 0){
+
+    var t = (cx * dy - cy * dx) / b_dot_d_perp;
+    if(t < 0 || t > 1) {
       return null;
+    }
+    var u = (cx * by - cy * bx) / b_dot_d_perp;
+    if(u < 0 || u > 1) { 
+      return null;
+    }
+    var point={x1:x1, y1:y1, x2:x2, y2:y2, x:x1+t*bx, y:y1+t*by };
   }
-  if(b_dot_d_perp == 0) {
-    return null;
+  else if((cx * dy - cy * dx)==0){
+    var point={x1:x1, y1:y1, x2:x2 , y2:y2 , colinear:true};
   }
-  var cx = x3 - x1;
-  var cy = y3 - y1;
-  var t = (cx * dy - cy * dx) / b_dot_d_perp;
-  if(t < 0 || t > 1) {
-    return null;
-  }
-  var u = (cx * by - cy * bx) / b_dot_d_perp;
-  if(u < 0 || u > 1) { 
-    return null;
-  }
-  var point={x:x1+t*bx, y:y1+t*by};
+  else return null;
   return point;
 }

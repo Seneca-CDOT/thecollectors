@@ -59,14 +59,33 @@ MapGenerator.prototype.generateRoads = function(){
 				break;
 		}
 		var node2=new Node(this.index,x,y);
-		var intersectCheck=this.mapGraph.edgeIntersects(node.vertex.x,node.vertex.y,node2.vertex.x,node2.vertex.y);
-		console.log(intersectCheck);
 		var tmp=this.mapGraph.addNode(node2);
-		if(tmp!= i)
-			cap++;
+		if(tmp == i)
+			this.index++;
+		else
+			i--;
+
+		var intersectCheck=this.mapGraph.edgeIntersects(node.vertex.x,node.vertex.y,node2.vertex.x,node2.vertex.y);
+		var ln=intersectCheck.length;
+		
+		for (var j=0;j<ln;j++){
+			var ret=intersectCheck[j];
+			if (ret.colinear){
+				;
+			}
+			else {
+				var n1=new Node(this.index,ret.x,ret.y);
+				n1=this.mapGraph.addNode(n1);
+				if(n1 == i+1){
+					this.index++;
+					i++; cap++;
+				}
+			}
+		}
+	
+
 		this.mapGraph.addConnection(tmp,check);
 		check=tmp; 
-		this.index++;
 		node=node2;
 	}
 }
