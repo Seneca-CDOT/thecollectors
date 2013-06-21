@@ -1,8 +1,7 @@
 function Node(uID, x ,y){
     this.id = uID;
     this.vertex=new Vertex(x,y);
-    this.connections=[];
-    this.connectionWeights=[];
+    this.connections={};
 }
 Node.prototype.position = function() {
     return this.vertex;
@@ -18,15 +17,11 @@ Node.prototype.equals = function(node) {
 }
 Node.prototype.push=function(nodeId, weight){
 	if(!this.existingConnection(nodeId)){
-		this.connections.push(nodeId);
-        this.connectionWeights.push(weight);
+		this.connections[nodeId]=weight;
     }
 }
 Node.prototype.existingConnection=function(nodeId){
-	var ln=this.connections.length;
-	for(var i=0;i<ln;i++){
-		if(this.connections[i]==nodeId)
-			return true;
-	}
-	return false;
+	if (this.connections[nodeId] != undefined)
+        return true;
+    return false;
 }
