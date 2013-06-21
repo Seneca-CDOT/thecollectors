@@ -12,7 +12,7 @@ MapGenerator.prototype.generateMapGraph = function() {
 }
 MapGenerator.prototype.generateRoads = function(){
 	var node=new Node(this.index++,rng(10,sizex/10+10),rng(10,sizey/10+10));
-	var check=this.mapGraph.addNode(node);
+	var nodeID=this.mapGraph.addNode(node);
 	var cap=50;
 	for(var i=1; i<=cap;i++){	
 		var x,y, distance=rng(0,9);
@@ -59,33 +59,62 @@ MapGenerator.prototype.generateRoads = function(){
 				break;
 		}
 		var node2=new Node(this.index,x,y);
-		var tmp=this.mapGraph.addNode(node2);
-		if(tmp == i)
+		var node2ID=this.mapGraph.addNode(node2);
+		if(node2ID == i)
 			this.index++;
 		else
 			i--;
 
 		var intersectCheck=this.mapGraph.edgeIntersects(node.vertex.x,node.vertex.y,node2.vertex.x,node2.vertex.y);
 		var ln=intersectCheck.length;
-		
-		for (var j=0;j<ln;j++){
-			var ret=intersectCheck[j];
-			if (ret.colinear){
-				;
-			}
-			else {
-				var n1=new Node(this.index,ret.x,ret.y);
-				n1=this.mapGraph.addNode(n1);
-				if(n1 == i+1){
-					this.index++;
-					i++; cap++;
+		if(ln == 0)
+		{	this.mapGraph.addConnection(node2ID,nodeID);	}
+		else{
+			for (var j=0;j<ln;j++){
+				var ret=intersectCheck[j];
+				if (ret.colinear){
+					this.mapGraph.addConnection(node2ID,nodeID);
+				}
+				else {
+					var intNode=new Node(this.index,ret.x,ret.y);
+					intNode=this.mapGraph.addNode(intNode);
+					var tmpvert1=new Vertex(ret.x1,ret.y1);
+					var tmpvert2=new Vertex(ret.x2,ret.y2);
+					var rv1=this.mapGraph.vertexExists(new Vertex(ret.x1,ret.y1));
+					var rv2=this.mapGraph.vertexExists(new Vertex(ret.x2,ret.y2));
+					this.mapGraph.removeConnection(rv1,rv2);
+					if(intNode == i+1){ 					//a new node was added		
+						this.mapGraph.addConnection(rv1,intNode);
+						this.mapGraph.addConnection(rv2,intNode);
+						this.mapGraph.addConnection(node2ID,intNode);
+						this.mapGraph.addConnection(nodeID,intNode);
+						this.index++;
+						i++; cap++;
+					}
+					else {							//connected with an existing node
+						var connectTo=intNode;
+						if(intNode==nodeID){
+							connectTo=nodeID;
+						}
+						else if (intNode==node2ID){
+							connectTo=node2ID;
+						}
+						console.log(nodeID, node2ID ,rv1,rv2, connectTo);
+						this.mapGraph.addConnection(rv1,connectTo);
+						this.mapGraph.addConnection(rv2,connectTo);	
+						if(intNode==connectTo){
+							this.mapGraph.addConnection(node2ID,intNode);
+							this.mapGraph.addConnection(nodeID,intNode);							
+						}
+						else this.mapGraph.addConnection(node2ID,nodeID);
+					}
 				}
 			}
 		}
 	
 
-		this.mapGraph.addConnection(tmp,check);
-		check=tmp; 
+
+		nodeID=node2ID; 
 		node=node2;
 	}
 }

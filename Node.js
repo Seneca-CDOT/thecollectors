@@ -30,3 +30,6 @@ Node.prototype.existingConnection=function(nodeId){
 	}
 	return false;
 }
+Node.prototype.removeConnection=function(nodeId){
+    //wait until merge of connections array change
+}

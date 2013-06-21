@@ -120,7 +120,7 @@ class XMLLevelLayer extends LevelLayer{
             for(index in mapIn.mapGraph.nodeDictionary){
                 var x=mapIn.mapGraph.nodeDictionary[index].vertex.x;
                 var y=mapIn.mapGraph.nodeDictionary[index].vertex.y;
-                NodeDebug tmp = new NodeDebug(new Vertex(x,y),mapIn.mapGraph.nodeDictionary[index].flag);
+                NodeDebug tmp = new NodeDebug(new Vertex(x,y),index);//mapIn.mapGraph.nodeDictionary[index].flag);
                 addInteractor(tmp);
             }
         }
@@ -244,11 +244,13 @@ class NodeDebug extends Interactor{
     void draw(float v1x,float v1y,float v2x, float v2y){
         pushMatrix();
         scale(zoomLevel);
+        fill(0,0,0);
         if(flag)
             stroke(0,255,0);
         else
             stroke(255,0,0);
-        ellipse(vertex.x,vertex.y,8,8);
+        text(flag, vertex.x-2, vertex.y-2);
+        //ellipse(vertex.x,vertex.y,8,8);
         popMatrix();
     }
 }

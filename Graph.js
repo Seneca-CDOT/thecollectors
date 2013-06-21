@@ -33,7 +33,10 @@ Graph.prototype.addConnection = function(nodeID, nodeToConnect, weight) {
         console.error("Cannot add node connection. Node array not found!");
     }
 }
-
+Graph.prototype.removeConnection = function (node1, node2){
+    this.nodeDictionary[node1].removeConnection(node2);
+    this.nodeDictionary[node2].removeConnection(node1);
+}
 Graph.prototype.findNodeArray = function(nodeID) {
     return this.nodeDictionary[nodeID];
 }
