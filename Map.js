@@ -24,7 +24,6 @@ Map.prototype.getEdgeList=function(){
 			}
 		}
 	}
-	console.log(matrix);
 	return matrix;
 }
 Map.prototype.initNodes=function(xmlDoc){
