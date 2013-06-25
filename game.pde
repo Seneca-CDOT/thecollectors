@@ -165,8 +165,7 @@ class Driver extends Player{
         box.translate(_x, _y, layer.parent);
     }
     void mouseClicked(int mx, int my) {
-        pmouseX = mx;
-        pmouseY = my;
+        
     }
 }
 class Road extends Interactor{
