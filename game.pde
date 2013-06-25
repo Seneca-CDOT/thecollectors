@@ -120,6 +120,7 @@ class Driver extends Player{
         handleKey('+');
         handleKey('='); // For the =/+ combination key
         handleKey('-');
+        handleKey(' ');
     }
     void handleInput(){
         if (canvasHasFocus) {
@@ -150,6 +151,10 @@ class Driver extends Player{
             }
             if(isKeyDown('-')){
                 layer.zoom(-1/3/10);
+            }
+            if(isKeyDown(' ')){                     //key is subject to change
+                ViewBox box=layer.parent.viewbox;
+                box.track(layer.parent,this);
             }
         }
     }
