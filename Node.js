@@ -25,8 +25,10 @@ Node.prototype.push=function(nodeId, weight){
 Node.prototype.existingConnection=function(nodeId){
 	var ln=this.connections.length;
 	for(var i=0;i<ln;i++){
-		if(this.connections[i]==nodeId)
+		if(this.connections[i]==nodeId.toString())
 			return true;
+        if(this.id==nodeId.toString())
+            return true;
 	}
 	return false;
 }

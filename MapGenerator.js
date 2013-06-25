@@ -99,7 +99,7 @@ MapGenerator.prototype.generateRoads = function(){
 						else if (intNode==node2ID){
 							connectTo=node2ID;
 						}
-						console.log(nodeID, node2ID ,rv1,rv2, connectTo);
+						
 						this.mapGraph.addConnection(rv1,connectTo);
 						this.mapGraph.addConnection(rv2,connectTo);	
 						if(intNode==connectTo){
@@ -113,7 +113,7 @@ MapGenerator.prototype.generateRoads = function(){
 		}
 	
 
-
+		console.log(this.mapGraph.nodeDictionary);
 		nodeID=node2ID; 
 		node=node2;
 	}
