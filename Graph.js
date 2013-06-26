@@ -22,6 +22,7 @@ Graph.prototype.addNode = function(node) {
 
 Graph.prototype.clearGraph = function() {
     this.nodeDictionary = {};
+    this.length=0;
 }
 
 Graph.prototype.addConnection = function(nodeID, nodeToConnect, weight) {
