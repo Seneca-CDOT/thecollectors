@@ -107,6 +107,12 @@ class XMLLevelLayer extends LevelLayer{
 		addBoundary(new Boundary(0,0,0,height));
 		*/
 	}
+    void zoom(float s){
+        if(xScale+s < 0)
+            setScale(0);
+        else
+            setScale(xScale+s);
+    }
 }
 class Driver extends Player{
     Driver(){
@@ -136,13 +142,15 @@ class Driver extends Player{
                 keyCode=undefined;
             }
             if(mouseScroll!=0){
-                zoomLevel+= mouseScroll/10;
+                layer.zoom(mouseScroll/10);
                 mouseScroll=0;
             }
-            if(isKeyDown('+') || isKeyDown('='))
-                zoomLevel+=1/3/10;
-            if(isKeyDown('-'))
-                zoomLevel-=1/3/10;
+            if(isKeyDown('+') || isKeyDown('=')){
+                layer.zoom(1/3/10);
+            }
+            if(isKeyDown('-')){
+                layer.zoom(-1/3/10);
+            }
         }
     }
     void mouseDragged(int mx, int my, int button) {
@@ -168,18 +176,9 @@ class Road extends Interactor{
         super("Road");
         vertex1=vert1;
         vertex2=vert2;
-
     }
     void draw(float v1x,float v1y,float v2x, float v2y){
-        pushMatrix();
-        //translate(vertex1.x,vertex1.y);
-        scale(zoomLevel);
-        //translate(-vertex1.x,-vertex1.y);
-        //setScale(zoomLevel);
-        //var v1=vertex1.scale(zoomLevel);
-        //var v2=vertex2.scale(zoomLevel);
         line(vertex1.x, vertex1.y, vertex2.x, vertex2.y);
-        popMatrix();
     }
 }
 class Struct extends Interactor{
@@ -192,15 +191,5 @@ class Struct extends Interactor{
     }
     void setStates(){
         addState(new State("default","assets/gas.png"));
-    }
-    void draw(float v1x,float v1y,float v2x, float v2y){
-        pushMatrix();
-        //translate(vertex.x,vertex.y);
-        scale(zoomLevel);
-        //translate(-vertex.x,-vertex.y);
-        //setScale(zoomLevel);
-        super.draw(v1x,v1y,v2x,v2y);
-        popMatrix();
-
     }
 }
