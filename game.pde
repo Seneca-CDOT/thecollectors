@@ -97,7 +97,6 @@ class XMLLevelLayer extends LevelLayer{
 		color bgcolor=color(243,233,178);
 		setBackgroundColor(bgcolor);
 		var edgeList=mapIn.getEdgeList();
-		
 		for (index in edgeList){
 			var vert1=mapIn.mapGraph.findNodeArray(index).vertex;
 			for (var i = edgeList[index].length - 1; i >= 0; i--) {
@@ -116,11 +115,10 @@ class XMLLevelLayer extends LevelLayer{
 		Driver driver=new Driver();
 		addPlayer(driver);
         if(debug){
-
             for(index in mapIn.mapGraph.nodeDictionary){
                 var x=mapIn.mapGraph.nodeDictionary[index].vertex.x;
                 var y=mapIn.mapGraph.nodeDictionary[index].vertex.y;
-                NodeDebug tmp = new NodeDebug(new Vertex(x,y),mapIn.mapGraph.nodeDictionary[index].connections);//mapIn.mapGraph.nodeDictionary[index].flag);
+                NodeDebug tmp = new NodeDebug(new Vertex(x,y),mapIn.mapGraph.nodeDictionary[index]);//mapIn.mapGraph.nodeDictionary[index].flag);
                 addInteractor(tmp);
             }
         }
@@ -131,6 +129,12 @@ class XMLLevelLayer extends LevelLayer{
 		addBoundary(new Boundary(0,0,0,height));
 		*/
 	}
+    void zoom(float s){
+        if(xScale+s < 0)
+            setScale(0);
+        else
+            setScale(xScale+s);
+    }
 }
 class Driver extends Player{
     Driver(){
@@ -159,12 +163,15 @@ class Driver extends Player{
                 box.translate(_x,_y,layer.parent);
             }
             if(mouseScroll!=0){
-                zoomLevel+= mouseScroll/10;
+                layer.zoom(mouseScroll/10);
+                mouseScroll=0;
             }
-            if(isKeyDown('+') || isKeyDown('='))
-                zoomLevel+=1/3/10;
-            if(isKeyDown('-'))
-                zoomLevel-=1/3/10;
+            if(isKeyDown('+') || isKeyDown('=')){
+                layer.zoom(1/3/10);
+            }
+            if(isKeyDown('-')){
+                layer.zoom(-1/3/10);
+            }
         }
         mouseScroll=0;
         keyCode=undefined;
@@ -198,18 +205,13 @@ class Road extends Interactor{
         super("Road");
         vertex1=vert1;
         vertex2=vert2;
-
     }
     void draw(float v1x,float v1y,float v2x, float v2y){
-        pushMatrix();
-        //translate(vertex1.x,vertex1.y);
-        scale(zoomLevel);
         if(debugging)
             stroke(0,0,255);
         else
             stroke(0,0,0);
         line(vertex1.x, vertex1.y, vertex2.x, vertex2.y);
-        popMatrix();
     }
 }
 class Struct extends Interactor{
@@ -223,15 +225,9 @@ class Struct extends Interactor{
     void setStates(){
         addState(new State("default","assets/gas.png"));
     }
-    void draw(float v1x,float v1y,float v2x, float v2y){
-        pushMatrix();
-        //translate(vertex.x,vertex.y);
-        scale(zoomLevel);
-        //translate(-vertex.x,-vertex.y);
-        //setScale(zoomLevel);
-        super.draw(v1x,v1y,v2x,v2y);
-        popMatrix();
 
+    void draw(float v1x,float v1y,float v2x, float v2y){
+        super.draw(v1x,v1y,v2x,v2y);
     }
 }
 class NodeDebug extends Interactor{
@@ -249,7 +245,7 @@ class NodeDebug extends Interactor{
             stroke(0,255,0);
         else
             stroke(255,0,0);
-        text(flag.length, vertex.x-2, vertex.y-2);
+        text(flag.connectionsLength, vertex.x-2, vertex.y-2);
         //ellipse(vertex.x,vertex.y,8,8);
         popMatrix();
     }

@@ -112,8 +112,6 @@ MapGenerator.prototype.generateRoads = function(){
 			}
 		}
 	
-
-		console.log(this.mapGraph.nodeDictionary);
 		nodeID=node2ID; 
 		node=node2;
 	}

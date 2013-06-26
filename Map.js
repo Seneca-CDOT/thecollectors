@@ -53,6 +53,5 @@ Map.prototype.initStructures=function(xmlDoc){
 		var points=places[i].getAttribute("value");
 		nodeID=this.mapGraph.vertexExists(pos);
 		this.structureList.push(new Structure(nodeID,structType,caption,points));
-
 	}
 }

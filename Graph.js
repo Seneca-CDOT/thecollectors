@@ -93,10 +93,9 @@ Graph.prototype.getEdgeList=function(){
     var graphList=this.nodeDictionary; 
     for (index in graphList) {
         matrix[index]= [];
-        var ln=graphList[index].connections.length;
-        for (var i=0;i<ln;i++){
-            if(!matrix[graphList[index].connections[i]]){
-                matrix[index].push(graphList[index].connections[i]);
+        for (i in graphList[index].connections){
+            if(!matrix[i]){
+                matrix[index].push(i);
             }
         }
     }
