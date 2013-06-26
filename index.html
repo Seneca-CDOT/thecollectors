@@ -36,7 +36,7 @@
   </head>
   <body>
     <script type="text/javascript">
-      var sketch, playerAvatar;
+      var sketch;
       var pmouseX = 0, pmouseY = 0;
       var gameMode = null;
       var currentLevel = 1;
@@ -81,9 +81,6 @@
             break;
         }
       }
-      function drive() {
-          playerAvatar.driveToDestination();
-      }
     </script>
     <canvas onmouseenter="$('canvas').focus()" data-processing-sources="codebase.pde game.pde"></canvas>
     <div id="menuDiv" style="display:block;position:fixed;top:650px;left:0px;">
@@ -95,9 +92,6 @@
         <button id="easyButton"onclick="buttonClick(4)">Easy</button><br />
         <button id="mediumButton"onclick="buttonClick(5)">Normal</button><br />
         <button id="hardButton"onclick="buttonClick(6)">Hard</button><br />
-    </div>
-    <div style="display:block;position:fixed;left:840px;top:20px;">
-        <button id="goButton"onclick="drive()">Drive</button><br />
     </div>
   </body>  
 </html>

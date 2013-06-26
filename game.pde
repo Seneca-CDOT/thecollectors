@@ -143,7 +143,7 @@ class MapLevel extends LevelLayer {
         shadowMapColorDictionary = {};
         shadowMap = createGraphics(screenWidth * 2, screenHeight * 2, JAVA2D);
         generatedMap = map;
-		setBackgroundColor(color(0, 255, 0)); // for testing, replace with texture for final product
+		setBackgroundColor(color(243, 233, 178)); // for testing, replace with texture for final product
         initializeRoads();
     }
     void zoom(float s) {
@@ -383,19 +383,28 @@ class Driver extends Player{
         box.translate(_x, _y, layer.parent);
     }
     void mouseClicked(int mx, int my, int button) {
-        color c = shadowMap.get(pmouseX, pmouseY);
-        c = hex(c);
-        //console.log(c);
-        if (colorDictionary[c] != null && button == LEFT) {
-            if (colorDictionary[c][0].equals(currentPosition)) {
-                destination = colorDictionary[c][1];
-            } else if (colorDictionary[c][1].equals(currentPosition)) {
-                destination = colorDictionary[c][0];
-            } else {
-                console.log("Registered click on invalid road");
+        var vBox = getBoundingBox();
+        var vBoxDeltaX = Math.abs(vBox[0] - vBox[4]) * 0.5;
+        var vBoxDeltaY = Math.abs(vBox[1] - vBox[5]) * 0.5;
+
+        if (mx >= getX() - vBoxDeltaX && mx <= getX() + vBoxDeltaX &&
+                my >= getY() - vBoxDeltaY && my <= getY() + vBoxDeltaY) {
+            driveToDestination();
+        } else {
+            color c = shadowMap.get(pmouseX, pmouseY);
+            c = hex(c);
+            //console.log(c);
+            if (colorDictionary[c] != null && button == LEFT) {
+                if (colorDictionary[c][0].equals(currentPosition)) {
+                    destination = colorDictionary[c][1];
+                } else if (colorDictionary[c][1].equals(currentPosition)) {
+                    destination = colorDictionary[c][0];
+                } else {
+                    console.log("Registered click on invalid road");
+                }
+                roadDeltaX = destination.x - currentPosition.x;
+                roadDeltaY = destination.y - currentPosition.y;
             }
-            roadDeltaX = destination.x - currentPosition.x;
-            roadDeltaY = destination.y - currentPosition.y;
         }
     }
     void setStates() {
@@ -434,7 +443,7 @@ class Road extends Interactor {
         line(vertex1.x, vertex1.y, vertex2.x, vertex2.y);
         fill(126);
         text(fracText, (vertex1.x - vertex2.x) == 0 ? vertex1.x + 5 : ((vertex1.x + vertex2.x) * 0.5),
-            (vertex1.y - vertex2.y) == 0 ? vertex1.y - 30 : ((vertex1.y + vertex2.y) * 0.5));
+            (vertex1.y - vertex2.y) == 0 ? vertex1.y - 23 : ((vertex1.y + vertex2.y) * 0.5));
         //image(shadowMap, 0, 0);
     }
 }
