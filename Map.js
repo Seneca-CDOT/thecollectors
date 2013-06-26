@@ -70,6 +70,7 @@ Map.prototype.initStructures=function(xmlDoc){
 Map.prototype.exportToXML = function() {
     var edgeList = this.getEdgeList(); // Contains the list node connections as indices
     var xmlWriter = new XMLWriter('UTF-8');
+    var xmlString = null;
 
     // Set up XML document formatting
     xmlWriter.formatting = 'indented';
@@ -159,6 +160,8 @@ Map.prototype.exportToXML = function() {
     xmlWriter.writeEndElement(); // maps
     xmlWriter.writeEndDocument();
 
-    console.log(xmlWriter.flush().substr(40));
+    xmlString = xmlWriter.flush().substr(40);
     xmlWriter.close();
+
+    return xmlString;
 }
