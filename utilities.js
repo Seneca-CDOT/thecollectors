@@ -21,7 +21,7 @@ return xmlDoc;
 }
 //end of XML Document setup
 function rng(min,max){
-	return Math.floor(Math.random()*max+1)+min
+	return Math.floor(Math.random()*(max-min))+min
 }
 function getDotProduct(dx1, dy1, dx2, dy2) {
     // normalise both vectors
@@ -46,10 +46,10 @@ function segIntersection(x1, y1, x2, y2, x3, y3, x4, y4)
   var dx = x4 - x3; 
   var dy = y4 - y3;
   var b_dot_d_perp = bx * dy - by * dx;
-  //var check=getDotProduct(bx,by,dx,dy);
-    var cx = x3 - x1;
-    var cy = y3 - y1;
-        //console.log((cx * dy - cy * dx));
+
+  var cx = x3 - x1;
+  var cy = y3 - y1;
+
   if(b_dot_d_perp != 0){
 
     var t = (cx * dy - cy * dx) / b_dot_d_perp;
@@ -63,7 +63,7 @@ function segIntersection(x1, y1, x2, y2, x3, y3, x4, y4)
     var point={x1:x1, y1:y1, x2:x2, y2:y2, x:x1+t*bx, y:y1+t*by };
   }
   else if((cx * dy - cy * dx)==0){
-    var point={x1:x1, y1:y1, x2:x2 , y2:y2 , colinear:true};
+    return null;//var point={x1:x1, y1:y1, x2:x2 , y2:y2 , colinear:true};
   }
   else return null;
   return point;

@@ -62,8 +62,7 @@ void initialize() {
         setActiveScreen("XMLLevel");
     }
     else{
-        var gen=new MapGenerator(0);
-        addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(gen.mapGraph,gen.structureList)));
+        addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map()));
     }
 }
 
@@ -245,7 +244,7 @@ class NodeDebug extends Interactor{
             stroke(0,255,0);
         else
             stroke(255,0,0);
-        text(flag.connectionsLength, vertex.x-2, vertex.y-2);
+        text(flag.id+":"+flag.connectionsLength, vertex.x-4, vertex.y-2);
         //ellipse(vertex.x,vertex.y,8,8);
         popMatrix();
     }

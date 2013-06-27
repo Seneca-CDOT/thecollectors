@@ -1,4 +1,4 @@
-function Map(mapGraph,structureList,filename){
+function Map(filename){
 	this.mapGraph=new Graph();
 	this.structureList=[];
 	this.fuel;
@@ -9,8 +9,9 @@ function Map(mapGraph,structureList,filename){
 		this.initStructures(xmlDoc);
 	}
 	else{
-		this.mapGraph=mapGraph;
-		this.structureList=structureList;
+		var gen=new MapGenerator(0);
+		this.mapGraph=gen.mapGraph;
+		this.structureList=gen.structureList;
 	}
 }
 Map.prototype.getEdgeList=function(){

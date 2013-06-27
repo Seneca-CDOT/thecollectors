@@ -5,8 +5,8 @@ function Graph() {
 }
 Graph.prototype.addNode = function(node) {
     if (this.nodeDictionary[node.id] != undefined) {
-        console.warn("Node already exists in the graph. Duplicate attempt to add node terminated.");
-        return;
+        //console.warn("Node already exists in the graph. Duplicate attempt to add node terminated.");
+        return node.id;
     }
     var check=this.vertexExists(node.vertex);
     if (node instanceof Node && check===false) {
@@ -50,15 +50,10 @@ Graph.prototype.areNodesConnected = function(nodeID, nodeIDToMatch) {
     var nodeArray = this.findNodeArray(nodeID);
 
     if (nodeArray != undefined) {
-        var len = nodeArray.length;
-
-        for (i = 1; i < len; i++) {
-            if (nodeArray[i].id == nodeIDToMatch) {
-                return true;
-            }
+        if(nodeArray.connections[nodeIDToMatch]){
+            return true;
         }
-
-        return false;
+        else return false;
     } else {
         console.error("Invalid NodeID. Node does not exist.");
     }
@@ -79,6 +74,7 @@ Graph.prototype.edgeIntersects=function(x1,y1,x2,y2){
     for(index in edges){
         var vert1=this.nodeDictionary[index].vertex;
         for (var i = edges[index].length - 1; i >= 0; i--) {
+            //console.log(index, "::", i, "::", edges[index]);
             var vert2=this.nodeDictionary[edges[index][i]].vertex;
             var check=segIntersection(vert1.x,vert1.y,vert2.x,vert2.y,x1,y1,x2,y2);
             if(check){
@@ -86,7 +82,7 @@ Graph.prototype.edgeIntersects=function(x1,y1,x2,y2){
             }
         }
     }
-    return rvList;//segIntersection(x1, y1, x2, y2, x3, y3, x4, y4) ;
+    return rvList;
 }
 Graph.prototype.getEdgeList=function(){
     var matrix= {};
