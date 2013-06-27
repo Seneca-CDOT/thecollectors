@@ -7,13 +7,16 @@ final int screenWidth=960;
 final int screenHeight=640;
 
 PGraphics shadowMap = null;
+var shadowMapColorDictionary;
+var roadSelectedDictionary;
 float VEHICLE_SPEED = 1.5;
 float zoomLevel=1;
 int arrowSpeed=10;
 int gameDifficulty = 0;
 //line width
 strokeWeight(4);
-var debugFlag = true;
+var GEN_TUTORIAL = true;
+var DISPLAY_SHADOWMAP = false;
 
 /*debugging tools*/
 var mapType="gen"; //change between "xml" or "gen"
@@ -97,7 +100,7 @@ class CampaignMap extends Level {
         super(mWidth, mHeight);
         setViewBox(0, 0, screenWidth, screenHeight);
 
-        if (debugFlag || (gameDifficulty == 1 && currentLevel == 1)) {
+        if (GEN_TUTORIAL || (gameDifficulty == 1 && currentLevel == 1)) {
             generateTutorial();
         } else {
             generateMap();
@@ -134,13 +137,13 @@ class CampaignMap extends Level {
 
 class MapLevel extends LevelLayer {
     var generatedMap = null;
-    var shadowMapColorDictionary = null;
     var r = 0, g = 0, b = 0;
 
     MapLevel(Level owner, map) {
         super(owner);
         shadowMap = null;
         shadowMapColorDictionary = {};
+        roadSelectedDictionary = {};
         shadowMap = createGraphics(screenWidth * 2, screenHeight * 2, JAVA2D);
         generatedMap = map;
 		setBackgroundColor(color(243, 233, 178)); // for testing, replace with texture for final product
@@ -159,15 +162,13 @@ class MapLevel extends LevelLayer {
         shadowMap.beginDraw();
         shadowMap.background(255);
         shadowMap.strokeWeight(25);
+
         for (index in edgeList) {
             var primaryNode = generatedMap.mapGraph.nodeDictionary[index];
 
             for (var i = edgeList[index].length - 1; i >= 0; i--) {
                 var connectedNode = generatedMap.mapGraph.findNodeArray(edgeList[index][i]);
                 var fraction = primaryNode.connections[edgeList[index][i]];
-
-                Road roadSegment = new Road(primaryNode.vertex, connectedNode.vertex, fraction);
-                addInteractor(roadSegment);
 
                 // Generate a new colour for the road segment, then draw the segment in that colour
                 color shadowColor = color(r, g, b);
@@ -181,12 +182,19 @@ class MapLevel extends LevelLayer {
                 shadowMapColorDictionary[colorID].push(primaryNode.vertex);
                 shadowMapColorDictionary[colorID].push(connectedNode.vertex);
 
-                // Increment color values; stay within bounds
+                // Create and add the road segment to the level
+                Road roadSegment = new Road(colorID, primaryNode.vertex, connectedNode.vertex, fraction);
+                addInteractor(roadSegment);
+
+                // Initialize road selection
+                roadSelectedDictionary[colorID] = false;
+
+                // Increment color values for the shadow roads; stay within bounds
                 if (r >= 255) { r = 0; g++; }
                 else { r++; }
                 if (g > 255) { r = 0; g = 0; b++; }
                 // If the blue component goes beyond 255, we have run out of unique colours to
-                // identify road segments
+                // use to identify road segments
                 if (b > 255) { console.error("Ran out of colours for road segments!"); }
             }
         }
@@ -204,8 +212,8 @@ class MapLevel extends LevelLayer {
         initializePlayer();
     }
     void initializePlayer() {
-		playerAvatar = new Driver(generatedMap.startPoint, shadowMapColorDictionary);
-		addPlayer(playerAvatar);
+        playerAvatar = new Driver(generatedMap.startPoint);
+        addPlayer(playerAvatar);
     }
 }
 
@@ -228,7 +236,7 @@ class XMLLevelLayer extends LevelLayer{
 			var vert1=mapIn.mapGraph.findNodeArray(index).vertex;
 			for (var i = edgeList[index].length - 1; i >= 0; i--) {
 				var vert2=mapIn.mapGraph.findNodeArray(edgeList[index][i]).vertex;
-				Road temp= new Road(vert1,vert2, new Fraction(1, 7));
+				Road temp= new Road(i, vert1,vert2, new Fraction(1, 7));
 				addInteractor(temp);
 			}
 		}
@@ -265,24 +273,24 @@ class XMLLevelLayer extends LevelLayer{
     }
 }
 class Driver extends Player{
-    var currentPosition, previousPosition, destination;
-    var stopFlag, colorDictionary;
+    var currentPosition, previousPosition, destination, futurePosition, currDest;
     var edgeDelta, roadDeltaX = 0, roadDeltaY = 0, direction = 0;
-    Driver(startPoint, cd){
+    var currDestColorID;
+    Driver(startPoint) {
         super("Driver");
         setStates();
         handleKey('+');
         handleKey('='); // For the =/+ combination key
         handleKey('-');
         handleKey(' ');
-        colorDictionary = null;
-        colorDictionary = cd;
         currentPosition = startPoint;
+        futurePosition = startPoint; // for multi-road selection
         setPosition(currentPosition.x, currentPosition.y);
         previousPosition = new Vertex(getPrevX(), getPrevY());
-        destination = new Vertex(0, 0); // for initialization
-        setScale(zoomLevel*0.8);
-        stopFlag = true;
+        destination = [];
+        currDest = null;
+        currDestColorID = [];
+        setScale(0.8);
     }
     void handleInput(){
         if (canvasHasFocus) {
@@ -322,9 +330,14 @@ class Driver extends Player{
         keyCode=undefined;
     }
     void driveToDestination() {
-        stopFlag = true;
         var impulseX = 0, impulseY = 0;
 
+        // Get the current destination from the destination list
+        currDest = destination.shift();
+        roadDeltaX = currDest.x - currentPosition.x;
+        roadDeltaY = currDest.y - currentPosition.y;
+
+        // Set the vehicle direction and speed
         if (roadDeltaX != 0 && !roadDeltaY) {
             if (roadDeltaX > 0) {
                 direction = HALF_PI;
@@ -343,9 +356,10 @@ class Driver extends Player{
                 impulseY = -VEHICLE_SPEED;
             }
         }
+
         setRotation(direction);
         setImpulse(impulseX, impulseY);
-        edgeDelta = distance(previousPosition, destination);
+        edgeDelta = distance(previousPosition, currDest);
     }
     void drawObject() {
         currentPosition.x = getX();
@@ -356,54 +370,87 @@ class Driver extends Player{
          * starting location to its destination, stop the vehicle and re-position it
          * on the destination
          */
-        if (stopFlag && edgeDelta > 0 && vehicleDelta > 0 && vehicleDelta > edgeDelta) {
+        if (edgeDelta > 0 && vehicleDelta > 0 && vehicleDelta > edgeDelta) {
             stopVehicle();
-            setPosition(destination.x, destination.y);
-            previousPosition.x = getX();
-            previousPosition.y = getY();
+            setPosition(currDest.x, currDest.y);
+            previousPosition.x = currentPosition.x = getX();
+            previousPosition.y = currentPosition.y = getY();
 
             // Reset deltas
             roadDeltaX = 0;
             roadDeltaY = 0;
 
-            stopFlag = false;
+            // Keep driving as long as we haven't run out of destinations
+            if (destination.length != 0) {
+                driveToDestination();
+            }
+            // De-select the road we finished driving over
+            roadSelectedDictionary[currDestColorID.shift()] = false;
         }
         // Draw the vehicle
         super.drawObject();
     }
     void mouseDragged(int mx, int my, int button) {
-        ViewBox box = layer.parent.viewbox;
-        int _x = 0, _y = 0;
-        int deltaX = mx - pmouseX;
-        int deltaY = my - pmouseY;
-        if (deltaX > 0) _x -= Math.abs(deltaX);
-        else if (deltaX < 0) _x += Math.abs(deltaX);
-        if (deltaY < 0) _y += Math.abs(deltaY);
-        else if (deltaY > 0) _y -= Math.abs(deltaY);
-        box.translate(_x, _y, layer.parent);
+        if (button == LEFT) {
+            ViewBox box = layer.parent.viewbox;
+            int _x = 0, _y = 0;
+            int deltaX = mx - pmouseX;
+            int deltaY = my - pmouseY;
+            if (deltaX > 0) _x -= Math.abs(deltaX);
+            else if (deltaX < 0) _x += Math.abs(deltaX);
+            if (deltaY < 0) _y += Math.abs(deltaY);
+            else if (deltaY > 0) _y -= Math.abs(deltaY);
+            box.translate(_x, _y, layer.parent);
+        }
     }
     void mouseClicked(int mx, int my, int button) {
         var vBox = getBoundingBox();
         var vBoxDeltaX = Math.abs(vBox[0] - vBox[4]) * 0.5;
         var vBoxDeltaY = Math.abs(vBox[1] - vBox[5]) * 0.5;
 
+        // Did we click on the vehicle? If not, check if we clicked on a road
         if (mx >= getX() - vBoxDeltaX && mx <= getX() + vBoxDeltaX &&
                 my >= getY() - vBoxDeltaY && my <= getY() + vBoxDeltaY) {
-            driveToDestination();
+            if (destination.length > 0) driveToDestination();
         } else {
-            color c = shadowMap.get(pmouseX, pmouseY);
+            // Get the hexadecimal colour code at the clicked point on the shadowMap
+            color c = shadowMap.get(mx, my);
             c = hex(c);
-            //console.log(c);
-            if (colorDictionary[c] != null && button == LEFT) {
-                if (colorDictionary[c][0].equals(currentPosition)) {
-                    destination = colorDictionary[c][1];
-                } else if (colorDictionary[c][1].equals(currentPosition)) {
-                    destination = colorDictionary[c][0];
+            if (DISPLAY_SHADOWMAP) console.log(c);
+
+            /* Clicking the left mouse button on a valid road segment highlights that segment and
+             * updates the final destination for the vehicle to travel to. Clicking the right
+             * mouse button on a valid road segment removes its highlight and updates the vehicle's
+             * final destination to the previous node in the route.
+             */
+            if (shadowMapColorDictionary[c] != null && button == LEFT) {
+                if (shadowMapColorDictionary[c][0].equals(futurePosition)) {
+                    destination.push(shadowMapColorDictionary[c][1]);
+                    roadSelectedDictionary[c] = true;
+                    futurePosition = shadowMapColorDictionary[c][1];
+                    currDestColorID.push(c);
+                } else if (shadowMapColorDictionary[c][1].equals(futurePosition)) {
+                    destination.push(shadowMapColorDictionary[c][0]);
+                    roadSelectedDictionary[c] = true;
+                    futurePosition = shadowMapColorDictionary[c][0];
+                    currDestColorID.push(c);
                 } else {
+                    roadSelectedDictionary[c] = false;
                     console.log("Registered click on invalid road");
                 }
-                roadDeltaX = destination.x - currentPosition.x;
-                roadDeltaY = destination.y - currentPosition.y;
+            } else if (shadowMapColorDictionary[c] != null && button == RIGHT) {
+                if ((shadowMapColorDictionary[c][0].equals(futurePosition) ||
+                        shadowMapColorDictionary[c][1].equals(futurePosition)) &&
+                        destination.length > 0) {
+                    roadSelectedDictionary[c] = false;
+                    destination.pop();
+                    if (destination.length > 0) {
+                        futurePosition = destination[destination.length - 1];
+                    } else {
+                        futurePosition = currentPosition;
+                    }
+                    currDestColorID.pop();
+                }
             }
         }
     }
@@ -426,7 +473,10 @@ class Road extends Interactor {
     Road(vert1, vert2) {
     PFont fracFont;
     var fracText = "";
-    Road(vert1, vert2, frac) {
+    var currX = 0, currY = 0;
+    var roadBounds = [];
+    var cID;
+    Road(id, vert1, vert2, frac) {
         super("Road");
         vertex1 = vert1;
         vertex2 = vert2;
@@ -434,6 +484,36 @@ class Road extends Interactor {
         textFont(fracFont, 14);
         textLeading(9);
         fracText = frac.numerator.toString() + "\n--\n" + frac.denominator.toString();
+        // Associate the road segment with its shadowMap road's hexadecimal colour code
+        cID = id;
+        calculateBounds();
+    }
+    // Calculate the box that acts as the highlight for the road segment
+    void calculateBounds() {
+        var vFlippedX = (vertex1.x - vertex2.x) < 0 ? false : true;
+        var vFlippedY = (vertex1.y - vertex2.y) < 0 ? false : true;
+        if (vertex1.x - vertex2.x == 0 && !vFlippedY) {
+            roadBounds[0] = vertex1.x - 12;
+            roadBounds[1] = vertex1.y + 11;
+            roadBounds[2] = vertex2.x + 12;
+            roadBounds[3] = vertex2.y - 11;
+        } else if (vertex1.x - vertex2.x == 0 && vFlippedY) {
+            roadBounds[0] = vertex1.x - 12;
+            roadBounds[1] = vertex2.y + 11;
+            roadBounds[2] = vertex2.x + 12;
+            roadBounds[3] = vertex1.y - 11;
+        }
+        if (vertex1.y - vertex2.y == 0 && !vFlippedX) {
+            roadBounds[0] = vertex1.x + 11;
+            roadBounds[1] = vertex1.y - 12;
+            roadBounds[2] = vertex2.x - 11;
+            roadBounds[3] = vertex2.y + 12;
+        } else if (vertex1.y - vertex2.y == 0 && vFlippedX) {
+            roadBounds[0] = vertex2.x + 11;
+            roadBounds[1] = vertex1.y - 12;
+            roadBounds[2] = vertex1.x - 11;
+            roadBounds[3] = vertex2.y + 12;
+        }
     }
     void draw(float v1x,float v1y,float v2x, float v2y){
         if(debugging)
@@ -441,10 +521,23 @@ class Road extends Interactor {
 		else
             stroke(0,0,0);
         line(vertex1.x, vertex1.y, vertex2.x, vertex2.y);
+
+        // If the road has been selected or the mouse is within the road bounds,
+        // draw the road highlight
+        if (roadSelectedDictionary[cID] == true || (pmouseX >= roadBounds[0] && pmouseX <= roadBounds[2] &&
+                pmouseY >= roadBounds[1] && pmouseY <= roadBounds[3])) {
+            fill(173, 216, 230, 70);
+            noStroke();
+            rect(roadBounds[0], roadBounds[1], roadBounds[2] - roadBounds[0],
+                    roadBounds[3] - roadBounds[1]);
+            stroke(0);
+        }
+
+        // Render the fraction text next to the road segment
         fill(126);
         text(fracText, (vertex1.x - vertex2.x) == 0 ? vertex1.x + 5 : ((vertex1.x + vertex2.x) * 0.5),
             (vertex1.y - vertex2.y) == 0 ? vertex1.y - 23 : ((vertex1.y + vertex2.y) * 0.5));
-        //image(shadowMap, 0, 0);
+        if (DISPLAY_SHADOWMAP) image(shadowMap, 0, 0);
     }
 }
 class Struct extends Interactor {
