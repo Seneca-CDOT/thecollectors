@@ -277,7 +277,7 @@ class XMLLevelLayer extends LevelLayer{
 class Driver extends Player{
     var currentPosition, previousPosition, destination, futurePosition, currDest;
     var edgeDelta, roadDeltaX = 0, roadDeltaY = 0, direction = 0;
-    var currDestColorID;
+    var currDestColorID, driveFlag;
     Driver(startPoint) {
         super("Driver");
         setStates();
@@ -292,6 +292,7 @@ class Driver extends Player{
         destination = [];
         currDest = null;
         currDestColorID = [];
+        driveFlag = false;
         setScale(0.8);
     }
     void handleInput(){
@@ -362,6 +363,7 @@ class Driver extends Player{
         setRotation(direction);
         setImpulse(impulseX, impulseY);
         edgeDelta = distance(previousPosition, currDest);
+        driveFlag = true;
     }
     void drawObject() {
         currentPosition.x = getX();
@@ -385,6 +387,8 @@ class Driver extends Player{
             // Keep driving as long as we haven't run out of destinations
             if (destination.length != 0) {
                 driveToDestination();
+            } else {
+                driveFlag = false;
             }
             // De-select the road we finished driving over
             roadSelectedDictionary[currDestColorID.shift()] -= ROAD_DELTA;
@@ -406,6 +410,7 @@ class Driver extends Player{
         }
     }
     void mouseClicked(int mx, int my, int button) {
+        if (driveFlag) return;
         var vBox = getBoundingBox();
         var vBoxDeltaX = Math.abs(vBox[0] - vBox[4]) * 0.5;
         var vBoxDeltaY = Math.abs(vBox[1] - vBox[5]) * 0.5;
@@ -537,8 +542,12 @@ class Road extends Interactor {
 
         // Render the fraction text next to the road segment
         fill(126);
-        text(fracText, (vertex1.x - vertex2.x) == 0 ? vertex1.x + 5 : ((vertex1.x + vertex2.x) * 0.5),
-            (vertex1.y - vertex2.y) == 0 ? vertex1.y - 23 : ((vertex1.y + vertex2.y) * 0.5));
+        if ((pmouseX >= roadBounds[0] && pmouseX <= roadBounds[2] &&
+                pmouseY >= roadBounds[1] && pmouseY <= roadBounds[3])) {
+            fill(0);
+        }
+        text(fracText, (vertex1.x - vertex2.x) == 0 ? vertex1.x + 12 : ((vertex1.x + vertex2.x) * 0.5),
+            (vertex1.y - vertex2.y) == 0 ? vertex1.y - 32 : ((vertex1.y + vertex2.y) * 0.5));
         if (DISPLAY_SHADOWMAP) image(shadowMap, 0, 0);
     }
 }
