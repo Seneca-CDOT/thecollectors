@@ -17,6 +17,8 @@ int gameDifficulty = 0;
 strokeWeight(4);
 var GEN_TUTORIAL = true;
 var DISPLAY_SHADOWMAP = false;
+var ROAD_ALPHA = 70;
+var ROAD_DELTA = 10;
 
 /*debugging tools*/
 var mapType="gen"; //change between "xml" or "gen"
@@ -187,7 +189,7 @@ class MapLevel extends LevelLayer {
                 addInteractor(roadSegment);
 
                 // Initialize road selection
-                roadSelectedDictionary[colorID] = false;
+                roadSelectedDictionary[colorID] = ROAD_ALPHA;
 
                 // Increment color values for the shadow roads; stay within bounds
                 if (r >= 255) { r = 0; g++; }
@@ -385,7 +387,7 @@ class Driver extends Player{
                 driveToDestination();
             }
             // De-select the road we finished driving over
-            roadSelectedDictionary[currDestColorID.shift()] = false;
+            roadSelectedDictionary[currDestColorID.shift()] -= ROAD_DELTA;
         }
         // Draw the vehicle
         super.drawObject();
@@ -426,23 +428,21 @@ class Driver extends Player{
             if (shadowMapColorDictionary[c] != null && button == LEFT) {
                 if (shadowMapColorDictionary[c][0].equals(futurePosition)) {
                     destination.push(shadowMapColorDictionary[c][1]);
-                    roadSelectedDictionary[c] = true;
+                    roadSelectedDictionary[c] += ROAD_DELTA;
                     futurePosition = shadowMapColorDictionary[c][1];
                     currDestColorID.push(c);
                 } else if (shadowMapColorDictionary[c][1].equals(futurePosition)) {
                     destination.push(shadowMapColorDictionary[c][0]);
-                    roadSelectedDictionary[c] = true;
+                    roadSelectedDictionary[c] += ROAD_DELTA;
                     futurePosition = shadowMapColorDictionary[c][0];
                     currDestColorID.push(c);
                 } else {
-                    roadSelectedDictionary[c] = false;
                     console.log("Registered click on invalid road");
                 }
             } else if (shadowMapColorDictionary[c] != null && button == RIGHT) {
-                if ((shadowMapColorDictionary[c][0].equals(futurePosition) ||
-                        shadowMapColorDictionary[c][1].equals(futurePosition)) &&
-                        destination.length > 0) {
-                    roadSelectedDictionary[c] = false;
+                if (roadSelectedDictionary[c] > ROAD_ALPHA &&
+                        c == currDestColorID[currDestColorID.length - 1]) {
+                    roadSelectedDictionary[c] -= ROAD_DELTA;
                     destination.pop();
                     if (destination.length > 0) {
                         futurePosition = destination[destination.length - 1];
@@ -524,9 +524,11 @@ class Road extends Interactor {
 
         // If the road has been selected or the mouse is within the road bounds,
         // draw the road highlight
-        if (roadSelectedDictionary[cID] == true || (pmouseX >= roadBounds[0] && pmouseX <= roadBounds[2] &&
+        if (roadSelectedDictionary[cID] > ROAD_ALPHA ||
+                (pmouseX >= roadBounds[0] && pmouseX <= roadBounds[2] &&
                 pmouseY >= roadBounds[1] && pmouseY <= roadBounds[3])) {
-            fill(173, 216, 230, 70);
+            fill(173-roadSelectedDictionary[cID], 216-roadSelectedDictionary[cID], 230, ROAD_ALPHA
+                    +(roadSelectedDictionary[cID]));
             noStroke();
             rect(roadBounds[0], roadBounds[1], roadBounds[2] - roadBounds[0],
                     roadBounds[3] - roadBounds[1]);
