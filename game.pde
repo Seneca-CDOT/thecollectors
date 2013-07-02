@@ -207,7 +207,8 @@ class Road extends Interactor{
     }
     void draw(float v1x,float v1y,float v2x, float v2y){
         if(debugging)
-            stroke(0,0,255);
+            //stroke(0,0,255);
+			stroke(0,0,0);
         else
             stroke(0,0,0);
         line(vertex1.x, vertex1.y, vertex2.x, vertex2.y);
@@ -244,8 +245,8 @@ class NodeDebug extends Interactor{
             stroke(0,255,0);
         else
             stroke(255,0,0);
-        text(flag.id+":"+flag.connectionsLength, vertex.x-4, vertex.y-2);
-        //ellipse(vertex.x,vertex.y,8,8);
+        //text(flag.id+":"+flag.connectionsLength, vertex.x-4, vertex.y-2);
+        ellipse(vertex.x,vertex.y,8,8);
         popMatrix();
     }
 }

@@ -175,7 +175,7 @@ MapGenerator.prototype.cleanNodes = function(){
 		}
 	}
 
-	console.log(tmpGraph);
+	//console.log(tmpGraph);
 	this.mapGraph=tmpGraph;
 	//var intersectCheck=this.mapGraph.edgeIntersects(node.vertex.x,node.vertex.y,node2.vertex.x,node2.vertex.y);
 
