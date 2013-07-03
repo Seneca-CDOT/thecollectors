@@ -17,7 +17,7 @@ int gameDifficulty = 0;
 strokeWeight(4);
 var GEN_TUTORIAL = true;
 var DISPLAY_SHADOWMAP = false;
-var ROAD_ALPHA = 70;
+var ROAD_ALPHA = 50;
 var ROAD_DELTA = 10;
 
 /*debugging tools*/
@@ -312,6 +312,9 @@ class Driver extends Player{
                 if(keyCode==RIGHT){
                     _x+=arrowSpeed;
                 }
+                if (keyCode==ENTER) {
+                    advanceTutorial();
+                }
                 box.translate(_x,_y,layer.parent);
             }
             if(mouseScroll!=0){
@@ -335,6 +338,7 @@ class Driver extends Player{
     void driveToDestination() {
         var impulseX = 0, impulseY = 0;
 
+        setScale(0.8);
         // Get the current destination from the destination list
         currDest = destination.shift();
         roadDeltaX = currDest.x - currentPosition.x;
@@ -407,6 +411,13 @@ class Driver extends Player{
             if (deltaY < 0) _y += Math.abs(deltaY);
             else if (deltaY > 0) _y -= Math.abs(deltaY);
             box.translate(_x, _y, layer.parent);
+        }
+    }
+    void mouseMoved(int mx, int my) {
+        if (!driveFlag && over(mx, my)) {
+            setScale(1.0);
+        } else {
+            setScale(0.8);
         }
     }
     void mouseClicked(int mx, int my, int button) {
@@ -529,9 +540,9 @@ class Road extends Interactor {
 
         // If the road has been selected or the mouse is within the road bounds,
         // draw the road highlight
-        if (roadSelectedDictionary[cID] > ROAD_ALPHA ||
-                (pmouseX >= roadBounds[0] && pmouseX <= roadBounds[2] &&
-                pmouseY >= roadBounds[1] && pmouseY <= roadBounds[3])) {
+        if (roadSelectedDictionary[cID] > ROAD_ALPHA) {// ||
+               /* (pmouseX >= roadBounds[0] && pmouseX <= roadBounds[2] &&*/
+               /* pmouseY >= roadBounds[1] && pmouseY <= roadBounds[3])) {*/
             fill(173-roadSelectedDictionary[cID], 216-roadSelectedDictionary[cID], 230, ROAD_ALPHA
                     +(roadSelectedDictionary[cID]));
             noStroke();
@@ -552,11 +563,24 @@ class Road extends Interactor {
     }
 }
 class Struct extends Interactor {
-    var vertex;
+    var vertex, structLabel;
     Struct(vert) {
         super("Desc");
         setPosition(vert.x, vert.y);
         vertex = vert;
+        structLabel = document.createElement("div");
+        structLabel.classList.add("labelBox");
+        structLabel.classList.add("visible");
+        structLabel.style.position = 'fixed';
+        structLabel.style.top = (vert.y - 50).toString() + 'px';
+        structLabel.style.left = (vert.x - 35).toString() + 'px';
+        structLabel.style.width = '90px';
+        structLabel.style.height = '40px';
+        var p = document.createElement("p");
+        p.style.cssText = 'text-align:center;';
+        p.innerHTML = "Fuel";
+        structLabel.appendChild(p);
+        document.body.appendChild(structLabel);
         setStates();
     }
     void setStates() {
