@@ -5,15 +5,6 @@ function Structure(nodeID, StructType, StructCaption, Points) {
     this.Points=Points;
     this.visited=false;
 }
-Structure.prototype.position = function() {
-    return this.nodeID;
-}
-Structure.prototype.getType = function() {
-    return this.StructType;
-}
-Structure.prototype.getCaption = function(){
-	return this.StructCaption;
-}
 Structure.prototype.pointsString = function(){
 	return this.Points.toString();
 }

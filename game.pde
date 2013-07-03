@@ -47,11 +47,11 @@ void loadDifficulty(diffVal, gameMode) {
             setActiveScreen("testing");
         } else if (diffVal == 2) {
             // Change to correct screen later
-            addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map("map.xml")));
+            addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(0,0,"map.xml")));
             setActiveScreen("testing");
         } else if (diffVal == 3) {
             // Change to correct screen later
-            addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map("map.xml")));
+            addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(0,0,"map.xml")));
             setActiveScreen("testing");
         } else {
             console.error("Invalid difficulty! Cannot load map.");
@@ -77,7 +77,7 @@ void initialize() {
         addScreen("testing", new CampaignMap(screenWidth * 2, screenHeight * 2));
     }
     else{
-        addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map()));
+        addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(8,"hard")));
     }
 }
 

@@ -1,4 +1,4 @@
-function Map(filename){
+function Map(numStructs, difficulty, filename){
 	this.mapGraph=new Graph();
 	this.structureList=[];
 	this.fuel=new Fraction(0,0);
@@ -9,7 +9,7 @@ function Map(filename){
 		this.initStructures(xmlDoc);
 	}
 	else{
-		var gen=new MapGenerator(0);
+		var gen=new MapGenerator(numStructs,difficulty);
 		this.mapGraph=gen.mapGraph;
 		this.structureList=gen.structureList;
 	}
@@ -53,6 +53,7 @@ Map.prototype.initStructures=function(xmlDoc){
 		var caption=places[i].getAttribute("caption");
 		var points=places[i].getAttribute("value");
 		nodeID=this.mapGraph.vertexExists(pos);
+        structType="gas";//change this when we get more sprites
 		this.structureList.push(new Structure(nodeID,structType,caption,points));
 	}
 }

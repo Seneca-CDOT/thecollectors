@@ -1,18 +1,28 @@
 var sizex=940, sizey=640, baseDistance=60;
-function MapGenerator(difficulty){
+function MapGenerator(numStructs, difficulty){
 	this.mapGraph=new Graph();
-	this.structureList={};
+	this.structureList=[];
 	this.index=0;
+	this.numStructs=numStructs;
+	var pool=DenominatorPool.easy;
+	if(difficulty == "normal" || difficulty == "hard"){
+		pool=pool.concat(DenominatorPool.normal);
+		if(difficulty == "hard")
+			pool=pool.concat(DenominatorPool.hard);	
+	}
+	var fuel=pool[rng(0,pool.length-1)];
+	fuel=new Fraction(fuel,fuel);
 	this.generateMapGraph();
 }
 MapGenerator.prototype.generateMapGraph = function() {
 	this.generateRoads();
 	this.cleanNodes();
+	this.generateStructures();
 }
 MapGenerator.prototype.generateRoads = function(){
 	var node=new Node(this.index++,rng(10,sizex/10+10),rng(10,sizey/10+10));
 	var nodeID=this.mapGraph.addNode(node);
-	var cap=20, prevHeading=0, prevDistance=0;
+	var cap=this.numStructs*3, prevHeading=0, prevDistance=0;
 	for(var i=1; i<=cap;i++){	
 		var x,y, distance=rng(0,6);
 		distance-=prevDistance;
@@ -34,36 +44,39 @@ MapGenerator.prototype.generateRoads = function(){
 				distance=baseDistance;
 		}
 		if(prevHeading==1)
-			var heading=rng(3,5);
+			var heading=rng(5,8);
 		else if(prevHeading==2)
-			var heading=rng(0,2);
+			var heading=rng(0,4);
 		else
-			var heading=rng(0,5);
-		if(heading<3) prevHeading=1;
+			var heading=rng(0,8);
+		if(heading<5) prevHeading=1;
 		else prevHeading=2;
 		switch(heading){
 			case 0:
 			case 1:
+			case 2:
 				x=node.vertex.x;
 				y=node.vertex.y-distance;
 				if(y<35)
-					heading=2;
+					heading=3;
 				else	
 					break;
-			case 2:
+			case 3:
+			case 4:
 				x=node.vertex.x;
 				y=node.vertex.y+distance;
 				break;
-			case 3:
+			case 5:
+			case 6:
 				x=node.vertex.x-distance;
 				y=node.vertex.y;
 				if(x<35){
-					heading=4;
+					heading=7;
 				}
 				else
 					break;
-			case 4:
-			case 5:
+			case 7:
+			case 8:
 				x=node.vertex.x+distance;
 				y=node.vertex.y;
 				break;
@@ -74,54 +87,7 @@ MapGenerator.prototype.generateRoads = function(){
 			this.index++;
 		else
 			i--;
-/*
-		var intersectCheck=this.mapGraph.edgeIntersects(node.vertex.x,node.vertex.y,node2.vertex.x,node2.vertex.y);
-		var ln=intersectCheck.length;
-		if(ln == 0)
-		{	this.mapGraph.addConnection(node2ID,nodeID);	}
-		else{
-			for (var j=0;j<ln;j++){
-				var ret=intersectCheck[j];
-				if (ret.colinear){
-					this.mapGraph.addConnection(node2ID,nodeID);
-				}
-				else {
-					var intNode=new Node(this.index,ret.x,ret.y);
-					intNode=this.mapGraph.addNode(intNode);
-					var tmpvert1=new Vertex(ret.x1,ret.y1);
-					var tmpvert2=new Vertex(ret.x2,ret.y2);
-					var rv1=this.mapGraph.vertexExists(new Vertex(ret.x1,ret.y1));
-					var rv2=this.mapGraph.vertexExists(new Vertex(ret.x2,ret.y2));
-					this.mapGraph.removeConnection(rv1,rv2);
-					if(intNode == i+1){ 					//a new node was added		
-						this.mapGraph.addConnection(rv1,intNode);
-						this.mapGraph.addConnection(rv2,intNode);
-						this.mapGraph.addConnection(node2ID,intNode);
-						this.mapGraph.addConnection(nodeID,intNode);
-						this.index++;
-						i++; cap++;
-					}
-					else {							//connected with an existing node
-						var connectTo=intNode;
-						if(intNode==nodeID){
-							connectTo=nodeID;
-						}
-						else if (intNode==node2ID){
-							connectTo=node2ID;
-						}
-						
-						this.mapGraph.addConnection(rv1,connectTo);
-						this.mapGraph.addConnection(rv2,connectTo);	
-						if(intNode==connectTo){
-							this.mapGraph.addConnection(node2ID,intNode);
-							this.mapGraph.addConnection(nodeID,intNode);							
-						}
-						else this.mapGraph.addConnection(node2ID,nodeID);
-					}
-				}
-			}
-		}
-*/		this.mapGraph.addConnection(node2ID,nodeID);
+		this.mapGraph.addConnection(node2ID,nodeID);
 		nodeID=node2ID; 
 		node=node2;
 	}
@@ -136,8 +102,7 @@ MapGenerator.prototype.cleanNodes = function(){
 		for (var i = edges[indekkusu].length - 1; i >= 0; i--) {
 			var node2=nodes[edges[indekkusu][i]];
 			var intersectCheck=this.mapGraph.edgeIntersects(node1.vertex.x,node1.vertex.y,node2.vertex.x,node2.vertex.y)
-			if(intersectCheck){
-				
+			if(intersectCheck){			
 				var node1ID=new Node(j++, node1.vertex.x, node1.vertex.y);
 				node1ID=tmpGraph.addNode(node1ID);
 				var node2ID=new Node(j++, node2.vertex.x, node2.vertex.y);
@@ -190,4 +155,7 @@ MapGenerator.prototype.cleanNodes = function(){
 		}
 	}
 	this.mapGraph=tmpGraph;
+}
+MapGenerator.prototype.generateStructures = function(){
+	
 }
