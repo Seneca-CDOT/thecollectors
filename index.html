@@ -25,13 +25,13 @@
 
     <script type="text/javascript" src="XMLWriter-1.0.0-min.js"></script>
     <script type="text/javascript" src="Map.js"></script>
-
+    <script type="text/javascript" src="MapGenerator.js"></script>
 
     <script type="text/javascript" src="processing.js"></script>
     <script type="text/javascript" src="processing-lazyload.js"></script>
 	<style>
-	  canvas {width:960px;height:640px;}
-      button {width:120px;}
+	  canvas {outline:none;width:960px;height:640px;}
+    button {width:120px;}
 	</style>
   </head>
   <body>
@@ -81,7 +81,7 @@
         }
       }
     </script>
-    <canvas data-processing-sources="codebase.pde game.pde"></canvas>
+    <canvas onmouseenter="$('canvas').focus()" data-processing-sources="codebase.pde game.pde"></canvas>
     <div id="menuDiv" style="display:block;position:fixed;top:650px;left:0px;">
         <button id="campaignButton" onclick="buttonClick(1)">Campaign</button><br />
         <button id="quickPlayButton" onclick="buttonClick(2)">Quick Play</button><br />

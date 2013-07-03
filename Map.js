@@ -1,7 +1,7 @@
-function Map(mapGraph,structureList,filename){
+function Map(filename){
 	this.mapGraph=new Graph();
 	this.structureList=[];
-	this.fuel;
+	this.fuel=new Fraction(0,0);
 	this.startPoint;
 	if(filename){
 		var xmlDoc=loadXML(filename);
@@ -9,22 +9,13 @@ function Map(mapGraph,structureList,filename){
 		this.initStructures(xmlDoc);
 	}
 	else{
-		this.mapGraph=mapGraph;
-		this.structureList=structureList;
+		var gen=new MapGenerator(0);
+		this.mapGraph=gen.mapGraph;
+		this.structureList=gen.structureList;
 	}
 }
 Map.prototype.getEdgeList=function(){
-	var matrix= {};
-	var graphList=this.mapGraph.nodeDictionary;	
-	for (index in graphList) {
-		matrix[index]= [];
-		for (i in graphList[index].connections){
-			if(!matrix[i]){
-				matrix[index].push(i);
-			}
-		}
-	}
-	return matrix;
+	return this.mapGraph.getEdgeList();
 }
 Map.prototype.initNodes=function(xmlDoc){
 	map=xmlDoc.getElementsByTagName("map")[0];
@@ -63,7 +54,6 @@ Map.prototype.initStructures=function(xmlDoc){
 		var points=places[i].getAttribute("value");
 		nodeID=this.mapGraph.vertexExists(pos);
 		this.structureList.push(new Structure(nodeID,structType,caption,points));
-
 	}
 }
 

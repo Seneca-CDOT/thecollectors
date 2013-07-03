@@ -3,15 +3,14 @@ function Graph() {
     this.nodeDictionary = {};
     this.length=0;
 }
-
 Graph.prototype.addNode = function(node) {
     if (this.nodeDictionary[node.id] != undefined) {
-        console.warn("Node already exists in the graph. Duplicate attempt to add node terminated.");
-        return;
+        //console.warn("Node already exists in the graph. Duplicate attempt to add node terminated.");
+        return node.id;
     }
     var check=this.vertexExists(node.vertex);
     if (node instanceof Node && check===false) {
-        this.nodeDictionary[node.id]=node;
+        this.nodeDictionary[node.id.toString()]=node;
         this.length++;
         return node.id;
     }
@@ -28,7 +27,6 @@ Graph.prototype.clearGraph = function() {
 Graph.prototype.addConnection = function(nodeID, nodeToConnect, weight) {
     var nodeArray = this.findNodeArray(nodeID);
     var nodeArray2= this.findNodeArray(nodeToConnect);
-
     if (nodeArray != undefined && nodeArray2 != undefined) {
         nodeArray.push(nodeToConnect,weight);
         nodeArray2.push(nodeID,weight);
@@ -36,7 +34,10 @@ Graph.prototype.addConnection = function(nodeID, nodeToConnect, weight) {
         console.error("Cannot add node connection. Node array not found!");
     }
 }
-
+Graph.prototype.removeConnection = function (node1, node2){
+    this.nodeDictionary[node1].removeConnection(node2);
+    this.nodeDictionary[node2].removeConnection(node1);
+}
 Graph.prototype.findNodeArray = function(nodeID) {
     return this.nodeDictionary[nodeID];
 }
@@ -50,15 +51,10 @@ Graph.prototype.areNodesConnected = function(nodeID, nodeIDToMatch) {
     var nodeArray = this.findNodeArray(nodeID);
 
     if (nodeArray != undefined) {
-        var len = nodeArray.length;
-
-        for (i = 1; i < len; i++) {
-            if (nodeArray[i].id == nodeIDToMatch) {
-                return true;
-            }
+        if(nodeArray.connections[nodeIDToMatch]){
+            return true;
         }
-
-        return false;
+        else return false;
     } else {
         console.error("Invalid NodeID. Node does not exist.");
     }
@@ -71,6 +67,36 @@ Graph.prototype.vertexExists=function(vert){
             rv=index;
     }
     return rv;
+}
+Graph.prototype.edgeIntersects=function(x1,y1,x2,y2){
+    var rvList=[];
+    var edges=this.getEdgeList();
+
+    for(index in edges){
+        var vert1=this.nodeDictionary[index].vertex;
+        for (var i = edges[index].length - 1; i >= 0; i--) {
+            //console.log(index, "::", i, "::", edges[index]);
+            var vert2=this.nodeDictionary[edges[index][i]].vertex;
+            var check=segIntersection(vert1.x,vert1.y,vert2.x,vert2.y,x1,y1,x2,y2);
+            if(check){
+                rvList.push(check);
+            }
+        }
+    }
+    return rvList;
+}
+Graph.prototype.getEdgeList=function(){
+    var matrix= {};
+    var graphList=this.nodeDictionary; 
+    for (index in graphList) {
+        matrix[index]= [];
+        for (i in graphList[index].connections){
+            if(!matrix[i]){
+                matrix[index].push(i);
+            }
+        }
+    }
+    return matrix;
 }
 Graph.prototype.Length=function(){
     return this.length;
