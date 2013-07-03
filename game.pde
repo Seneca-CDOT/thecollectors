@@ -15,17 +15,16 @@ int arrowSpeed=10;
 int gameDifficulty = 0;
 //line width
 strokeWeight(4);
+
+/*debugging tools*/
+var mapType="xml"; //change between "xml" or "gen"
+var showMenus=false;//true;
 var GEN_TUTORIAL = true;
 var DISPLAY_SHADOWMAP = false;
 var ROAD_ALPHA = 50;
 var ROAD_DELTA = 10;
 
-/*debugging tools*/
-var mapType="gen"; //change between "xml" or "gen"
-var showMenus=false;
-
-boolean debugging=true;
-
+boolean debugging=false;
 
 void mouseOver() {
     canvasHasFocus = true;
@@ -41,7 +40,7 @@ void loadDifficulty(diffVal, gameMode) {
     if (gameMode == "Campaign") {
         if (diffVal == 1) {
             // Change to correct screen later
-            addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map("map.xml")));
+            //addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map("map.xml")));
             addScreen("testing", new CampaignMap(screenWidth * 2, screenHeight * 2));
             setActiveScreen("testing");
         } else if (diffVal == 2) {
@@ -112,7 +111,7 @@ class CampaignMap extends Level {
     // imported from an XML file.
     void generateTutorial() {
         var map = null;
-        map = new Map(null, null, "tutorial.xml");
+        map = new Map("tutorial.xml");
         renderMap(map);
         //overlayTutorialInterface();
     }
@@ -201,7 +200,7 @@ class MapLevel extends LevelLayer {
             }
         }
         shadowMap.endDraw();
-        initializeStructures();
+        initializePlayer();
     }
     void initializeStructures() {
 		var structureListLength = generatedMap.structureList.length;
@@ -209,13 +208,13 @@ class MapLevel extends LevelLayer {
 			var structObject = generatedMap.structureList[i];
 			var vert = generatedMap.mapGraph.findNodeArray(structObject.nodeID).vertex;
 			Struct structure = new Struct(vert);
-			addInteractor(structure);
+            addPlayer(structure);
 		}
-        initializePlayer();
     }
     void initializePlayer() {
         playerAvatar = new Driver(generatedMap.startPoint);
         addPlayer(playerAvatar);
+        initializeStructures();
     }
 }
 
@@ -247,7 +246,8 @@ class XMLLevelLayer extends LevelLayer{
 			var struct=mapIn.structureList[i];
 			var vert=mapIn.mapGraph.findNodeArray(struct.nodeID).vertex;
 			Struct temp= new Struct(vert);
-			addInteractor(temp);
+			//addInteractor(temp);
+            addPlayer(temp);
 		}
 		Driver driver=new Driver(mapIn.startPoint);
 		addPlayer(driver);
@@ -413,22 +413,14 @@ class Driver extends Player{
             box.translate(_x, _y, layer.parent);
         }
     }
-    void mouseMoved(int mx, int my) {
-        if (!driveFlag && over(mx, my)) {
-            setScale(1.0);
-        } else {
-            setScale(0.8);
-        }
-    }
     void mouseClicked(int mx, int my, int button) {
+        if(layer.debug){
+            //println("x:"+mx+" || "+"y:"+my);
+        }
         if (driveFlag) return;
-        var vBox = getBoundingBox();
-        var vBoxDeltaX = Math.abs(vBox[0] - vBox[4]) * 0.5;
-        var vBoxDeltaY = Math.abs(vBox[1] - vBox[5]) * 0.5;
 
         // Did we click on the vehicle? If not, check if we clicked on a road
-        if (mx >= getX() - vBoxDeltaX && mx <= getX() + vBoxDeltaX &&
-                my >= getY() - vBoxDeltaY && my <= getY() + vBoxDeltaY) {
+        if (over(mx, my)) {
             if (destination.length > 0) driveToDestination();
         } else {
             // Get the hexadecimal colour code at the clicked point on the shadowMap
@@ -476,17 +468,11 @@ class Driver extends Player{
     void stopVehicle() {
         stop();
     }
-    void mouseClicked(int mx, int my, int button){
-        if(layer.debug){
-            println("x:"+mx+" || "+"y:"+my);
-        }   
-    }
 }
 class Road extends Interactor {
     var vertex1;
     var vertex2;
 
-    Road(vert1, vert2) {
     PFont fracFont;
     var fracText = "";
     var currX = 0, currY = 0;
@@ -533,9 +519,7 @@ class Road extends Interactor {
     }
     void draw(float v1x,float v1y,float v2x, float v2y){
         if(debugging)
-            stroke(0,0,255);
-		else
-            stroke(0,0,0);
+			stroke(0,0,0);
         line(vertex1.x, vertex1.y, vertex2.x, vertex2.y);
 
         // If the road has been selected or the mouse is within the road bounds,
@@ -562,32 +546,41 @@ class Road extends Interactor {
         if (DISPLAY_SHADOWMAP) image(shadowMap, 0, 0);
     }
 }
-class Struct extends Interactor {
-    var vertex, structLabel;
+class Struct extends Player {
+    var vertex, structLabel, sBox;
+    var hovering;
     Struct(vert) {
         super("Desc");
         setPosition(vert.x, vert.y);
         vertex = vert;
-        structLabel = document.createElement("div");
-        structLabel.classList.add("labelBox");
-        structLabel.classList.add("visible");
-        structLabel.style.position = 'fixed';
-        structLabel.style.top = (vert.y - 50).toString() + 'px';
-        structLabel.style.left = (vert.x - 35).toString() + 'px';
-        structLabel.style.width = '90px';
-        structLabel.style.height = '40px';
-        var p = document.createElement("p");
-        p.style.cssText = 'text-align:center;';
-        p.innerHTML = "Fuel";
-        structLabel.appendChild(p);
-        document.body.appendChild(structLabel);
         setStates();
+        sBox = getBoundingBox();
+        hovering = false;
     }
     void setStates() {
         addState(new State("default","assets/gas.png"));
     }
     void draw(float v1x,float v1y,float v2x, float v2y){
         super.draw(v1x,v1y,v2x,v2y);
+        if (hovering) {
+            noStroke();
+            fill(0, 0, 0, 170);
+            rect(sBox[0] - 8, sBox[1] - 23, 90, 30);
+            rect(sBox[0] - 8, sBox[1] + 60, 90, 30);
+            fill(255);
+            text("Label", sBox[0] - 5, sBox[1] - 3);
+            text("800", sBox[0] - 5, sBox[1] + 83);
+            stroke(0);
+        }
+    }
+    void mouseMoved(int mx, int my) {
+        if (over(mx, my)) {
+            hovering = true;
+            setScale(1.2);
+        } else if (hovering) {
+            hovering = false;
+            setScale(1.0);
+        }
     }
 }
 class NodeDebug extends Interactor{
