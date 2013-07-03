@@ -12,10 +12,10 @@ int gameDifficulty = 0;
 strokeWeight(4);
 
 /*debugging tools*/
-var mapType="gen"; //change between "xml" or "gen"
-var showMenus=false;
+var mapType="xml"; //change between "xml" or "gen"
+var showMenus=true;
 
-boolean debugging=true;
+boolean debugging=false;
 
 
 void mouseOver() {
@@ -31,15 +31,15 @@ void loadDifficulty(diffVal, gameMode) {
     if (gameMode == "Campaign") {
         if (diffVal == 1) {
             // Change to correct screen later
-            addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(0,0,"map.xml")));
+            addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map("map.xml")));
             setActiveScreen("testing");
         } else if (diffVal == 2) {
             // Change to correct screen later
-            addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(0,0,"map.xml")));
+            addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map("map.xml")));
             setActiveScreen("testing");
         } else if (diffVal == 3) {
             // Change to correct screen later
-            addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(0,0,"map.xml")));
+            addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map("map.xml")));
             setActiveScreen("testing");
         } else {
             console.error("Invalid difficulty! Cannot load map.");
@@ -58,8 +58,9 @@ void initialize() {
         setActiveScreen("Title Screen"); // useful for when more screens are added
     }
     if(mapType=="xml"){
-        addScreen("XMLLevel",new XMLLevel(screenWidth*2,screenHeight*2,new Map(0,0,"map.xml")));
-        setActiveScreen("XMLLevel");
+        addScreen("XMLLevel",new XMLLevel(screenWidth*2,screenHeight*2,new Map("map.xml")));
+        if(!showMenus)
+            setActiveScreen("XMLLevel");
     }
     else{
         addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map()));
@@ -127,6 +128,7 @@ class XMLLevelLayer extends LevelLayer{
 		addBoundary(new Boundary(width,0,0,0));
 		addBoundary(new Boundary(0,0,0,height));
 		*/
+        //console.log(mapIn.exportToXML());         doesnt work with rng maps yet
 	}
     void zoom(float s){
         if(xScale+s < 0)
@@ -141,6 +143,7 @@ class Driver extends Player{
         handleKey('+');
         handleKey('='); // For the =/+ combination key
         handleKey('-');
+        handleKey(' ');
     }
     void handleInput(){
         if (canvasHasFocus) {
@@ -171,6 +174,10 @@ class Driver extends Player{
             if(isKeyDown('-')){
                 layer.zoom(-1/3/10);
             }
+            if(isKeyDown(' ')){                     //key is subject to change
+                ViewBox box=layer.parent.viewbox;
+                box.track(layer.parent,this);
+            }
         }
         mouseScroll=0;
         keyCode=undefined;
@@ -187,8 +194,7 @@ class Driver extends Player{
         box.translate(_x, _y, layer.parent);
     }
     void mouseClicked(int mx, int my) {
-        pmouseX = mx;
-        pmouseY = my;
+        
     }
     void mouseClicked(int mx, int my, int button){
         if(layer.debug){
@@ -225,7 +231,6 @@ class Struct extends Interactor{
     void setStates(){
         addState(new State("default","assets/gas.png"));
     }
-
     void draw(float v1x,float v1y,float v2x, float v2y){
         super.draw(v1x,v1y,v2x,v2y);
     }
