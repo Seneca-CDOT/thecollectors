@@ -10,8 +10,8 @@ function MapGenerator(numStructs, difficulty){
 		if(difficulty == "hard")
 			pool=pool.concat(DenominatorPool.hard);	
 	}
-	var fuel=pool[rng(0,pool.length-1)];
-	fuel=new Fraction(fuel,fuel);
+	this.fuel=pool[rng(0,pool.length-1)];
+	//this.fuel=new Fraction(fuel,fuel);
 	this.generateMapGraph();
 }
 MapGenerator.prototype.generateMapGraph = function() {
@@ -23,26 +23,10 @@ MapGenerator.prototype.generateRoads = function(){
 	var node=new Node(this.index++,rng(10,sizex/10+10),rng(10,sizey/10+10));
 	var nodeID=this.mapGraph.addNode(node);
 	var cap=this.numStructs*3, prevHeading=0, prevDistance=0;
+	var distanceCap=Math.round(this.fuel / 2);
 	for(var i=1; i<=cap;i++){	
-		var x,y, distance=rng(0,6);
-		distance-=prevDistance;
-		if(distance < 0) distance*= -1;
-		prevDistance=distance;
-		
-		switch(distance){
-			case 0:
-				distance=baseDistance*4;
-				break;
-			case 1:
-				distance=baseDistance*3;
-				break;
-			case 2:
-			case 3:
-				distance=baseDistance*2;
-				break;
-			default:
-				distance=baseDistance;
-		}
+		var x,y, distance=rng(1,distanceCap);
+		distance=baseDistance*distance;
 		if(prevHeading==1)
 			var heading=rng(5,8);
 		else if(prevHeading==2)
@@ -115,11 +99,16 @@ MapGenerator.prototype.cleanNodes = function(){
 						node3=tmpGraph.addNode(node3);
 						var node4=new Node(j++, intersectCheck[i].x2, intersectCheck[i].y2);
 						node4=tmpGraph.addNode(node4);
-						tmpGraph.addConnection(intNode,node1ID);
-						tmpGraph.addConnection(intNode,node2ID);
-						tmpGraph.addConnection(intNode,node3);
-						tmpGraph.addConnection(intNode,node4);
 						var tmpNodes=tmpGraph.nodeDictionary;
+						tmpGraph.addConnection(intNode,node1ID, 
+							new Fraction(distance(tmpNodes[intNode].vertex,tmpNodes[node1ID].vertex)/baseDistance,this.fuel));
+						tmpGraph.addConnection(intNode,node2ID,
+							new Fraction(distance(tmpNodes[intNode].vertex,tmpNodes[node2ID].vertex)/baseDistance,this.fuel));
+						tmpGraph.addConnection(intNode,node3,
+							new Fraction(distance(tmpNodes[intNode].vertex,tmpNodes[node3].vertex)/baseDistance,this.fuel));
+						tmpGraph.addConnection(intNode,node4,
+							new Fraction(distance(tmpNodes[intNode].vertex,tmpNodes[node4].vertex)/baseDistance,this.fuel));
+						
 					}
 				}
 				
@@ -146,7 +135,9 @@ MapGenerator.prototype.cleanNodes = function(){
 								tmpGraph.removeConnection(node1.id, node3.id);
 							}
 							else{
-								tmpGraph.removeConnection(node1.id, node2.id);
+								/*tmpGraph.removeConnection(node1.id, node2.id);
+								tmpGraph.addConnection(node1.id,node3.id,
+									new Fraction(distance(node1.vertex,node3.vertex)/baseDistance,this.fuel));*/
 							}
 						}
 					}

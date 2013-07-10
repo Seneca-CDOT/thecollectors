@@ -100,3 +100,10 @@ Graph.prototype.getEdgeList=function(){
 Graph.prototype.Length=function(){
     return this.length;
 }
+Graph.prototype.numConnections=function(){
+    var rv=0;
+    for(index in this.nodeDictionary){
+        rv+=this.nodeDictionary[index].connectionsLength;
+    }
+    return rv;
+}

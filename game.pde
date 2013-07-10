@@ -247,9 +247,14 @@ class XMLLevelLayer extends LevelLayer{
 		for(int i=0;i<ln;i++){
 			var struct=mapIn.structureList[i];
 			var vert=mapIn.mapGraph.findNodeArray(struct.nodeID).vertex;
-			Struct temp= new Struct(vert);
-			//addInteractor(temp);
-            addPlayer(temp);
+            Struct temp;
+            if(debug){
+                temp=new StructDebug(struct,vert);
+            }
+            else{
+                temp= new Struct(vert);
+            }
+			addPlayer(temp);
 		}
 		Driver driver=new Driver(mapIn.startPoint);
 		addPlayer(driver);
@@ -601,6 +606,25 @@ class Struct extends Player {
         }
     }
 }
+class StructDebug extends Interactor{
+    var struct,vertex;
+    StructDebug(structIn,vert){
+        super("Desc");
+        struct=structIn;
+        setPosition(vert.x,vert.y);
+        vertex=vert;
+    }
+    void draw(float v1x,float v1y,float v2x, float v2y){
+        pushMatrix();
+        scale(zoomLevel);
+        if(struct.StructType=="fuel")
+            stroke(0,255,0);
+        else
+            stroke(255,0,0);
+        ellipse(vertex.x,vertex.y,8,8);
+        popMatrix();
+    }
+}
 class NodeDebug extends Interactor{
     var vertex,flag;
     NodeDebug(vert,flagin){
@@ -616,8 +640,8 @@ class NodeDebug extends Interactor{
             stroke(0,255,0);
         else
             stroke(255,0,0);
-        //text(flag.id+":"+flag.connectionsLength, vertex.x-4, vertex.y-2);
-        ellipse(vertex.x,vertex.y,8,8);
+        text(flag.id+":"+flag.connectionsLength, vertex.x-4, vertex.y-2);
+        //ellipse(vertex.x,vertex.y,8,8);
         popMatrix();
     }
 }

@@ -1,8 +1,8 @@
-function Structure(nodeID, StructType, StructCaption, Points) {
+function Structure(nodeID, StructType) {
     this.nodeID=nodeID;
     this.StructType=StructType;
-    this.StructCaption=StructCaption;
-    this.Points=Points;
+    this.StructCaption=StructCaptions[StructType];
+    this.Points=StructureValues[StructType];
     this.visited=false;
 }
 Structure.prototype.pointsString = function(){

@@ -25,9 +25,9 @@ var StructureCaptions={
 	fuel:"Fuel Station"
 };
 var DenominatorPool={	//denominations subject to change (read : likely)
-	easy: [4,5,6],
-	normal: [8,10,12],
-	hard: [7,9]
+	easy: [4,5,6],			// 6,8,10
+	normal: [8,10,12],      // 9,12,14
+	hard: [7,9]             // 7,15,16
 };
 var clearMultipliers={
 	easy: 1,
