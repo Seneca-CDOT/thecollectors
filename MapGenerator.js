@@ -143,71 +143,51 @@ MapGenerator.prototype.cleanNodes = function(){
 				var node2ID=new Node(j++, node2.vertex.x, node2.vertex.y);
 				node2ID=tmpGraph.addNode(node2ID);
 				for (var i = intersectCheck.length - 1; i >= 0; i--) {
-					var intNode=new Node(j++, intersectCheck[i].x, intersectCheck[i].y);
-					intNode=tmpGraph.addNode(intNode);
-					var node3=new Node(j++, intersectCheck[i].x1, intersectCheck[i].y1);
-					node3=tmpGraph.addNode(node3);
-					var node4=new Node(j++, intersectCheck[i].x2, intersectCheck[i].y2);
-					node4=tmpGraph.addNode(node4);
-					tmpGraph.addConnection(intNode,node1ID);
-					tmpGraph.addConnection(intNode,node2ID);
-					tmpGraph.addConnection(intNode,node3);
-					tmpGraph.addConnection(intNode,node4);
-					var tmpNodes=tmpGraph.nodeDictionary;
-					/*for (z in tmpNodes[intNode].connections) {
-						if(tmpGraph.areNodesConnected(z,node1ID)){
-							if(distance(tmpNodes[intNode].vertex,tmpNodes[z].vertex) > distance(tmpNodes[intNode].vertex,tmpNodes[node1ID].vertex)){
-								tmpGraph.removeConnection(z,intNode);
-								tmpGraph.addConnection(z,node1ID);
-								tmpGraph.addConnection(node1ID,intNode);
-							}
-							else{
-								tmpGraph.removeConnection(node1ID,intNode);
-								tmpGraph.addConnection(node1ID,z);
-								tmpGraph.addConnection(z,intNode);
-							}
-						}
-					}*/
-					
+					if(!intersectCheck[i].colinear){
+						var intNode=new Node(j++, intersectCheck[i].x, intersectCheck[i].y);
+						intNode=tmpGraph.addNode(intNode);
+						var node3=new Node(j++, intersectCheck[i].x1, intersectCheck[i].y1);
+						node3=tmpGraph.addNode(node3);
+						var node4=new Node(j++, intersectCheck[i].x2, intersectCheck[i].y2);
+						node4=tmpGraph.addNode(node4);
+						tmpGraph.addConnection(intNode,node1ID);
+						tmpGraph.addConnection(intNode,node2ID);
+						tmpGraph.addConnection(intNode,node3);
+						tmpGraph.addConnection(intNode,node4);
+						var tmpNodes=tmpGraph.nodeDictionary;
+					}
 				}
 				
 			}
 		}
 	}
-
-	//console.log(tmpGraph);
-	this.mapGraph=tmpGraph;
-	//var intersectCheck=this.mapGraph.edgeIntersects(node.vertex.x,node.vertex.y,node2.vertex.x,node2.vertex.y);
-
-
-
-
-
-
-
-
-
-	/*for(index in this.mapGraph.nodeDictionary){
-		var tmpNode = this.mapGraph.nodeDictionary[index];
-		if (tmpNode.connections.length==2){
-			tmpNode.flag=true;
-			var nodeindex1=tmpNode.connections[0];
-			var nodeindex2=tmpNode.connections[1];
-			var node1=this.mapGraph.nodeDictionary[nodeindex1];
-			var node2=this.mapGraph.nodeDictionary[nodeindex2];
-			var dot=getDotProduct(	node1.vertex.x-tmpNode.vertex.x,
-									node1.vertex.y-tmpNode.vertex.y,
-									node2.vertex.x-tmpNode.vertex.x,
-									node2.vertex.y-tmpNode.vertex.y);
-			if(dot==1){
-				var weight=tmpNode.connectionWeights[0] + tmpNode.connectionWeights[1] ; //this may be changed if they are fractions
-				node1.push(nodeindex2,weight);
-				node2.push(nodeindex1,weight);
-				console.log(node1.connections.indexOf(index));
-				node1.connections.splice(node1.connections.indexOf(index),1);
-				node2.connections.splice(node2.connections.indexOf(index),1);
-				delete this.mapGraph.nodeDictionary[index];
+	nodes=tmpGraph.nodeDictionary;
+	for(index in nodes){
+		var node1=nodes[index];
+		for(indx in node1.connections){
+			var node2=nodes[indx];
+			for(indekkusu in node1.connections){
+				if(indx != indekkusu){
+					var node3=nodes[indekkusu];
+					var intersectCheck=segIntersection(node1.vertex.x, node1.vertex.y,
+														node2.vertex.x, node2.vertex.y,
+														node1.vertex.x, node1.vertex.y,
+														node3.vertex.x, node3.vertex.y);
+					if(intersectCheck.colinear){
+						var dist1=distance(node1.vertex,node2.vertex);
+						var dist2=distance(node1.vertex,node3.vertex);
+						if(node1.vertex.extendedSlope(node2.vertex) == node1.vertex.extendedSlope(node3.vertex)){
+							if(dist1<dist2){
+								tmpGraph.removeConnection(node1.id, node3.id);
+							}
+							else{
+								tmpGraph.removeConnection(node1.id, node2.id);
+							}
+						}
+					}
+				}
 			}
 		}
-	}*/
+	}
+	this.mapGraph=tmpGraph;
 }
