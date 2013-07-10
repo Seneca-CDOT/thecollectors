@@ -32,5 +32,8 @@ Node.prototype.existingConnection=function(nodeId){
 	return false;
 }
 Node.prototype.removeConnection=function(nodeId){
-    delete this.connections[nodeId];
+    if(this.connections[nodeId]){
+        delete this.connections[nodeId];
+        this.connectionsLength--;
+    }
 }

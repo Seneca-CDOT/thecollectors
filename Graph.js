@@ -75,7 +75,6 @@ Graph.prototype.edgeIntersects=function(x1,y1,x2,y2){
     for(index in edges){
         var vert1=this.nodeDictionary[index].vertex;
         for (var i = edges[index].length - 1; i >= 0; i--) {
-            //console.log(index, "::", i, "::", edges[index]);
             var vert2=this.nodeDictionary[edges[index][i]].vertex;
             var check=segIntersection(vert1.x,vert1.y,vert2.x,vert2.y,x1,y1,x2,y2);
             if(check){

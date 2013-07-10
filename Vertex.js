@@ -48,7 +48,24 @@ Vertex.prototype.slope = function(vertex) {
     var ydiff = -1 * (vertex.y - this.y);
     return ydiff / xdiff;
 }
-
+//this slope is used for the map generator, in order to differentiate the direction of lines that are parallel to the x and y axis
+Vertex.prototype.extendedSlope = function(vertex) {
+    var xdiff = vertex.x - this.x;
+    var ydiff = -1 * (vertex.y - this.y);
+    var rv;
+    if(xdiff == 0){
+        if(ydiff>0) rv=1;
+        else rv=-1;
+    }
+    else if(ydiff == 0){
+        if(xdiff>0) rv=1;
+        else rv=-1;
+    }
+    else{
+        rv=ydiff/xdiff;
+    }
+    return rv;
+}
 Vertex.prototype.inverse = function() {
     return new Vertex(-this.x, -this.y);
 }
