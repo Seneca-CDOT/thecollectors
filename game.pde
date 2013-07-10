@@ -249,8 +249,8 @@ class NodeDebug extends Interactor{
             stroke(0,255,0);
         else
             stroke(255,0,0);
-        text(flag.id+":"+flag.connectionsLength, vertex.x-4, vertex.y-2);
-        //ellipse(vertex.x,vertex.y,8,8);
+        //text(flag.id+":"+flag.connectionsLength, vertex.x-4, vertex.y-2);
+        ellipse(vertex.x,vertex.y,8,8);
         popMatrix();
     }
 }
