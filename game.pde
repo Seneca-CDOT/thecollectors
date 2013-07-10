@@ -23,6 +23,8 @@ var GEN_TUTORIAL = true;
 var DISPLAY_SHADOWMAP = false;
 var ROAD_ALPHA = 50;
 var ROAD_DELTA = 10;
+var mouseOffsetX = 0;
+var mouseOffsetY = 0;
 
 boolean debugging=false;
 
@@ -419,8 +421,14 @@ class Driver extends Player{
         }
         if (driveFlag) return;
 
+        // The mouse co-ordinates must be offset by the position of the ViewBox
+        // for scrolling and zooming to work properly
+        var layerCoords = layer.mapCoordinateFromScreen(mx, my);
+        mx = layerCoords[0];
+        my = layerCoords[1];
+
         // Did we click on the vehicle? If not, check if we clicked on a road
-        if (over(mx, my)) {
+        if (over(mx, my) && button == LEFT) {
             if (destination.length > 0) driveToDestination();
         } else {
             // Get the hexadecimal colour code at the clicked point on the shadowMap
@@ -537,8 +545,8 @@ class Road extends Interactor {
 
         // Render the fraction text next to the road segment
         fill(126);
-        if ((pmouseX >= roadBounds[0] && pmouseX <= roadBounds[2] &&
-                pmouseY >= roadBounds[1] && pmouseY <= roadBounds[3])) {
+        if ((mouseOffsetX >= roadBounds[0] && mouseOffsetX <= roadBounds[2] &&
+                mouseOffsetY >= roadBounds[1] && mouseOffsetY <= roadBounds[3])) {
             fill(0);
         }
         text(fracText, (vertex1.x - vertex2.x) == 0 ? vertex1.x + 12 : ((vertex1.x + vertex2.x) * 0.5),
@@ -574,6 +582,16 @@ class Struct extends Player {
         }
     }
     void mouseMoved(int mx, int my) {
+        // The mouse co-ordinates must be offset by the position of the ViewBox
+        // for scrolling and zooming to work properly
+        var layerCoords = layer.mapCoordinateFromScreen(mx, my);
+        mx = layerCoords[0];
+        my = layerCoords[1];
+
+        // For detecting if we've hovered over a road
+        mouseOffsetX = mx;
+        mouseOffsetY = my;
+
         if (over(mx, my)) {
             hovering = true;
             setScale(1.2);
