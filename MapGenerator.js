@@ -1,13 +1,13 @@
-var sizex=940, sizey=640, baseDistance=60;
+var sizex=940, sizey=640, baseDistance=100;
 function MapGenerator(numStructs, difficulty){
 	this.mapGraph=new Graph();
 	this.structureList=[];
 	this.index=0;
 	this.numStructs=numStructs;
 	var pool=DenominatorPool.easy;
-	if(difficulty == "normal" || difficulty == "hard"){
+	if(difficulty == 2 || difficulty == 3){
 		pool=pool.concat(DenominatorPool.normal);
-		if(difficulty == "hard")
+		if(difficulty == 3)
 			pool=pool.concat(DenominatorPool.hard);	
 	}
 	this.fuel=pool[rng(0,pool.length-1)];
@@ -20,7 +20,7 @@ MapGenerator.prototype.generateMapGraph = function() {
 	this.generateStructures();
 }
 MapGenerator.prototype.generateRoads = function(){
-	var node=new Node(this.index++,rng(10,sizex/10+10),rng(10,sizey/10+10));
+	var node=new Node(this.index++,rng(50,sizex/5),rng(50,sizey/5));
 	var nodeID=this.mapGraph.addNode(node);
 	var cap=this.numStructs*3, prevHeading=0, prevDistance=0;
 	var distanceCap=Math.round(this.fuel / 2);
@@ -41,7 +41,7 @@ MapGenerator.prototype.generateRoads = function(){
 			case 2:
 				x=node.vertex.x;
 				y=node.vertex.y-distance;
-				if(y<35)
+				if(y<50)
 					heading=3;
 				else	
 					break;
@@ -54,7 +54,7 @@ MapGenerator.prototype.generateRoads = function(){
 			case 6:
 				x=node.vertex.x-distance;
 				y=node.vertex.y;
-				if(x<35){
+				if(x<50){
 					heading=7;
 				}
 				else

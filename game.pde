@@ -13,13 +13,14 @@ float VEHICLE_SPEED = 1.5;
 float zoomLevel=1;
 int arrowSpeed=10;
 int gameDifficulty = 0;
+int currentLevel = 0;
 //line width
 strokeWeight(4);
 
 /*debugging tools*/
-var mapType="xml"; //change between "xml" or "gen"
+var mapType="gen"; //change between "xml" or "gen"
 var showMenus=false;//true;
-var GEN_TUTORIAL = true;
+var GEN_TUTORIAL = false;
 var DISPLAY_SHADOWMAP = false;
 var ROAD_ALPHA = 50;
 var ROAD_DELTA = 10;
@@ -77,7 +78,9 @@ void initialize() {
         addScreen("testing", new CampaignMap(screenWidth * 2, screenHeight * 2));
     }
     else{
-        addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(8,"hard")));
+        gameDifficulty=3;
+        currentLevel=2;
+        addScreen("testing",new CampaignMap(screenWidth*2,screenHeight*2));
     }
 }
 
@@ -129,9 +132,9 @@ class CampaignMap extends Level {
         map = new MapGenerator(gameDifficulty);
             //numDeliveries = int,fractionModChance = float,simpleMultiples = bool
         denominator = 0; // extract the denominator to pass back into future map generations
-
+*/      
+        map=new Map(numDeliveries,gameDifficulty);
         renderMap(map);
-*/      renderMap(null);
     }
     void renderMap(generatedMap) {
         addLevelLayer("Level", new MapLevel(this, generatedMap));
@@ -214,7 +217,7 @@ class MapLevel extends LevelLayer {
 		}
     }
     void initializePlayer() {
-        playerAvatar = new Driver(generatedMap.startPoint);
+        playerAvatar = new Driver(generatedMap.startPoint.clone());
         addPlayer(playerAvatar);
         initializeStructures();
     }
