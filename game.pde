@@ -27,7 +27,7 @@ var mouseOffsetX = 0;
 var mouseOffsetY = 0;
 
 boolean debugging=false;
-//sfghfg
+
 var canvasHasFocus = false;
 void mouseOver() {
     canvasHasFocus = true;
