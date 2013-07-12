@@ -1,0 +1,14 @@
+if [ -e "consolidatedJS.js"]
+then
+	rm consolidatedJS.js
+fi
+
+cat Utilities.js >> consolidatedJS.js
+cat gameValues.js >> consolidatedJS.js
+cat Fraction.js >> consolidatedJS.js
+cat Vertex.js >> consolidatedJS.js
+cat Node.js >> consolidatedJS.js
+cat Structure.js >> consolidatedJS.js
+cat Graph.js >> consolidatedJS.js
+cat Map.js >> consolidatedJS.js
+cat MapGenerator.js >> consolidatedJS.js

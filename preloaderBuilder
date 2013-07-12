@@ -1,0 +1,24 @@
+# I am terrible at BASH :(
+exec 3< assets.txt
+assetsFolder=$(grep assetsFolder gameValues.js)
+assetsFolder=$(echo $assetsFolder | cut -d'"' -f2)
+echo /*@pjs preload=\" > assetPreloader.pde
+keepgoing=true
+while $keepgoing
+do
+	if [ ! -z "$input" ]
+	then
+		echo -n $assetsFolder$input >> assetPreloader.pde
+		if read input <&3
+		then
+			echo , >>assetPreloader.pde
+		else 
+			echo >>assetPreloader.pde
+			keepgoing=false
+		fi
+	else
+		read input <&3
+	fi
+done
+echo '";*/' >> assetPreloader.pde
+exec 3<&-
