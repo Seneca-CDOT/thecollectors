@@ -31,20 +31,112 @@
     <script type="text/javascript" src="processing-lazyload.js"></script>
 	<style>
 	  canvas {outline:none;width:960px;height:640px;}
-    button {width:120px;}
+      button { width:120px; }
+      div.textBox
+      {
+          background-color: #000000;
+          opacity:0.6;
+      }
+      div.labelBox
+      {
+          background-color: #000000;
+          opacity:0.8;
+      }
+      div.visible { display:block; }
+      div.hidden { display:none; }
+      div.textBox p
+      {
+          color:#ffffff;
+          margin: 10px 10px;
+      }
+      div.labelBox p
+      {
+          color:#ffffff;
+          margin: 10px 10px;
+      }
 	</style>
   </head>
   <body>
+    <canvas onmouseenter="$('canvas').focus()" data-processing-sources="codebase.pde game.pde"></canvas>
+    <div id="menuDiv" style="display:block;position:fixed;top:650px;left:0px;">
+        <button id="campaignButton">Campaign</button><br />
+        <button id="quickPlayButton">Quick Play</button><br />
+        <button id="optionsButton">Options</button>
+    </div>
+    <div id="difficultyDiv" style="display:none;position:fixed;top:100px;left:250px;">
+        <button id="easyButton">Easy</button><br />
+        <button id="mediumButton">Normal</button><br />
+        <button id="hardButton">Hard</button><br />
+    </div>
+    <div id="tutorialTextDiv" class="textBox visible" style="position:fixed;left:200px;top:500px;width:500px;height:110px;">
+        <p id="tutorialTextElement">
+        </p>
+    </div>
+    <div id="legendDiv" class="textBox visible" style="position:fixed;left:730px;top:500px;width:200px;height:110px;">
+        <p id="legendElement">
+        </p>
+    </div>
+
+    <script type="text/javascript">
+        var tutorialText = [], tutorialIndex = 0;
+        tutorialText[0] = "Welcome to the tutorial. Press the Enter button or click this text area to continue.";
+        tutorialText[1] = "This tutorial will explain how to play the game, and what the objectives are.";
+        tutorialText[2] = "Let's take a look at the map. This is the main play area.<br/><br/>You can drag the map by holding down the LEFT mouse button and dragging the mouse in any direction.";
+        tutorialText[3] = "Alternatively, you can use the keyboard arrow keys to move the map.";
+        document.getElementById("tutorialTextElement").innerHTML = tutorialText[tutorialIndex];
+        document.getElementById("legendElement").innerHTML = "Enter Key or Click<br/> to Advance Tutorial";
+
+        // Event listener for the <p> element containing tutorial instructions.
+        document.getElementById("tutorialTextDiv").addEventListener("click", function(event) {
+          advanceTutorial();
+        }, false);
+        function advanceTutorial() {
+          if (tutorialIndex < tutorialText.length - 1) {
+            document.getElementById("tutorialTextElement").innerHTML = tutorialText[++tutorialIndex];
+          }
+        }
+    </script>
+
     <script type="text/javascript">
       var sketch;
       var pmouseX = 0, pmouseY = 0;
       var gameMode = null;
+      var currentLevel = 1;
       var canvasHasFocus = false;
       document.addEventListener("DOMMouseScroll", function(e) {
         if (canvasHasFocus) {
           e.preventDefault();
         }
       }, false);
+      // Event listener for the div containing the main menu buttons
+      document.getElementById("menuDiv").addEventListener("click", function(event) {
+        switch (event.target.id) {
+          case "campaignButton":
+            buttonClick(1);
+            break;
+          case "quickPlayButton":
+            buttonClick(2);
+            break;
+          case "optionsButton":
+            buttonClick(3);
+            break;
+        }
+      }, false);
+      // Event listener for the div containing the difficulty menu buttons
+      document.getElementById("difficultyDiv").addEventListener("click", function(event) {
+        switch (event.target.id) {
+          case "easyButton":
+            buttonClick(4);
+            break;
+          case "mediumButton":
+            buttonClick(5);
+            break;
+          case "hardButton":
+            buttonClick(6);
+            break;
+        }
+      }, false);
+
       function buttonClick(buttonVal) {
         switch (buttonVal) {
           case 1:
@@ -81,16 +173,5 @@
         }
       }
     </script>
-    <canvas onmouseenter="$('canvas').focus()" data-processing-sources="codebase.pde game.pde"></canvas>
-    <div id="menuDiv" style="display:block;position:fixed;top:650px;left:0px;">
-        <button id="campaignButton" onclick="buttonClick(1)">Campaign</button><br />
-        <button id="quickPlayButton" onclick="buttonClick(2)">Quick Play</button><br />
-        <button id="optionsButton" onclick="buttonClick(3)">Options</button>
-    </div>
-    <div id="difficultyDiv" style="display:none;position:fixed;top:100px;left:250px;">
-        <button id="easyButton"onclick="buttonClick(4)">Easy</button><br />
-        <button id="mediumButton"onclick="buttonClick(5)">Normal</button><br />
-        <button id="hardButton"onclick="buttonClick(6)">Hard</button><br />
-    </div>
   </body>  
 </html>
