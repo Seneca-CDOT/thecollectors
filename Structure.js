@@ -1,7 +1,7 @@
 function Structure(nodeID, StructType) {
     this.nodeID=nodeID;
     this.StructType=StructType;
-    this.StructCaption=StructCaptions[StructType];
+    this.StructCaption=StructureCaptions[StructType];
     this.Points=StructureValues[StructType];
     this.visited=false;
 }

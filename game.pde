@@ -113,7 +113,7 @@ class CampaignMap extends Level {
     // imported from an XML file.
     void generateTutorial() {
         var map = null;
-        map = new Map("tutorial.xml");
+        map = new Map(0,0,"tutorial.xml");
         renderMap(map);
         //overlayTutorialInterface();
     }
