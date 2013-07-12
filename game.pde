@@ -27,7 +27,8 @@ var mouseOffsetX = 0;
 var mouseOffsetY = 0;
 
 boolean debugging=false;
-
+//sfghfg
+var canvasHasFocus = false;
 void mouseOver() {
     canvasHasFocus = true;
 }
@@ -336,6 +337,9 @@ class Driver extends Player{
         }
         mouseScroll=0;
         keyCode=undefined;
+    }
+    void mouseMoved(int mx, int my){
+        canvasHasFocus=true;
     }
     void driveToDestination() {
         var impulseX = 0, impulseY = 0;
