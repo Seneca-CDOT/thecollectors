@@ -6,7 +6,8 @@ distance(pt1, pt2){}
 clone(){}
 equals(vertex){}
 slope(vertex){}
-invers(){}
+extendedSlope(vertex){}			//custom slope function which returns 1 or -1 for horizontal or vertical lines
+inverse(){}
 applyRotation(angle){}
 move(offset){}
 scale(factor){}

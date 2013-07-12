@@ -6,3 +6,4 @@ position(){}						//returns the vertex of the node
 equals(node){}						//checks if the ids of the nodes are equal
 push(nodeId) {}						//push a node into the connections list
 existingConnection(nodeId){}		//checks if the connection exists already
+removeConnection(nodeId){}			//removes connection to a node

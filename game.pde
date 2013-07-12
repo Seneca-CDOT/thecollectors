@@ -1,10 +1,5 @@
-/* @pjs preload="assets/gas.png,
-                 assets/car.png,
-                 assets/titleScreenTest.jpg";
- */
-
-final int screenWidth=960;
-final int screenHeight=640;
+final int screenWidth=screenSizeX;
+final int screenHeight=screenSizeY;
 
 PGraphics shadowMap = null;
 var shadowMapColorDictionary;
@@ -12,22 +7,26 @@ var roadSelectedDictionary;
 float VEHICLE_SPEED = 1.5;
 float zoomLevel=1;
 int arrowSpeed=10;
-int gameDifficulty = 0;
-int currentLevel = 0;
+
+//tracking game values
+int gameDifficulty = 1;
+int currentLevel = 1;
+
 //line width
 strokeWeight(4);
 
 /*debugging tools*/
-var mapType="gen"; //change between "xml" or "gen"
-var showMenus=false;//true;
-var GEN_TUTORIAL = false;
+boolean debugging=false;
+
+var mapType="gen";              //change between "xml" or "gen"
+var showMenus=false;
+var GEN_TUTORIAL = false;       //since game difficulty and level are both 1, this can stay false for now
 var DISPLAY_SHADOWMAP = false;
 var ROAD_ALPHA = 50;
 var ROAD_DELTA = 10;
 var mouseOffsetX = 0;
 var mouseOffsetY = 0;
 
-boolean debugging=false;
 
 void mouseOver() {
     canvasHasFocus = true;
@@ -37,6 +36,7 @@ void mouseOut() {
     canvasHasFocus = false;
 }
 
+/*  NEEDS TO BE REWRITTEN
 void loadDifficulty(diffVal, gameMode) {
     gameDifficulty = diffVal;
 
@@ -63,6 +63,7 @@ void loadDifficulty(diffVal, gameMode) {
         console.error("Undefined game mode!");
     }
 }
+*/
 
 void initialize() {
     clearScreens(); // reset the screen
@@ -71,10 +72,6 @@ void initialize() {
         setActiveScreen("Title Screen"); // useful for when more screens are added
     }
     if(mapType=="xml"){
-        /*addScreen("XMLLevel",new XMLLevel(screenWidth*2,screenHeight*2,new Map("map.xml")));
-        if(!showMenus)
-            setActiveScreen("XMLLevel");
-            */
         addScreen("testing", new CampaignMap(screenWidth * 2, screenHeight * 2));
     }
     else{
@@ -95,7 +92,7 @@ class TitleScreenLayer extends LevelLayer {
     TitleScreenLayer(Level owner) {
         super(owner);
         addBackgroundSprite(new TilingSprite(
-            new Sprite("assets/titleScreenTest.jpg"), 0, 0, screenWidth, screenHeight));
+            new Sprite(assetsFolder+"titleScreenTest.jpg"), 0, 0, screenWidth, screenHeight));
     }
 }
 
@@ -125,15 +122,9 @@ class CampaignMap extends Level {
     void overlayTutorialInterface() {
     }
     void generateMap() {
-        var map = null;
         var numDeliveries = 2 * currentLevel + 2;
         var simpleMultiples = true;
-/*
-        map = new MapGenerator(gameDifficulty);
-            //numDeliveries = int,fractionModChance = float,simpleMultiples = bool
-        denominator = 0; // extract the denominator to pass back into future map generations
-*/      
-        map=new Map(numDeliveries,gameDifficulty);
+        var map=new Map(numDeliveries,gameDifficulty);
         renderMap(map);
     }
     void renderMap(generatedMap) {
@@ -212,7 +203,10 @@ class MapLevel extends LevelLayer {
 		for(var i = 0; i < structureListLength; i++) {
 			var structObject = generatedMap.structureList[i];
 			var vert = generatedMap.mapGraph.findNodeArray(structObject.nodeID).vertex;
-			Struct structure = new Struct(vert);
+            if (debugging)
+                StructDebug structure = new StructDebug(vert,structObject);
+            else
+                Struct structure = new Struct(vert,structObject);
             addPlayer(structure);
 		}
     }
@@ -220,68 +214,6 @@ class MapLevel extends LevelLayer {
         playerAvatar = new Driver(generatedMap.startPoint.clone());
         addPlayer(playerAvatar);
         initializeStructures();
-    }
-}
-
-class XMLLevel extends Level{
-    XMLLevel(float levelWidth,float levelHeight,var mapIn){
-        super(levelWidth,levelHeight)
-            addLevelLayer("",new XMLLevelLayer(this,mapIn));
-        setViewBox(0,0,screenHeight, screenHeight);
-    }
-}
-class XMLLevelLayer extends LevelLayer{
-	XMLLevelLayer(Level owner, mapIn){
-		super(owner);
-        debug=debugging;
-
-		color bgcolor=color(243,233,178);
-		setBackgroundColor(bgcolor);
-		var edgeList=mapIn.getEdgeList();
-		for (index in edgeList){
-			var vert1=mapIn.mapGraph.findNodeArray(index).vertex;
-			for (var i = edgeList[index].length - 1; i >= 0; i--) {
-				var vert2=mapIn.mapGraph.findNodeArray(edgeList[index][i]).vertex;
-				Road temp= new Road(i, vert1,vert2, new Fraction(1, 7));
-				addInteractor(temp);
-			}
-		}
-		ln=mapIn.structureList.length;
-		for(int i=0;i<ln;i++){
-			var struct=mapIn.structureList[i];
-			var vert=mapIn.mapGraph.findNodeArray(struct.nodeID).vertex;
-            Struct temp;
-            if(debug){
-                temp=new StructDebug(struct,vert);
-            }
-            else{
-                temp= new Struct(vert);
-            }
-			addPlayer(temp);
-		}
-		Driver driver=new Driver(mapIn.startPoint);
-		addPlayer(driver);
-        if(debug){
-            for(index in mapIn.mapGraph.nodeDictionary){
-                var x=mapIn.mapGraph.nodeDictionary[index].vertex.x;
-                var y=mapIn.mapGraph.nodeDictionary[index].vertex.y;
-                NodeDebug tmp = new NodeDebug(new Vertex(x,y),mapIn.mapGraph.nodeDictionary[index]);//mapIn.mapGraph.nodeDictionary[index].flag);
-                addInteractor(tmp);
-            }
-        }
-		/* Boundaries not necessary at the moment. Leaving this here just in case
-		addBoundary(new Boundary(0,height,width,height));
-		addBoundary(new Boundary(width,height,width,0));
-		addBoundary(new Boundary(width,0,0,0));
-		addBoundary(new Boundary(0,0,0,height));
-		*/
-        //console.log(mapIn.exportToXML());         doesnt work with rng maps yet
-	}
-    void zoom(float s){
-        if(xScale+s < 0)
-            setScale(0);
-        else
-            setScale(xScale+s);
     }
 }
 class Driver extends Player{
@@ -479,7 +411,7 @@ class Driver extends Player{
         }
     }
     void setStates() {
-        addState(new State("Player", "assets/car.png"));
+        addState(new State("Player", assetsFolder+"car.png"));
     }
     void stopVehicle() {
         stop();
@@ -563,18 +495,19 @@ class Road extends Interactor {
     }
 }
 class Struct extends Player {
-    var vertex, structLabel, sBox;
+    var vertex, structLabel, sBox, structObject;
     var hovering;
-    Struct(vert) {
-        super("Desc");
+    Struct(vert, structObjectIn) {
+        super("Structure");
         setPosition(vert.x, vert.y);
         vertex = vert;
         setStates();
         sBox = getBoundingBox();
         hovering = false;
+        structObject=structObjectIn;
     }
     void setStates() {
-        addState(new State("default","assets/gas.png"));
+        addState(new State("default",assetsFolder+"gas.png"));
     }
     void draw(float v1x,float v1y,float v2x, float v2y){
         super.draw(v1x,v1y,v2x,v2y);
@@ -584,8 +517,8 @@ class Struct extends Player {
             rect(sBox[0] - 8, sBox[1] - 23, 90, 30);
             rect(sBox[0] - 8, sBox[1] + 60, 90, 30);
             fill(255);
-            text("Label", sBox[0] - 5, sBox[1] - 3);
-            text("800", sBox[0] - 5, sBox[1] + 83);
+            text(structObject.StructCaption, sBox[0] - 5, sBox[1] - 3);
+            text(structObject.pointsString(), sBox[0] - 5, sBox[1] + 83);
             stroke(0);
         }
     }
@@ -609,18 +542,15 @@ class Struct extends Player {
         }
     }
 }
-class StructDebug extends Interactor{
-    var struct,vertex;
-    StructDebug(structIn,vert){
-        super("Desc");
-        struct=structIn;
-        setPosition(vert.x,vert.y);
-        vertex=vert;
+class StructDebug extends Struct{
+
+    StructDebug(vert,structObject){
+        super(vert,structObject);
     }
     void draw(float v1x,float v1y,float v2x, float v2y){
         pushMatrix();
-        scale(zoomLevel);
-        if(struct.StructType=="fuel")
+        //scale(zoomLevel);
+        if(structObject.StructType=="Fuel Station")
             stroke(0,255,0);
         else
             stroke(255,0,0);
@@ -637,7 +567,7 @@ class NodeDebug extends Interactor{
     }
     void draw(float v1x,float v1y,float v2x, float v2y){
         pushMatrix();
-        scale(zoomLevel);
+        //scale(zoomLevel);
         fill(0,0,0);
         if(flag)
             stroke(0,255,0);
