@@ -16,7 +16,8 @@ int currentLevel = 1;
 strokeWeight(4);
 
 /*debugging tools*/
-boolean debugging=false;
+boolean debugging=true;
+
 
 var mapType="gen";              //change between "xml" or "gen"
 var showMenus=false;
@@ -27,8 +28,6 @@ var ROAD_DELTA = 10;
 var mouseOffsetX = 0;
 var mouseOffsetY = 0;
 
-
-var canvasHasFocus = false;
 void mouseOver() {
     canvasHasFocus = true;
 }
@@ -65,6 +64,11 @@ void loadDifficulty(diffVal, gameMode) {
     }
 }
 */
+
+if(!GEN_TUTORIAL){
+  $("#tutorialTextDiv").hide();
+  $("#legendDiv").hide();
+}
 
 void initialize() {
     clearScreens(); // reset the screen
@@ -198,6 +202,13 @@ class MapLevel extends LevelLayer {
         }
         shadowMap.endDraw();
         initializePlayer();
+        if(debugging){
+            var allNodes=generatedMap.mapGraph.nodeDictionary;
+            for(index in allNodes){
+                NodeDebug tmp = new NodeDebug(allNodes[index].vertex, index);
+                addInteractor(tmp);
+            }
+        }
     }
     void initializeStructures() {
 		var structureListLength = generatedMap.structureList.length;
@@ -572,12 +583,12 @@ class NodeDebug extends Interactor{
     void draw(float v1x,float v1y,float v2x, float v2y){
         pushMatrix();
         //scale(zoomLevel);
-        fill(0,0,0);
+        fill(0,255,0);
         if(flag)
             stroke(0,255,0);
         else
             stroke(255,0,0);
-        text(flag.id+":"+flag.connectionsLength, vertex.x-4, vertex.y-2);
+        text(flag, vertex.x-4, vertex.y-2);
         //ellipse(vertex.x,vertex.y,8,8);
         popMatrix();
     }
