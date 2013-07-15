@@ -28,6 +28,7 @@ var mouseOffsetX = 0;
 var mouseOffsetY = 0;
 
 
+var canvasHasFocus = false;
 void mouseOver() {
     canvasHasFocus = true;
 }
@@ -277,6 +278,9 @@ class Driver extends Player{
         mouseScroll=0;
         keyCode=undefined;
     }
+    void mouseMoved(int mx, int my){
+        canvasHasFocus=true;
+    }
     void driveToDestination() {
         var impulseX = 0, impulseY = 0;
 
@@ -367,8 +371,15 @@ class Driver extends Player{
         mx = layerCoords[0];
         my = layerCoords[1];
 
+        var vBox = getBoundingBox();
+        var vBoxDeltaX = Math.abs(vBox[0] - vBox[4]) * 0.5;
+        var vBoxDeltaY = Math.abs(vBox[1] - vBox[5]) * 0.5;
+        var x = getX();
+        var y = getY();
+
         // Did we click on the vehicle? If not, check if we clicked on a road
-        if (over(mx, my) && button == LEFT) {
+        if (button == LEFT && mx >= x - vBoxDeltaX && mx <= x + vBoxDeltaX &&
+                my >= y - vBoxDeltaY && my <= y + vBoxDeltaY) {
             if (destination.length > 0) driveToDestination();
         } else {
             // Get the hexadecimal colour code at the clicked point on the shadowMap

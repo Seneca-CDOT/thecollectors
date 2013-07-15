@@ -51,6 +51,7 @@
 	</style>
   </head>
   <body>
+
     <canvas onmouseenter="$('canvas').focus()" data-processing-sources="codebase.pde assetPreloader.pde game.pde"></canvas>
     <div id="menuDiv" style="display:block;position:fixed;top:650px;left:0px;">
         <button id="campaignButton">Campaign</button><br />
@@ -93,10 +94,8 @@
 
     <script type="text/javascript">
       var sketch;
-      var pmouseX = 0, pmouseY = 0;
       var gameMode = null;
-      var currentLevel = 1;
-      var canvasHasFocus = false;
+      
       document.addEventListener("DOMMouseScroll", function(e) {
         if (canvasHasFocus) {
           e.preventDefault();
