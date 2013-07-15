@@ -5,7 +5,7 @@ PGraphics shadowMap = null;
 var shadowMapColorDictionary;
 var roadSelectedDictionary;
 float VEHICLE_SPEED = 1.5;
-float zoomLevel=1;
+float zoomLevel = 1.0;
 int arrowSpeed=10;
 
 //tracking game values
@@ -152,10 +152,15 @@ class MapLevel extends LevelLayer {
         initializeRoads();
     }
     void zoom(float s) {
-        if (xScale + s < 0) {
-            setScale(0);
+        if (xScale + s < 0.7) {
+            setScale(0.7);
+            zoomLevel = 1.3;
+        } else if (xScale + s > 1.6) {
+            setScale(1.6);
+            zoomLevel = 0.4;
         } else {
             setScale(xScale + s);
+            zoomLevel -= s;
         }
     }
     void initializeRoads() {
@@ -363,6 +368,19 @@ class Driver extends Player{
             int _x = 0, _y = 0;
             int deltaX = mx - pmouseX;
             int deltaY = my - pmouseY;
+            deltaX = deltaX * zoomLevel;
+            deltaY = deltaY * zoomLevel;
+            if (deltaX < 0) {
+                deltaX = Math.floor(deltaX);
+            } else {
+                deltaX = Math.ceil(deltaX);
+            }
+            if (deltaY < 0) {
+                deltaY = Math.floor(deltaY);
+            } else {
+                deltaY = Math.ceil(deltaY);
+            }
+
             if (deltaX > 0) _x -= Math.abs(deltaX);
             else if (deltaX < 0) _x += Math.abs(deltaX);
             if (deltaY < 0) _y += Math.abs(deltaY);
