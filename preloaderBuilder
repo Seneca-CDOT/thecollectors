@@ -1,24 +1,46 @@
-# I am terrible at BASH :(
-exec 3< assets.txt
-assetsFolder=$(grep assetsFolder gameValues.js)
-assetsFolder=$(echo $assetsFolder | cut -d'"' -f2)
-echo /*@pjs preload=\" > assetPreloader.pde
+# USAGE : preloaderBuilder [ inputfile [outputfile] ]
+
+# first line of the input file is the folder containing the assets
+# each asset should be on a separate line
+# make sure the file ends with a newline
+
+if [ $# -ge 1 ]
+then
+	if [ -f "$1" ]
+	then
+		inputfile=$1
+	else
+		echo "File did not exist. Defaulting to \"assets.dat\""
+		inputfile=assets.dat
+	fi
+else
+	inputfile=assets.dat
+fi
+if [[ $# = 2 ]]
+then
+	outputfile=$2
+else
+	outputfile=assetPreloader.pde
+fi
+exec 3< $inputfile
+read assetsFolder <&3
+echo /*@pjs preload=\" > $outputfile
 keepgoing=true
 while $keepgoing
 do
 	if [ ! -z "$input" ]
 	then
-		echo -n $assetsFolder$input >> assetPreloader.pde
+		echo -n $assetsFolder$input >> $outputfile
 		if read input <&3
 		then
-			echo , >>assetPreloader.pde
+			echo , >>$outputfile
 		else 
-			echo >>assetPreloader.pde
+			echo >>$outputfile
 			keepgoing=false
 		fi
 	else
 		read input <&3
 	fi
 done
-echo '";*/' >> assetPreloader.pde
+echo '";*/' >> $outputfile
 exec 3<&-
