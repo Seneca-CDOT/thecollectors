@@ -165,6 +165,7 @@ class CampaignMap extends Level {
 class MapLevel extends LevelLayer {
     var generatedMap = null;
     var r = 0, g = 0, b = 0;
+    var shadowBounds = [];
 
     MapLevel(Level owner, map) {
         super(owner);
@@ -188,6 +189,33 @@ class MapLevel extends LevelLayer {
             zoomLevel -= s;
         }
     }
+    // Calculate the shadow road vertices
+    void calculateShadowBounds(vertex1, vertex2) {
+        var vFlippedX = (vertex1.x - vertex2.x) < 0 ? false : true;
+        var vFlippedY = (vertex1.y - vertex2.y) < 0 ? false : true;
+        if (vertex1.x - vertex2.x == 0 && !vFlippedY) {
+            shadowBounds[0] = vertex1.x;
+            shadowBounds[1] = vertex1.y + 17;
+            shadowBounds[2] = vertex2.x;
+            shadowBounds[3] = vertex2.y - 17;
+        } else if (vertex1.x - vertex2.x == 0 && vFlippedY) {
+            shadowBounds[0] = vertex1.x;
+            shadowBounds[1] = vertex2.y + 17;
+            shadowBounds[2] = vertex2.x;
+            shadowBounds[3] = vertex1.y - 17;
+        }
+        if (vertex1.y - vertex2.y == 0 && !vFlippedX) {
+            shadowBounds[0] = vertex1.x + 17;
+            shadowBounds[1] = vertex1.y;
+            shadowBounds[2] = vertex2.x - 17;
+            shadowBounds[3] = vertex2.y;
+        } else if (vertex1.y - vertex2.y == 0 && vFlippedX) {
+            shadowBounds[0] = vertex2.x + 17;
+            shadowBounds[1] = vertex1.y;
+            shadowBounds[2] = vertex1.x - 17;
+            shadowBounds[3] = vertex2.y;
+        }
+    }
     void initializeRoads() {
         var edgeList = generatedMap.getEdgeList();
 
@@ -205,8 +233,8 @@ class MapLevel extends LevelLayer {
                 // Generate a new colour for the road segment, then draw the segment in that colour
                 color shadowColor = color(r, g, b);
                 shadowMap.stroke(shadowColor);
-                shadowMap.line(primaryNode.vertex.x, primaryNode.vertex.y, connectedNode.vertex.x,
-                        connectedNode.vertex.y);
+                calculateShadowBounds(primaryNode.vertex, connectedNode.vertex);
+                shadowMap.line(shadowBounds[0], shadowBounds[1], shadowBounds[2], shadowBounds[3]);
 
                 // Store the coordinates that make up the edge using its color as the ID
                 var colorID = hex(shadowColor);
@@ -231,6 +259,7 @@ class MapLevel extends LevelLayer {
             }
         }
         shadowMap.endDraw();
+        shadowBounds = [];
         initializePlayer();
         if(debugging){
             var allNodes=generatedMap.mapGraph.nodeDictionary;
