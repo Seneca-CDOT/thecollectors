@@ -63,11 +63,11 @@
         <button id="mediumButton">Normal</button><br />
         <button id="hardButton">Hard</button><br />
     </div>
-    <div id="tutorialTextDiv" class="textBox visible" style="position:fixed;left:200px;top:500px;width:500px;height:110px;">
+    <div id="tutorialTextDiv" class="textBox visible inCanvas" style="position:fixed;left:200px;top:500px;width:500px;height:110px;">
         <p id="tutorialTextElement">
         </p>
     </div>
-    <div id="legendDiv" class="textBox visible" style="position:fixed;left:730px;top:500px;width:200px;height:110px;">
+    <div id="legendDiv" class="textBox visible inCanvas" style="position:fixed;left:730px;top:500px;width:200px;height:110px;">
         <p id="legendElement">
         </p>
     </div>
@@ -93,7 +93,7 @@
     </script>
 
     <script type="text/javascript">
-      var sketch;
+
       var gameMode = null;
       var canvasHasFocus = false;
       
@@ -144,21 +144,20 @@
             gameMode = "Quick Play";
             break;
           case 3:
-            //TODO: make options menu screen
+            player.driveToDestination();
             break;
           case 4:
             difficultyDiv.style.display = "none";
-            sketch = Processing.instances[0];
+            var sketch = Processing.instances[0];
+            console.log(sketch);
             sketch.loadDifficulty(1, gameMode);
             break;
           case 5:
             difficultyDiv.style.display = "none";
-            sketch = Processing.instances[0];
             sketch.loadDifficulty(2, gameMode);
             break;
           case 6:
             difficultyDiv.style.display = "none";
-            sketch = Processing.instances[0];
             sketch.loadDifficulty(3, gameMode);
             break;
           default:

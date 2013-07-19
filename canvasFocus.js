@@ -1,3 +1,4 @@
+var canvasHasFocus=false;
 document.addEventListener("DOMContentLoaded",function(){
 
   // while focussed, play sketch
@@ -7,6 +8,7 @@ document.addEventListener("DOMContentLoaded",function(){
     if (sketch) {
       if(sketch.loop) sketch.loop();
       if(sketch.unmute) sketch.unmute();
+      canvasHasFocus=true;
     }
   });
   

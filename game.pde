@@ -71,6 +71,7 @@ if(!GEN_TUTORIAL){
 }
 
 void initialize() {
+    sketch = Processing.instances[0];
     clearScreens(); // reset the screen
     if(showMenus){
         addScreen("Title Screen", new TitleScreen(screenWidth, screenHeight));
@@ -228,8 +229,8 @@ class MapLevel extends LevelLayer {
 		}
     }
     void initializePlayer() {
-        playerAvatar = new Driver(generatedMap.startPoint.clone());
-        addPlayer(playerAvatar);
+        player = new Driver(generatedMap.startPoint.clone());
+        addPlayer(player);
         initializeStructures();
     }
 }

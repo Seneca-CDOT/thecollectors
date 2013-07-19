@@ -1,4 +1,5 @@
 //	Environment Values 	//
+var sketch, player;
 var screenSizeX=940;
 var screenSizeY=640;
 
