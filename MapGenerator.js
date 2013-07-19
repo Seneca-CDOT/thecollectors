@@ -17,7 +17,8 @@ MapGenerator.prototype.generateMapGraph = function() {
 	this.index=0;
 	this.generateRawGraph();
 	this.cleanGraph();
-	this.generateStructures();
+	if(!this.startPoint)
+		this.generateStructures();
 }
 /*	
 	internal function which should only be called by generateMapGraph()
@@ -193,5 +194,17 @@ MapGenerator.prototype.minConnections = function(nodeFrom,nodeIn,hops){
 	else return true;
 }
 MapGenerator.prototype.generateStructures = function(){
-	
+	this.startPoint = this.randomNode();
+}
+/*
+	Returns a random node within the Graph object
+*/
+MapGenerator.prototype.randomNode = function() {
+	var loops = rng(0,this.mapGraph.length);
+	var nodes = this.mapGraph.nodeDictionary;
+	var i=0;
+	for(index in nodes){
+		if(i++ == loops)
+			return nodes[index];
+	}
 }

@@ -8,4 +8,6 @@ generateMapGraph(){}
 
 generateRawGraph(){}
 cleanGraph(){}
+minConnection(nodeFrom, nodeIn, hops){}
 generateStructures(){}
+randomNode(){}
