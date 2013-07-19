@@ -16,7 +16,7 @@ function Map(numStructs, difficulty, filename){
 		this.mapGraph=gen.mapGraph;
 		this.structureList=gen.structureList;
         this.fuel=new Fraction(gen.fuel,gen.fuel);
-        this.startPoint=gen.mapGraph.nodeDictionary[0].vertex;
+        this.startPoint=gen.startPoint.vertex;
 	}
 }
 Map.prototype.getEdgeList=function(){
