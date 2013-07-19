@@ -175,7 +175,7 @@ MapGenerator.prototype.cleanGraph = function(){
 	nodes has at least 3 connections, a.k.a not making a one direction path.
 	Currently tests a chain of up to 3 nodes
 */
-MapGenerator.prototype.minConnections = function(nodeFrom,nodeIn,hops){
+MapGenerator.prototype.minConnections = function(nodeFrom, nodeIn, hops){
 	var node=this.mapGraph.nodeDictionary[nodeIn];
 	var tmpHops=hops;
 	if(node.connectionsLength <= 2){
@@ -196,6 +196,25 @@ MapGenerator.prototype.minConnections = function(nodeFrom,nodeIn,hops){
 }
 MapGenerator.prototype.generateStructures = function(){
 	this.startPoint = this.randomNode();
+}
+//needs work
+MapGenerator.prototype.findStructure = function(nodeFrom, nodeIn, fuelAmt){
+	var node=this.mapGraph.nodeDictionary[nodeIn];
+	var tmpFuelAmt=fuelAmt;
+	if(node.connectionsLength > 1){
+		if(fuelAmt == 0)
+			return {};
+		else{
+			for(index in node.connections){
+				tmpHops=hops;
+				if(index!=nodeFrom){
+					var rv=this.minConnections(nodeIn,index,++tmpHops);
+					if(!rv) return false;
+				}
+			}
+			return true;
+		}
+	}
 }
 /*
 	Returns a random node within the Graph object
