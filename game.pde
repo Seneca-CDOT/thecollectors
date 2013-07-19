@@ -211,7 +211,7 @@ class MapLevel extends LevelLayer {
 			var structObject = generatedMap.structureList[i];
 			var vert = generatedMap.mapGraph.findNodeArray(structObject.nodeID).vertex;
 			Struct structure = new Struct(vert);
-            addPlayer(structure);
+            addInputInteractor(structure);
 		}
     }
     void initializePlayer() {
@@ -558,7 +558,7 @@ class Road extends Interactor {
         if (DISPLAY_SHADOWMAP) image(shadowMap, 0, 0);
     }
 }
-class Struct extends Player {
+class Struct extends InputInteractor {
     var vertex, structLabel, sBox;
     var hovering;
     Struct(vert) {
