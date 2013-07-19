@@ -601,12 +601,12 @@ class NodeDebug extends Interactor{
     void draw(float v1x,float v1y,float v2x, float v2y){
         pushMatrix();
         //scale(zoomLevel);
-        fill(0,255,0);
+        fill(0,0,255);
         if(flag)
-            stroke(0,255,0);
+            stroke(0,0,255);
         else
             stroke(255,0,0);
-        text(flag, vertex.x-4, vertex.y-2);
+        text(flag, vertex.x+4, vertex.y-2);
         //ellipse(vertex.x,vertex.y,8,8);
         popMatrix();
     }
