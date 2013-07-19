@@ -2,12 +2,11 @@ function Node(uID, x ,y){
     this.id = uID;
     this.vertex=new Vertex(x,y);
     this.connections={};
-    this.connectionsLength=0;
+    this.connectionsLength=0;                  
 }
 Node.prototype.position = function() {
     return this.vertex;
 }
-
 Node.prototype.equals = function(node) {
     var rv = false;
 
@@ -16,6 +15,8 @@ Node.prototype.equals = function(node) {
     }
     return rv;
 }
+//pushes a new nodeId and weight into connections
+//does nothing if a connection to the nodeId already exists
 Node.prototype.push=function(nodeId, weight){
 	if(!this.existingConnection(nodeId)){
         if (!weight) weight=1;

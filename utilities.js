@@ -21,7 +21,7 @@ return xmlDoc;
 }
 //end of XML Document setup
 function rng(min,max){
-	return Math.floor(Math.random()*(max-min))+min
+	return Math.floor((Math.random()*(max-min+1))+min);
 }
 function getDotProduct(dx1, dy1, dx2, dy2) {
     // normalise both vectors

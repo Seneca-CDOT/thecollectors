@@ -7,28 +7,22 @@
 
     <script type="text/javascript" src="minim.js"></script>
     <script type="text/javascript" src="syntaxHighlight.js"></script>
+    <script type="text/javascript" src="XMLWriter-1.0.0-min.js"></script>
+    <script type="text/javascript" src="processing.js"></script>
+    <script type="text/javascript" src="processing-lazyload.js"></script>
     <script type="text/javascript" src="canvasFocus.js"></script>
 
     <!--Custom JavaScript class definitions. Consolidate into one file at the end-->
+    <script type="text/javascript" src="Utilities.js"></script>
+    <script type="text/javascript" src="gameValues.js"></script>
     <script type="text/javascript" src="Fraction.js"></script>
     <script type="text/javascript" src="Vertex.js"></script>
     <script type="text/javascript" src="Node.js"></script>
-    <script type="text/javascript" src="Edge.js"></script>
     <script type="text/javascript" src="Structure.js"></script>
-
-    <script type="text/javascript" src="utilities.js"></script>
     <script type="text/javascript" src="Graph.js"></script>
-    <script type="text/javascript" src="VertexIndex.js"></script>
-    <script type="text/javascript" src="NodeIndex.js"></script>
-    <script type="text/javascript" src="EdgeIndex.js"></script>
-    <script type="text/javascript" src="StructureIndex.js"></script>
-
-    <script type="text/javascript" src="XMLWriter-1.0.0-min.js"></script>
     <script type="text/javascript" src="Map.js"></script>
     <script type="text/javascript" src="MapGenerator.js"></script>
 
-    <script type="text/javascript" src="processing.js"></script>
-    <script type="text/javascript" src="processing-lazyload.js"></script>
 	<style>
 	  canvas {outline:none;width:960px;height:640px;}
       button { width:120px; }
@@ -57,7 +51,8 @@
 	</style>
   </head>
   <body>
-    <canvas tabindex="1" onmouseover="$('canvas').focus()" data-processing-sources="codebase.pde game.pde"></canvas>
+
+    <canvas onmouseenter="$('canvas').focus()" data-processing-sources="codebase.pde assetPreloader.pde game.pde"></canvas>
     <div id="menuDiv" style="display:block;position:fixed;top:650px;left:0px;">
         <button id="campaignButton">Campaign</button><br />
         <button id="quickPlayButton">Quick Play</button><br />

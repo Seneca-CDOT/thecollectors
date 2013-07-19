@@ -1,23 +1,32 @@
-function Map(filename){
+function Map(numStructs, difficulty, filename){
 	this.mapGraph=new Graph();
 	this.structureList=[];
 	this.fuel=new Fraction(0,0);
 	this.startPoint;
+    //if a filename exists, load the map from an XML file
 	if(filename){
 		var xmlDoc=loadXML(filename);
-		this.initNodes(xmlDoc);
-		this.initStructures(xmlDoc);
+		this.initNodesFromXML(xmlDoc);
+		this.initStructuresFromXML(xmlDoc);
 	}
+    //otherwise generate map using number of structures and difficulty
+    //get the map's variable data from the map generator object
 	else{
-		var gen=new MapGenerator(0);
+		var gen=new MapGenerator(numStructs,difficulty);
 		this.mapGraph=gen.mapGraph;
 		this.structureList=gen.structureList;
+        this.fuel=new Fraction(gen.fuel,gen.fuel);
+        this.startPoint=gen.mapGraph.nodeDictionary[0].vertex;
 	}
 }
 Map.prototype.getEdgeList=function(){
 	return this.mapGraph.getEdgeList();
 }
-Map.prototype.initNodes=function(xmlDoc){
+/*  initializes nodes in the Graph object from an XML file
+    using the <road> and <point> tags
+    also initializes fuel tank value and startpoint 
+*/
+Map.prototype.initNodesFromXML=function(xmlDoc){
 	map=xmlDoc.getElementsByTagName("map")[0];
 	var fuel=map.getElementsByTagName("fuel")[0];
 	var num=fuel.getAttribute("numerator");
@@ -43,7 +52,10 @@ Map.prototype.initNodes=function(xmlDoc){
 		this.mapGraph.addConnection(tmp,tmp2,new Fraction(num,denom));
     }
 }
-Map.prototype.initStructures=function(xmlDoc){
+/*  fills the structure list from an XML file
+    uses <place> tag
+*/
+Map.prototype.initStructuresFromXML=function(xmlDoc){
 	var places=xmlDoc.getElementsByTagName("map")[0].getElementsByTagName("place");
 	var len=places.length;
     for (var i = 0; i < len; i++) {

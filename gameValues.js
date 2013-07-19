@@ -1,3 +1,11 @@
+//	Environment Values 	//
+var screenSizeX=940;
+var screenSizeY=640;
+
+//	Assets Folder		//
+var assetsFolder = "assets/";
+
+//	Static Game Values 	//
 var StructureValues={
 	office:1100,
 	restaurant:1100,
@@ -25,9 +33,9 @@ var StructureCaptions={
 	fuel:"Fuel Station"
 };
 var DenominatorPool={	//denominations subject to change (read : likely)
-	easy: [4,5,6],
-	normal: [8,10,12],
-	hard: [7,9]
+	easy: [6,8,10],			// 6,8,10
+	normal: [9,12,14],      // 9,12,14
+	hard: [7,15,16]             // 7,15,16
 };
 var clearMultipliers={
 	easy: 1,
@@ -37,3 +45,7 @@ var clearMultipliers={
 var answerBonus={
 	//dont really know about this one yet
 };
+
+//	Map Generator Values //
+var roadsPerStructure = 3;
+var baseRoadLength = 100;

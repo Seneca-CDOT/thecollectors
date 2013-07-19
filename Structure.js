@@ -1,18 +1,15 @@
-function Structure(nodeID, StructType, StructCaption, Points) {
+function Structure(nodeID, StructType, customCaption, customPoints) {
     this.nodeID=nodeID;
     this.StructType=StructType;
-    this.StructCaption=StructCaption;
-    this.Points=Points;
+    if(customCaption)
+    	this.StructCaption=customCaption;
+    else
+    	this.StructCaption=StructureCaptions[StructType];
+    if(customPoints)
+    	this.Points=customPoints;
+    else
+    	this.Points=StructureValues[StructType];
     this.visited=false;
-}
-Structure.prototype.position = function() {
-    return this.nodeID;
-}
-Structure.prototype.getType = function() {
-    return this.StructType;
-}
-Structure.prototype.getCaption = function(){
-	return this.StructCaption;
 }
 Structure.prototype.pointsString = function(){
 	return this.Points.toString();
