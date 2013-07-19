@@ -48,5 +48,5 @@ var answerBonus={
 };
 
 //	Map Generator Values //
-var roadsPerStructure = 3;
+var roadsPerStructure = 5;
 var baseRoadLength = 100;

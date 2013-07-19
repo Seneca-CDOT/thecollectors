@@ -103,18 +103,19 @@ MapGenerator.prototype.cleanGraph = function(){
 			var node2=nodes[edges[indekkusu][i]];
 			var intersectCheck=this.mapGraph.edgeIntersects(node1.vertex.x,node1.vertex.y,node2.vertex.x,node2.vertex.y)
 			if(intersectCheck){			
-				var node1ID=new Node(j++, node1.vertex.x, node1.vertex.y);
+				var node1ID=new Node(j, node1.vertex.x, node1.vertex.y);
 				node1ID=tmpGraph.addNode(node1ID);
-				var node2ID=new Node(j++, node2.vertex.x, node2.vertex.y);
-				node2ID=tmpGraph.addNode(node2ID);
+				if(node1ID==j)j++;
+				var node2ID=new Node(j, node2.vertex.x, node2.vertex.y);
+				node2ID=tmpGraph.addNode(node2ID); if(node2ID==j)j++;
 				for (var i = intersectCheck.length - 1; i >= 0; i--) {
 					if(!intersectCheck[i].colinear){
-						var intNode=new Node(j++, intersectCheck[i].x, intersectCheck[i].y);
-						intNode=tmpGraph.addNode(intNode);
-						var node3=new Node(j++, intersectCheck[i].x1, intersectCheck[i].y1);
-						node3=tmpGraph.addNode(node3);
-						var node4=new Node(j++, intersectCheck[i].x2, intersectCheck[i].y2);
-						node4=tmpGraph.addNode(node4);
+						var intNode=new Node(j, intersectCheck[i].x, intersectCheck[i].y);
+						intNode=tmpGraph.addNode(intNode); if(intNode==j)j++;
+						var node3=new Node(j, intersectCheck[i].x1, intersectCheck[i].y1);
+						node3=tmpGraph.addNode(node3); if(node3==j)j++;
+						var node4=new Node(j, intersectCheck[i].x2, intersectCheck[i].y2);
+						node4=tmpGraph.addNode(node4); if(node4==j)j++;
 						var tmpNodes=tmpGraph.nodeDictionary;
 						tmpGraph.addConnection(intNode,node1ID, 
 							new Fraction(distance(tmpNodes[intNode].vertex,tmpNodes[node1ID].vertex)/baseRoadLength,this.fuel));
