@@ -181,8 +181,9 @@ abstract class Actor extends Positionable {
    */
   float[] getBoundingBox() {
     if(active==null) return null;
-    float[] bounds = active.sprite.getBoundingBox(sx,sy);
-
+    
+    float[] bounds = active.sprite.getBoundingBox(sx,sy); 
+    
     // transform the bounds, based on local translation/scale/rotation
     if(r!=0) {
       float x1=bounds[0], y1=bounds[1],
@@ -365,11 +366,12 @@ abstract class Actor extends Positionable {
    */
   void drawObject() {
     if(active!=null) {
-      active.draw(disabledCounter>0);    
+      active.draw(disabledCounter>0);
+      /*
       if(debug) {
         pushMatrix();
         resetMatrix();
-        translate(x,y);
+        translate(x,y);         
         noFill();
         stroke(255,0,0);
         float[] bounds = getBoundingBox();
@@ -379,15 +381,9 @@ abstract class Actor extends Positionable {
         vertex(bounds[4]-x,bounds[5]-y);
         vertex(bounds[6]-x,bounds[7]-y);
         endShape(CLOSE);
-        float[] bounds = previous.getBoundingBox();
-        beginShape();
-        vertex(bounds[0]-x,bounds[1]-y);
-        vertex(bounds[2]-x,bounds[3]-y);
-        vertex(bounds[4]-x,bounds[5]-y);
-        vertex(bounds[6]-x,bounds[7]-y);
-        endShape(CLOSE);
         popMatrix();
       }
+      */
     }
   }
 
@@ -443,7 +439,6 @@ abstract class Actor extends Positionable {
       setIfTrue(int(key),keyCodes[i]);
     }
   }
-    
   // handle key releases
   void keyReleased(char key, int keyCode) {
     for(int i=0;i<keyCodes.length;i++){
@@ -456,9 +451,12 @@ abstract class Actor extends Positionable {
    */
   boolean over(float _x, float _y) {
     if (active == null) return false;
-    return active.over(_x - getX(), _y - getY(),sx,sy);
+    float x_=_x - getX();
+    float y_=_y - getY();
+    return active.over( x_*cos(r) - y_*sin(r),
+                        x_*sin(r) + y_*cos(r),
+                        sx,sy);
   }
-
   void mouseMoved(int mx, int my) {}
   void mousePressed(int mx, int my, int button) {}
   void mouseDragged(int mx, int my, int button) {}
@@ -1469,6 +1467,18 @@ void clearScreens() {
   activeScreen = null;
 }
 /**
+ * InputInteractors are interactors that can handle input.
+ * They are identical to a Player, just named separately for sanity
+ */
+abstract class InputInteractor extends Interactor {
+
+  // simple constructor
+  InputInteractor(String name) { super(name); }
+
+  // full constructor
+  InputInteractor(String name, float dampening_x, float dampening_y) {
+    super(name, dampening_x, dampening_y); }
+}/**
  * Interactors are non-player actors
  * that can interact with other interactors
  * as well as player actors. However,
@@ -1492,9 +1502,7 @@ abstract class Interactor extends Actor {
 
   // Interactors don't do anything with pickups by default
   void pickedUp(Pickup pickup) {}
-  
-  // Interactors are not playable
-  final void handleInput() {}
+
 }
 /**
  * JavaScript interface, to enable console.log
@@ -1708,6 +1716,7 @@ abstract class LevelLayer {
   ArrayList<BoundedInteractor> bounded_interactors;
   ArrayList<Player> players;
   ArrayList<Trigger> triggers;
+  ArrayList<InputInteractor> input_interactors;
 
   // Level layers need not share the same coordinate system
   // as the managing level. For instance, things in the
@@ -1763,7 +1772,7 @@ abstract class LevelLayer {
   // The list of fully interacting non-player sprites
   void addInteractor(Interactor interactor) { interactors.add(interactor); bind(interactor); }
   void removeInteractor(Interactor interactor) { interactors.remove(interactor); }
-  void clearInteractors() { interactors.clear(); bounded_interactors.clear(); }
+  void clearInteractors() { interactors.clear(); bounded_interactors.clear(); input_interactors.clear(); }
 
   // The list of fully interacting non-player sprites that have associated boundaries
   void addBoundedInteractor(BoundedInteractor bounded_interactor) { bounded_interactors.add(bounded_interactor); bind(bounded_interactor); }
@@ -1773,6 +1782,11 @@ abstract class LevelLayer {
   void addPlayer(Player player) { players.add(player); bind(player); }
   void removePlayer(Player player) { players.remove(player); }
   void clearPlayers() { players.clear(); }
+
+  // Add InputInteractors to the list of player sprites
+  void addInputInteractor(InputInteractor interactor) { input_interactors.add(interactor); addInteractor(interactor);}
+  void removeInputInteractor(InputInteractor interactor) { input_interactors.remove(interactor); removeInteractor(interactor);}
+  void clearInputInteractors() {input_interactors.clear();}
 
   void updatePlayer(Player oldPlayer, Player newPlayer) {
     int pos = players.indexOf(oldPlayer);
@@ -1858,6 +1872,7 @@ abstract class LevelLayer {
     bounded_interactors = new ArrayList<BoundedInteractor>();
     players  = new ArrayList<Player>();
     triggers = new ArrayList<Trigger>();
+    input_interactors = new ArrayList<InputInteractor>();
   }
 
   /**
@@ -1879,7 +1894,7 @@ abstract class LevelLayer {
   void setScale(float s){
     xScale = s;
     yScale = s;
-  }
+  }   
   /**
    * Get the level this layer exists in
    */
@@ -2199,31 +2214,52 @@ abstract class LevelLayer {
    */
   void keyPressed(char key, int keyCode) {
     for(Player a: players) {
-      a.keyPressed(key,keyCode); }}
+      a.keyPressed(key,keyCode); }
+    for(InputInteractor a: input_interactors) {
+      a.keyPressed(key,keyCode); }
+  }
 
   void keyReleased(char key, int keyCode) {
     for(Player a: players) {
-      a.keyReleased(key,keyCode); }}
+      a.keyReleased(key,keyCode); }
+    for(InputInteractor a: input_interactors) {
+      a.keyReleased(key,keyCode); }
+  }
 
   void mouseMoved(int mx, int my) {
     for(Player a: players) {
-      a.mouseMoved(mx,my); }}
+      a.mouseMoved(mx,my); }
+    for(InputInteractor a: input_interactors) {
+      a.mouseMoved(mx,my); }
+  }
 
   void mousePressed(int mx, int my, int button) {
     for(Player a: players) {
-      a.mousePressed(mx,my,button); }}
+      a.mousePressed(mx,my,button); }
+    for(InputInteractor a: input_interactors) {
+      a.mousePressed(mx,my,button); }
+  }
 
   void mouseDragged(int mx, int my, int button) {
     for(Player a: players) {
-      a.mouseDragged(mx,my,button); }}
+      a.mouseDragged(mx,my,button); }
+    for(InputInteractor a: input_interactors) {
+      a.mouseDragged(mx,my,button); }
+  }
 
   void mouseReleased(int mx, int my, int button) {
     for(Player a: players) {
-      a.mouseReleased(mx,my,button); }}
+      a.mouseReleased(mx,my,button); }
+    for(InputInteractor a: input_interactors) {
+      a.mouseReleased(mx,my,button); }
+  }
 
   void mouseClicked(int mx, int my, int button) {
     for(Player a: players) {
-      a.mouseClicked(mx,my,button); }}
+      a.mouseClicked(mx,my,button); }
+    for(InputInteractor a: input_interactors) {
+      a.mouseClicked(mx,my,button); }
+  }
 }
 /**
  * Pickups!
@@ -2411,6 +2447,7 @@ class Position {
                        x+ox+ssx*width/2, y-oy+ssy*height/2,  // bottom-right
                        x+ox-ssx*width/2, y-oy+ssy*height/2}; // bottom-left
   }
+
   /**
    * Primitive sprite overlap test: bounding box
    * overlap using midpoint distance.
@@ -3553,7 +3590,7 @@ class Sprite extends Positionable {
     int tmpHeight=height*scaley;
     _x -= ox - tmpWidth/2;
     _y -= oy - tmpHeight/2;
-    return x <= _x && _x <= x+tmpWidth && y <= _y && _y <= y+tmpHeight;
+    return x <= _x && _x <= x+tmpWidth && y <= _y && _y <= y+tmpHeight; 
   }
   
 // -- pathing informmation
@@ -4222,7 +4259,7 @@ class State {
   }
   
   // check if coordinate is in sprite
-  boolean over(float _x, float _y,float sx,float sy) {
+  boolean over(float _x, float _y, float sx, float sy) {
     return sprite.over(_x,_y,sx,sy);
   }
   
@@ -4440,13 +4477,19 @@ class ViewBox {
     y = min( max(0,idealy), level.height - h );
   }
   void translate(int _x, int _y, Level level){
-    if(x+_x < 0) x=0; 
-    else if (x+_x > level.width) x=level.width;
-    else x+=_x;
-    if(y+_y < 0) y=0;
-    else if(y+_y > level.height) y=level.height;
-    else y+=_y;
-  }
+    if(x+_x < 0) 
+      x=0; 
+    else if (x+_x > level.width) 
+      x=level.width;
+    else 
+      x+=_x;
+    if(y+_y < 0) 
+      y=0;
+    else if(y+_y > level.height) 
+      y=level.height;
+    else 
+      y+=_y;
+  } 
 }
 
 

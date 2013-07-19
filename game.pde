@@ -208,7 +208,7 @@ class MapLevel extends LevelLayer {
                 StructDebug structure = new StructDebug(vert,structObject);
             else
                 Struct structure = new Struct(vert,structObject);
-            addPlayer(structure);
+            addInputInteractor(structure);
 		}
     }
     void initializePlayer() {
@@ -371,15 +371,8 @@ class Driver extends Player{
         mx = layerCoords[0];
         my = layerCoords[1];
 
-        var vBox = getBoundingBox();
-        var vBoxDeltaX = Math.abs(vBox[0] - vBox[4]) * 0.5;
-        var vBoxDeltaY = Math.abs(vBox[1] - vBox[5]) * 0.5;
-        var x = getX();
-        var y = getY();
-
         // Did we click on the vehicle? If not, check if we clicked on a road
-        if (button == LEFT && mx >= x - vBoxDeltaX && mx <= x + vBoxDeltaX &&
-                my >= y - vBoxDeltaY && my <= y + vBoxDeltaY) {
+        if (button == LEFT && over(mx,my)) {
             if (destination.length > 0) driveToDestination();
         } else {
             // Get the hexadecimal colour code at the clicked point on the shadowMap
@@ -505,8 +498,8 @@ class Road extends Interactor {
         if (DISPLAY_SHADOWMAP) image(shadowMap, 0, 0);
     }
 }
-class Struct extends Player {
-    var vertex, structLabel, sBox, structObject;
+class Struct extends InputInteractor {
+    var vertex, structLabel, sBox;
     var hovering;
     Struct(vert, structObjectIn) {
         super("Structure");
