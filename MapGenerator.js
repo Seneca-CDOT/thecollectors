@@ -1,9 +1,7 @@
 function MapGenerator(numStructs, difficulty){
 	this.mapGraph=new Graph();
 	this.structureList=[];
-	this.index=0;
 	this.numStructs=numStructs;
-
 	//Based on the difficulty, fill the pool with possible denominators
 	var pool=DenominatorPool.easy;
 	if(difficulty == 2 || difficulty == 3){
@@ -15,6 +13,8 @@ function MapGenerator(numStructs, difficulty){
 	this.generateMapGraph();
 }
 MapGenerator.prototype.generateMapGraph = function() {
+	this.mapGraph.clearGraph();
+	this.index=0;
 	this.generateRawGraph();
 	this.cleanGraph();
 	this.generateStructures();
@@ -123,10 +123,8 @@ MapGenerator.prototype.cleanGraph = function(){
 							new Fraction(distance(tmpNodes[intNode].vertex,tmpNodes[node3].vertex)/baseRoadLength,this.fuel));
 						tmpGraph.addConnection(intNode,node4,
 							new Fraction(distance(tmpNodes[intNode].vertex,tmpNodes[node4].vertex)/baseRoadLength,this.fuel));
-						
 					}
 				}
-				
 			}
 		}
 	}
@@ -159,8 +157,41 @@ MapGenerator.prototype.cleanGraph = function(){
 			}
 		}
 	}
-	this.mapGraph=tmpGraph;
+	//run minConnections() on each Node to see if a one-direction path has been generated
+	//if minConnections() is not satisfied, generate a new map
+	this.mapGraph=tmpGraph; var invalid=false;
+	for(index in this.mapGraph.nodeDictionary){
+		if(!this.minConnections(-1,index,0)){
+			invalid=true;
+			break;
+		} 
+	}
+	if(invalid) this.generateMapGraph();
+}
+/*
+	Recursive Algorithim to test if a node or one of its nearby connected
+	nodes has at least 3 connections, a.k.a not making a one direction path.
+	Currently tests a chain of up to 3 nodes
+*/
+MapGenerator.prototype.minConnections = function(nodeFrom,nodeIn,hops){
+	var node=this.mapGraph.nodeDictionary[nodeIn];
+	var tmpHops=hops;
+	if(node.connectionsLength <= 2){
+		if(hops == 3)
+			return false;
+		else{
+			for(index in node.connections){
+				tmpHops=hops;
+				if(index!=nodeFrom){
+					var rv=this.minConnections(nodeIn,index,++tmpHops);
+					if(!rv) return false;
+				}
+			}
+			return true;
+		}
+	}
+	else return true;
 }
 MapGenerator.prototype.generateStructures = function(){
-	//does absolutely nothing because there is nothing here
+	
 }
