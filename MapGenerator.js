@@ -96,11 +96,11 @@ MapGenerator.prototype.cleanGraph = function(){
 	var edges=this.mapGraph.getEdgeList();
 	var tmpGraph= new Graph();
 	var j=0;
-	//why the index variable didn't work here is beyond me
-	for(indekkusu in edges){
-		var node1=nodes[indekkusu];
-		for (var i = edges[indekkusu].length - 1; i >= 0; i--) {
-			var node2=nodes[edges[indekkusu][i]];
+	//find intersection points and create connections to reflect these intersections
+	for(var index in edges){
+		var node1=nodes[index];
+		for (var i = edges[index].length - 1; i >= 0; i--) {
+			var node2=nodes[edges[index][i]];
 			var intersectCheck=this.mapGraph.edgeIntersects(node1.vertex.x,node1.vertex.y,node2.vertex.x,node2.vertex.y)
 			if(intersectCheck){			
 				var node1ID=new Node(j, node1.vertex.x, node1.vertex.y);
@@ -132,11 +132,11 @@ MapGenerator.prototype.cleanGraph = function(){
 	}
 	//necessary to remove extraneous nodes that persisted due to colinear lines
 	nodes=tmpGraph.nodeDictionary;
-	for(index in nodes){
+	for(var index in nodes){
 		var node1=nodes[index];
-		for(indx in node1.connections){
+		for(var indx in node1.connections){
 			var node2=nodes[indx];
-			for(indekkusu in node1.connections){
+			for(var indekkusu in node1.connections){
 				if(indx != indekkusu){
 					var node3=nodes[indekkusu];
 					var intersectCheck=segIntersection(node1.vertex.x, node1.vertex.y,
@@ -162,7 +162,7 @@ MapGenerator.prototype.cleanGraph = function(){
 	//run minConnections() on each Node to see if a one-direction path has been generated
 	//if minConnections() is not satisfied, generate a new map
 	this.mapGraph=tmpGraph; var invalid=false;
-	for(index in this.mapGraph.nodeDictionary){
+	for(var index in this.mapGraph.nodeDictionary){
 		if(!this.minConnections(-1,index,0)){
 			invalid=true;
 			break;
@@ -177,15 +177,13 @@ MapGenerator.prototype.cleanGraph = function(){
 */
 MapGenerator.prototype.minConnections = function(nodeFrom, nodeIn, hops){
 	var node=this.mapGraph.nodeDictionary[nodeIn];
-	var tmpHops=hops;
 	if(node.connectionsLength <= 2){
 		if(hops == 3)
 			return false;
 		else{
-			for(index in node.connections){
-				tmpHops=hops;
+			for(var index in node.connections){
 				if(index!=nodeFrom){
-					var rv=this.minConnections(nodeIn,index,++tmpHops);
+					var rv=this.minConnections(nodeIn,index,hops+1);
 					if(!rv) return false;
 				}
 			}
@@ -196,25 +194,57 @@ MapGenerator.prototype.minConnections = function(nodeFrom, nodeIn, hops){
 }
 MapGenerator.prototype.generateStructures = function(){
 	this.startPoint = this.randomNode();
-}
-//needs work
-MapGenerator.prototype.findStructure = function(nodeFrom, nodeIn, fuelAmt){
-	var node=this.mapGraph.nodeDictionary[nodeIn];
-	var tmpFuelAmt=fuelAmt;
-	if(node.connectionsLength > 1){
-		if(fuelAmt == 0)
-			return {};
-		else{
-			for(index in node.connections){
-				tmpHops=hops;
-				if(index!=nodeFrom){
-					var rv=this.minConnections(nodeIn,index,++tmpHops);
-					if(!rv) return false;
-				}
+	var nodes = this.mapGraph.nodeDictionary;
+	var structCount=0;
+	for(var index in nodes){
+		if(structCount == this.numStructs) break;
+		var emptyNodes = this.emptyPoints(-1,index,this.fuel);
+		for (var i = emptyNodes.length - 1; i >= 0; i--) {
+			if(!this.findStructure(-1,emptyNodes[i].id, this.fuel)){
+				this.structureList.push(new Structure(index,"fuel"));
+				structCount++;
 			}
-			return true;
 		}
 	}
+}
+/*
+	
+*/
+MapGenerator.prototype.findStructure = function(nodeFrom, nodeIn, fuelAmt){
+
+	if(fuelAmt < 0)
+		return false;
+	var structureAtNode = this.getStructureFromList(nodeIn);
+	if(structureAtNode)
+		return true;
+	var node=this.mapGraph.nodeDictionary[nodeIn];
+	if(node.connectionsLength > 1){
+		for(var index in node.connections){
+			if(index!=nodeFrom){
+				var rv=this.findStructure(nodeIn,index,fuelAmt-node.connections[index].numerator);
+				if(rv) return rv;
+			}
+		}
+	}
+	return false;
+}
+MapGenerator.prototype.emptyPoints = function(nodeFrom, nodeIn, fuelAmt){
+	var node=this.mapGraph.nodeDictionary[nodeIn];
+	if(fuelAmt <= 0)
+		return node;
+	var rvList=[];
+
+	if(node.connectionsLength > 1){
+		for(var index in node.connections){
+			if(index!=nodeFrom){
+				rv=this.emptyPoints(nodeIn,index,fuelAmt-node.connections[index].numerator);
+				if(rv instanceof Node) rvList.push(rv);
+				else rvList=rvList.concat(rv);
+			}
+		}
+		return rvList;
+	}
+	return node;
 }
 /*
 	Returns a random node within the Graph object
@@ -223,8 +253,15 @@ MapGenerator.prototype.randomNode = function() {
 	var loops = rng(0,this.mapGraph.length);
 	var nodes = this.mapGraph.nodeDictionary;
 	var i=0;
-	for(index in nodes){
+	for(var index in nodes){
 		if(i++ == loops)
 			return nodes[index];
 	}
+}
+MapGenerator.prototype.getStructureFromList = function(nodeID) {
+	for (var i = this.structureList.length - 1; i >= 0; i--) {
+		if(this.structureList[i].nodeID == nodeID)
+			return this.structureList[i];
+	}
+	return false;
 }
