@@ -618,8 +618,9 @@ class Struct extends InputInteractor {
             rect(sBox[0] - 8, sBox[1] - 23, 90, 30);
             rect(sBox[0] - 8, sBox[1] + 60, 90, 30);
             fill(255);
-            text(structObject.StructCaption, sBox[0] - 5, sBox[1] - 3);
-            text(structObject.pointsString(), sBox[0] - 5, sBox[1] + 83);
+            textAlign(CENTER);
+            text(structObject.StructCaption, sBox[0] - 8, sBox[1] - 14, 90, 30);
+            text(structobject.pointsString(), sBox[0] - 8, sBox[1] + 68, 90, 30);
             stroke(0);
         }
     }
