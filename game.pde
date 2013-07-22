@@ -596,7 +596,7 @@ class Depot extends Interactor {
     }
 }
 class Struct extends InputInteractor {
-    var vertex, structObject, sBox;
+    var vertex, sBox, structObject;
     var hovering;
     Struct(vert, _structObject) {
         super("Structure");
@@ -620,8 +620,9 @@ class Struct extends InputInteractor {
             fill(255);
             textAlign(CENTER);
             text(structObject.StructCaption, sBox[0] - 8, sBox[1] - 14, 90, 30);
-            text(structobject.pointsString(), sBox[0] - 8, sBox[1] + 68, 90, 30);
+            text(structObject.pointsString(), sBox[0] - 8, sBox[1] + 68, 90, 30);
             stroke(0);
+            textAlign(LEFT);
         }
     }
     void mouseMoved(int mx, int my) {
