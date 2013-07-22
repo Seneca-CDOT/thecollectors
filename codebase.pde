@@ -1390,18 +1390,19 @@ void setup() {
 
 // draw loop
 void draw() { 
-  activeScreen.draw(); 
+  if(activeScreen)
+    activeScreen.draw(); 
   SoundManager.draw();
 }
 
 // event handling
-void keyPressed()    { activeScreen.keyPressed(key, keyCode); }
-void keyReleased()   { activeScreen.keyReleased(key, keyCode); }
-void mouseMoved()    { activeScreen.mouseMoved(mouseX, mouseY); }
-void mousePressed()  { SoundManager.clicked(mouseX,mouseY); activeScreen.mousePressed(mouseX, mouseY, mouseButton); }
-void mouseDragged()  { activeScreen.mouseDragged(mouseX, mouseY, mouseButton); }
-void mouseReleased() { activeScreen.mouseReleased(mouseX, mouseY, mouseButton); }
-void mouseClicked()  { activeScreen.mouseClicked(mouseX, mouseY, mouseButton); }
+void keyPressed()    { if(activeScreen) activeScreen.keyPressed(key, keyCode); }
+void keyReleased()   { if(activeScreen) activeScreen.keyReleased(key, keyCode); }
+void mouseMoved()    { if(activeScreen) activeScreen.mouseMoved(mouseX, mouseY); }
+void mousePressed()  { SoundManager.clicked(mouseX,mouseY); if(activeScreen) activeScreen.mousePressed(mouseX, mouseY, mouseButton); }
+void mouseDragged()  { if(activeScreen) activeScreen.mouseDragged(mouseX, mouseY, mouseButton); }
+void mouseReleased() { if(activeScreen) activeScreen.mouseReleased(mouseX, mouseY, mouseButton); }
+void mouseClicked()  { if(activeScreen) activeScreen.mouseClicked(mouseX, mouseY, mouseButton); }
 
 /**
  * Mute the game
