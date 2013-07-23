@@ -13,6 +13,7 @@ int gameDifficulty = 1;
 int currentLevel = 1;
 int levelCash = 0;
 int campaignCash = 0;
+int deliveriesLeft = 0;
 
 //line width
 strokeWeight(4);
@@ -128,8 +129,18 @@ class TitleScreenLayer extends LevelLayer {
     }
 }
 
+class WinScreen extends LevelLayer {
+    WinScreen(Level owner) {
+        super(owner);
+        setBackgroundColor(color(0, 0, 0)); // for testing, replace with texture for final product
+        addBackgroundSprite(new TilingSprite(
+            new Sprite(assetsFolder+"winner.jpg"), 188, 93, 563, 454));
+    }
+}
+
 class CampaignMap extends Level {
     var denominator = 0;
+    var renderedWinScreen = false;
 
     CampaignMap(float mWidth, float mHeight) {
         super(mWidth, mHeight);
@@ -145,6 +156,7 @@ class CampaignMap extends Level {
     // imported from an XML file.
     void generateTutorial() {
         var map = null;
+        deliveriesLeft = 4;
         map = new Map(0,0,"tutorial.xml");
         renderMap(map);
         //overlayTutorialInterface();
@@ -155,12 +167,24 @@ class CampaignMap extends Level {
     }
     void generateMap() {
         var numDeliveries = 2 * currentLevel + 2;
+        deliveriesLeft = numDeliveries;
         var simpleMultiples = true;
         var map=new Map(numDeliveries,gameDifficulty);
         renderMap(map);
     }
     void renderMap(generatedMap) {
         addLevelLayer("Level", new MapLevel(this, generatedMap));
+    }
+    void draw() {
+        super.draw();
+
+        // Check if all deliveries for the level have been satisfied
+        if (deliveriesLeft <= 0 && !renderedWinScreen) {
+            cleanUp();
+            end();
+            addLevelLayer("Win Screen", new WinScreen(this));
+            renderedWinScreen = true;
+        }
     }
 }
 
@@ -419,6 +443,7 @@ class Driver extends Player{
                     if (sL[i].StructType != "Fuel Station" && !sL[i].visited) {
                         levelCash += sL[i].Points;
                         sL[i].visited = true;
+                        deliveriesLeft--;
                         console.log(levelCash);
                     } else if (sL[i].StructType == "Fuel Station") {
                         console.log("Fuel up!");
