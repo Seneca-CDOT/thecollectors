@@ -63,7 +63,7 @@ Map.prototype.initStructuresFromXML=function(xmlDoc){
         places[i].getElementsByTagName("point")[0].getAttribute("y"));
 		var structType=places[i].getAttribute("type");
 		var caption=places[i].getAttribute("caption");
-		var points=places[i].getAttribute("value");
+		var points=parseInt(places[i].getAttribute("value"));
 		nodeID=this.mapGraph.vertexExists(pos);
 		this.structureList.push(new Structure(nodeID,structType,caption,points));
 	}
