@@ -11,6 +11,8 @@ int arrowSpeed=10;
 //tracking game values
 int gameDifficulty = 1;
 int currentLevel = 1;
+int levelCash = 0;
+int campaignCash = 0;
 
 //line width
 strokeWeight(4);
@@ -21,7 +23,7 @@ boolean debugging=false;
 
 var mapType="gen";              //change between "xml" or "gen"
 var showMenus=false;
-var GEN_TUTORIAL = false;       //since game difficulty and level are both 1, this can stay false for now
+var GEN_TUTORIAL = true;//false;       //since game difficulty and level are both 1, this can stay false for now
 var DISPLAY_SHADOWMAP = false;
 var ROAD_ALPHA = 50;
 var ROAD_DELTA = 10;
@@ -282,7 +284,7 @@ class MapLevel extends LevelLayer {
 		}
     }
     void initializePlayer() {
-        player = new Driver(generatedMap.startPoint.clone());
+        player = new Driver(generatedMap, generatedMap.startPoint.clone());
         addPlayer(player);
         var depot = new Depot(generatedMap.startPoint.clone());
         addInteractor(depot);
@@ -292,8 +294,8 @@ class MapLevel extends LevelLayer {
 class Driver extends Player{
     var currentPosition, previousPosition, destination, futurePosition, currDest;
     var edgeDelta, roadDeltaX = 0, roadDeltaY = 0, direction = 0;
-    var currDestColorID, driveFlag;
-    Driver(startPoint) {
+    var currDestColorID, driveFlag, nodeMap;
+    Driver(map, startPoint) {
         super("Driver");
         setStates();
         handleKey('+');
@@ -308,6 +310,7 @@ class Driver extends Player{
         currDest = null;
         currDestColorID = [];
         driveFlag = false;
+        nodeMap = map;
         setScale(0.8);
     }
     void handleInput(){
@@ -405,6 +408,23 @@ class Driver extends Player{
             // Reset deltas
             roadDeltaX = 0;
             roadDeltaY = 0;
+
+            // Check if we've driven over a structure
+            var idx = nodeMap.mapGraph.vertexExists(currentPosition);
+            var currentNode = nodeMap.mapGraph.nodeDictionary[idx];
+            var sLen = nodeMap.structureList.length;
+            var sL = nodeMap.structureList;
+            for (var i = 0; i < sLen; i++) {
+                if (sL[i].nodeID == currentNode.id) {
+                    if (sL[i].StructType != "Fuel Station" && !sL[i].visited) {
+                        levelCash += sL[i].Points;
+                        sL[i].visited = true;
+                        console.log(levelCash);
+                    } else if (sL[i].StructType == "Fuel Station") {
+                        console.log("Fuel up!");
+                    }
+                }
+            }
 
             // Keep driving as long as we haven't run out of destinations
             if (destination.length != 0) {
