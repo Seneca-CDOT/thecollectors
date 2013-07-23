@@ -48,7 +48,7 @@
       div.labelBox
       {
           background-color: #000000;
-          opacity:0.8;
+          opacity:0.9;
       }
       div.visible { display:block; }
       div.hidden { display:none; }
@@ -89,8 +89,12 @@
         <p id="tutorialTextElement">
         </p>
     </div>
-    <div id="legendDiv" class="textBox visible inCanvas" style="position:fixed;left:730px;top:500px;width:200px;height:110px;">
+    <div id="legendDiv" class="labelBox visible inCanvas" style="position:fixed;left:730px;top:500px;width:130px;height:110px;">
         <p id="legendElement">
+        </p>
+    </div>
+    <div id="fuelDiv" class="labelBox visible" style="position:fixed;left:865px;top:500px;width:80px;height:110px;">
+        <p id="fuelElement">
         </p>
     </div>
 
@@ -99,6 +103,8 @@
 	document.getElementById("legendElement").innerHTML = tutorialText[0];
 	var tutorialIndex = 1;
         document.getElementById("tutorialTextElement").innerHTML = tutorialText[tutorialIndex];
+        document.getElementById("legendElement").innerHTML = "Cash<br /><h1></h1>";
+        document.getElementById("fuelElement").innerHTML = "Fuel<br /><h1></h1>";
 
         // Event listener for the <p> element containing tutorial instructions.
         document.getElementById("tutorialTextDiv").addEventListener("click", function(event) {

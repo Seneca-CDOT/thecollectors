@@ -14,6 +14,8 @@ int currentLevel = 1;
 int levelCash = 0;
 int campaignCash = 0;
 int deliveriesLeft = 0;
+var mapScreen = false;
+var gameOver = false;
 
 //line width
 strokeWeight(4);
@@ -138,9 +140,19 @@ class WinScreen extends LevelLayer {
     }
 }
 
+class GameOverScreen extends LevelLayer {
+    GameOverScreen(Level owner) {
+        super(owner);
+        setBackgroundColor(color(0, 0, 0)); // for testing, replace with texture for final product
+        addBackgroundSprite(new TilingSprite(
+            new Sprite(assetsFolder+"gameOver.jpg"), 245, 193, 450, 253));
+    }
+}
+
 class CampaignMap extends Level {
     var denominator = 0;
     var renderedWinScreen = false;
+    var renderedLossScreen = false;
 
     CampaignMap(float mWidth, float mHeight) {
         super(mWidth, mHeight);
@@ -173,6 +185,7 @@ class CampaignMap extends Level {
         renderMap(map);
     }
     void renderMap(generatedMap) {
+        mapScreen = true;
         addLevelLayer("Level", new MapLevel(this, generatedMap));
     }
     void draw() {
@@ -182,8 +195,19 @@ class CampaignMap extends Level {
         if (deliveriesLeft <= 0 && !renderedWinScreen) {
             cleanUp();
             end();
+            mapScreen = false;
             addLevelLayer("Win Screen", new WinScreen(this));
             renderedWinScreen = true;
+            document.getElementById("legendDiv").style.cssText = 'display:none';
+            document.getElementById("fuelDiv").style.cssText = 'display:none';
+        } else if (gameOver && !renderedLossScreen) {
+            cleanUp();
+            end();
+            mapScreen = false;
+            addLevelLayer("Game Over Screen", new GameOverScreen(this));
+            renderedLossScreen = true;
+            document.getElementById("legendDiv").style.cssText = 'display:none';
+            document.getElementById("fuelDiv").style.cssText = 'display:none';
         }
     }
 }
@@ -318,7 +342,7 @@ class MapLevel extends LevelLayer {
 class Driver extends Player{
     var currentPosition, previousPosition, destination, futurePosition, currDest;
     var edgeDelta, roadDeltaX = 0, roadDeltaY = 0, direction = 0;
-    var currDestColorID, driveFlag, nodeMap;
+    var currDestColorID, driveFlag, nodeMap, fuelGauge;
     Driver(map, startPoint) {
         super("Driver");
         setStates();
@@ -335,6 +359,9 @@ class Driver extends Player{
         currDestColorID = [];
         driveFlag = false;
         nodeMap = map;
+        fuelGuage = new Fraction(nodeMap.fuel.numerator, nodeMap.fuel.denominator);
+        document.getElementById("fuelElement").children[1].innerHTML = fuelGuage.toString();
+        document.getElementById("legendElement").children[1].innerHTML = levelCash;
         setScale(0.8);
     }
     void handleInput(){
@@ -426,6 +453,7 @@ class Driver extends Player{
         if (edgeDelta > 0 && vehicleDelta > 0 && vehicleDelta > edgeDelta) {
             stopVehicle();
             setPosition(currDest.x, currDest.y);
+            var prevIdx = nodeMap.mapGraph.vertexExists(previousPosition);
             previousPosition.x = currentPosition.x = getX();
             previousPosition.y = currentPosition.y = getY();
 
@@ -433,22 +461,45 @@ class Driver extends Player{
             roadDeltaX = 0;
             roadDeltaY = 0;
 
-            // Check if we've driven over a structure
+            // Get the connection weight (fraction) between the current
+            // node and the previous one
             var idx = nodeMap.mapGraph.vertexExists(currentPosition);
             var currentNode = nodeMap.mapGraph.nodeDictionary[idx];
+            var fraction = currentNode.connections[prevIdx];
+
+            // Subtract the fraction from the fuel guage and update the HUD
+            fuelGuage.numerator -= fraction.numerator;
+            if (fuelGuage.numerator < 0) fuelGuage.numerator = 0;
+            document.getElementById("fuelElement").children[1].innerHTML = fuelGuage.toString();
+
+            // Get the structure list
             var sLen = nodeMap.structureList.length;
             var sL = nodeMap.structureList;
+
+            // Check if we've driven over a structure
             for (var i = 0; i < sLen; i++) {
                 if (sL[i].nodeID == currentNode.id) {
+                    // If the current structure is a delivery location, add points,
+                    // if it is a fuel station reduce points but increase fuel capacity
                     if (sL[i].StructType != "Fuel Station" && !sL[i].visited) {
-                        levelCash += sL[i].Points;
+                        // FIXME: Remove parseInt once pull request #73 is merged into master
+                        levelCash += parseInt(sL[i].Points);
                         sL[i].visited = true;
                         deliveriesLeft--;
-                        console.log(levelCash);
+                        document.getElementById("legendElement").children[1].innerHTML = levelCash;
                     } else if (sL[i].StructType == "Fuel Station") {
                         console.log("Fuel up!");
+                        fuelGuage.numerator = 6;
+                        document.getElementById("fuelElement").children[1].innerHTML = fuelGuage.toString();
                     }
                 }
+            }
+
+            // If we're out of fuel and all deliveries have not been completed,
+            // the game is over
+            if (fuelGuage.numerator <= 0) {
+                gameOver = true;
+                return;
             }
 
             // Keep driving as long as we haven't run out of destinations
@@ -464,7 +515,7 @@ class Driver extends Player{
         super.drawObject();
     }
     void mouseDragged(int mx, int my, int button) {
-        if (button == LEFT) {
+        if (mapScreen && button == LEFT) {
             ViewBox box = layer.parent.viewbox;
             int _x = 0, _y = 0;
             int deltaX = mx - pmouseX;
