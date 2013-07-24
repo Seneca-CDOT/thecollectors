@@ -17,7 +17,8 @@ MapGenerator.prototype.generateMapGraph = function() {
 	this.index=0;
 	this.generateRawGraph();
 	this.cleanGraph();
-	this.generateStructures();
+	if(!this.startPoint)
+		this.generateStructures();
 }
 /*	
 	internal function which should only be called by generateMapGraph()
@@ -95,25 +96,26 @@ MapGenerator.prototype.cleanGraph = function(){
 	var edges=this.mapGraph.getEdgeList();
 	var tmpGraph= new Graph();
 	var j=0;
-	//why the index variable didn't work here is beyond me
-	for(indekkusu in edges){
-		var node1=nodes[indekkusu];
-		for (var i = edges[indekkusu].length - 1; i >= 0; i--) {
-			var node2=nodes[edges[indekkusu][i]];
+	//find intersection points and create connections to reflect these intersections
+	for(var index in edges){
+		var node1=nodes[index];
+		for (var i = edges[index].length - 1; i >= 0; i--) {
+			var node2=nodes[edges[index][i]];
 			var intersectCheck=this.mapGraph.edgeIntersects(node1.vertex.x,node1.vertex.y,node2.vertex.x,node2.vertex.y)
 			if(intersectCheck){			
-				var node1ID=new Node(j++, node1.vertex.x, node1.vertex.y);
+				var node1ID=new Node(j, node1.vertex.x, node1.vertex.y);
 				node1ID=tmpGraph.addNode(node1ID);
-				var node2ID=new Node(j++, node2.vertex.x, node2.vertex.y);
-				node2ID=tmpGraph.addNode(node2ID);
+				if(node1ID==j)j++;
+				var node2ID=new Node(j, node2.vertex.x, node2.vertex.y);
+				node2ID=tmpGraph.addNode(node2ID); if(node2ID==j)j++;
 				for (var i = intersectCheck.length - 1; i >= 0; i--) {
 					if(!intersectCheck[i].colinear){
-						var intNode=new Node(j++, intersectCheck[i].x, intersectCheck[i].y);
-						intNode=tmpGraph.addNode(intNode);
-						var node3=new Node(j++, intersectCheck[i].x1, intersectCheck[i].y1);
-						node3=tmpGraph.addNode(node3);
-						var node4=new Node(j++, intersectCheck[i].x2, intersectCheck[i].y2);
-						node4=tmpGraph.addNode(node4);
+						var intNode=new Node(j, intersectCheck[i].x, intersectCheck[i].y);
+						intNode=tmpGraph.addNode(intNode); if(intNode==j)j++;
+						var node3=new Node(j, intersectCheck[i].x1, intersectCheck[i].y1);
+						node3=tmpGraph.addNode(node3); if(node3==j)j++;
+						var node4=new Node(j, intersectCheck[i].x2, intersectCheck[i].y2);
+						node4=tmpGraph.addNode(node4); if(node4==j)j++;
 						var tmpNodes=tmpGraph.nodeDictionary;
 						tmpGraph.addConnection(intNode,node1ID, 
 							new Fraction(distance(tmpNodes[intNode].vertex,tmpNodes[node1ID].vertex)/baseRoadLength,this.fuel));
@@ -130,11 +132,11 @@ MapGenerator.prototype.cleanGraph = function(){
 	}
 	//necessary to remove extraneous nodes that persisted due to colinear lines
 	nodes=tmpGraph.nodeDictionary;
-	for(index in nodes){
+	for(var index in nodes){
 		var node1=nodes[index];
-		for(indx in node1.connections){
+		for(var indx in node1.connections){
 			var node2=nodes[indx];
-			for(indekkusu in node1.connections){
+			for(var indekkusu in node1.connections){
 				if(indx != indekkusu){
 					var node3=nodes[indekkusu];
 					var intersectCheck=segIntersection(node1.vertex.x, node1.vertex.y,
@@ -160,7 +162,7 @@ MapGenerator.prototype.cleanGraph = function(){
 	//run minConnections() on each Node to see if a one-direction path has been generated
 	//if minConnections() is not satisfied, generate a new map
 	this.mapGraph=tmpGraph; var invalid=false;
-	for(index in this.mapGraph.nodeDictionary){
+	for(var index in this.mapGraph.nodeDictionary){
 		if(!this.minConnections(-1,index,0)){
 			invalid=true;
 			break;
@@ -173,17 +175,15 @@ MapGenerator.prototype.cleanGraph = function(){
 	nodes has at least 3 connections, a.k.a not making a one direction path.
 	Currently tests a chain of up to 3 nodes
 */
-MapGenerator.prototype.minConnections = function(nodeFrom,nodeIn,hops){
+MapGenerator.prototype.minConnections = function(nodeFrom, nodeIn, hops){
 	var node=this.mapGraph.nodeDictionary[nodeIn];
-	var tmpHops=hops;
 	if(node.connectionsLength <= 2){
 		if(hops == 3)
 			return false;
 		else{
-			for(index in node.connections){
-				tmpHops=hops;
+			for(var index in node.connections){
 				if(index!=nodeFrom){
-					var rv=this.minConnections(nodeIn,index,++tmpHops);
+					var rv=this.minConnections(nodeIn,index,hops+1);
 					if(!rv) return false;
 				}
 			}
@@ -192,6 +192,68 @@ MapGenerator.prototype.minConnections = function(nodeFrom,nodeIn,hops){
 	}
 	else return true;
 }
+/*
+	Generates structures...
+*/
 MapGenerator.prototype.generateStructures = function(){
-	
+	var nodes = this.mapGraph.nodeDictionary;
+	var structCount=0;
+	//	generates structures at dead-ends
+	for(var index in nodes){
+		if(nodes[index].connectionsLength==1 && !this.findStructure(-1,index,this.fuel)){
+			this.structureList.push(new Structure(index,"fuel"));
+			structCount++;
+		}
+	}
+	//	Every loop reduces the fuel amount passed into findStructure
+	//	This makes it easier to return false, and then generate a structure
+	var loops = 0;
+	while(structCount != this.numStructs && loops<=5){
+		for(var index in nodes){
+			if(structCount == this.numStructs) break;
+			if(!this.findStructure(-1,index, this.fuel-loops)){
+				this.structureList.push(new Structure(index,"fuel"));
+				structCount++;
+			}
+		}
+		loops++;
+	}
+	//	Randomizing a start point for the player
+	//	Want to make sure the start point isn't on or too close to a structure
+	//	loops variable protects against looping too many times/infinite loops
+	loops=0;
+	do{
+		this.startPoint = this.mapGraph.randomNode();
+		loops++;
+	}
+	while(this.findStructure(-1,this.startPoint.id,this.fuel-loops/2));
+}
+/*
+	Recursive check for a nearby structure that can be reached with
+	the fuel specified by fuelAmt
+*/
+MapGenerator.prototype.findStructure = function(nodeFrom, nodeIn, fuelAmt){
+	if(fuelAmt <= 0)
+		return false;
+	var structureAtNode = this.getStructureFromList(nodeIn);
+	if(structureAtNode)
+		return true;
+	var node=this.mapGraph.nodeDictionary[nodeIn];
+	for(var index in node.connections){
+		if(index!=nodeFrom){
+			var rv=this.findStructure(nodeIn,index,fuelAmt-node.connections[index].numerator);
+			if(rv) return rv;
+		}
+	}
+	return false;
+}
+/*
+	Returns the structure in structureList at the specified node ID
+*/
+MapGenerator.prototype.getStructureFromList = function(nodeID) {
+	for (var i = this.structureList.length - 1; i >= 0; i--) {
+		if(this.structureList[i].nodeID == nodeID)
+			return this.structureList[i];
+	}
+	return false;
 }

@@ -107,3 +107,11 @@ Graph.prototype.numConnections=function(){
     }
     return rv;
 }
+Graph.prototype.randomNode=function(){
+    var loops = rng(0,this.length-1);
+    var i=0;
+    for(var index in this.nodeDictionary){
+        if(i++ == loops)
+            return this.nodeDictionary[index];
+    }
+}
