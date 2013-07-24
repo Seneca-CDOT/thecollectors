@@ -193,39 +193,53 @@ MapGenerator.prototype.minConnections = function(nodeFrom, nodeIn, hops){
 	else return true;
 }
 MapGenerator.prototype.generateStructures = function(){
-	this.startPoint = this.randomNode();
+	
 	var nodes = this.mapGraph.nodeDictionary;
 	var structCount=0;
 	for(var index in nodes){
-		if(structCount == this.numStructs) break;
-		var emptyNodes = this.emptyPoints(-1,index,this.fuel);
-		for (var i = emptyNodes.length - 1; i >= 0; i--) {
-			if(!this.findStructure(-1,emptyNodes[i].id, this.fuel)){
-				this.structureList.push(new Structure(index,"fuel"));
-				structCount++;
-			}
+		if(nodes[index].connectionsLength==1 && !this.findStructure(-1,index,this.fuel)){
+			this.structureList.push(new Structure(index,"fuel"));
+			structCount++;
 		}
 	}
+	var loops = 0;
+	while(structCount != this.numStructs && loops<=5){
+		for(var index in nodes){
+			if(structCount == this.numStructs) break;
+			var emptyNodes = this.emptyPoints(-1,index,this.fuel-loops);
+			for (var i = emptyNodes.length - 1; i >= 0 && structCount!= this.numStructs; i--) {
+				if(!this.findStructure(-1,emptyNodes[i].id, this.fuel-loops)){
+					this.structureList.push(new Structure(emptyNodes[i].id,"fuel"));
+					structCount++;
+				}
+			}
+		}
+		loops++;
+	}
+	do{
+		this.startPoint = this.randomNode();
+	}
+	while(this.findStructure(-1,this.startPoint.id,this.fuel/2));
 }
 /*
 	
 */
 MapGenerator.prototype.findStructure = function(nodeFrom, nodeIn, fuelAmt){
-
-	if(fuelAmt < 0)
+	//console.log("In findStructure:",nodeFrom,nodeIn,fuelAmt)
+	if(fuelAmt <= (this.fuel/3.5))
 		return false;
 	var structureAtNode = this.getStructureFromList(nodeIn);
 	if(structureAtNode)
 		return true;
 	var node=this.mapGraph.nodeDictionary[nodeIn];
-	if(node.connectionsLength > 1){
+	//if(node.connectionsLength > 1){
 		for(var index in node.connections){
 			if(index!=nodeFrom){
 				var rv=this.findStructure(nodeIn,index,fuelAmt-node.connections[index].numerator);
 				if(rv) return rv;
 			}
 		}
-	}
+	//}
 	return false;
 }
 MapGenerator.prototype.emptyPoints = function(nodeFrom, nodeIn, fuelAmt){
