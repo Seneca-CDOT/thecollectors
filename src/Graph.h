@@ -10,4 +10,5 @@ findNodeArray(nodeID){}								//returns the Node object with the specified ID
 areNodesConnected(nodeID, nodeIDMatch){}			//checks if two nodes are connected
 vertexExists(vert){}								//checks if the specified vertex already exists within the nodes
 													//returns the index of the node if it does exist
-Length() 											//returns length of the nodeDictionary since it does not have a .length property
+Length(){} 											//returns length of the nodeDictionary since it does not have a .length property
+randomNode(){}										//returns a random node

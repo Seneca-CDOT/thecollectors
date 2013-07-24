@@ -192,86 +192,64 @@ MapGenerator.prototype.minConnections = function(nodeFrom, nodeIn, hops){
 	}
 	else return true;
 }
+/*
+	Generates structures...
+*/
 MapGenerator.prototype.generateStructures = function(){
-	
 	var nodes = this.mapGraph.nodeDictionary;
 	var structCount=0;
+	//	generates structures at dead-ends
 	for(var index in nodes){
 		if(nodes[index].connectionsLength==1 && !this.findStructure(-1,index,this.fuel)){
 			this.structureList.push(new Structure(index,"fuel"));
 			structCount++;
 		}
 	}
+	//	Every loop reduces the fuel amount passed into findStructure
+	//	This makes it easier to return false, and then generate a structure
 	var loops = 0;
 	while(structCount != this.numStructs && loops<=5){
 		for(var index in nodes){
 			if(structCount == this.numStructs) break;
-			var emptyNodes = this.emptyPoints(-1,index,this.fuel-loops);
-			for (var i = emptyNodes.length - 1; i >= 0 && structCount!= this.numStructs; i--) {
-				if(!this.findStructure(-1,emptyNodes[i].id, this.fuel-loops)){
-					this.structureList.push(new Structure(emptyNodes[i].id,"fuel"));
-					structCount++;
-				}
+			if(!this.findStructure(-1,index, this.fuel-loops)){
+				this.structureList.push(new Structure(index,"fuel"));
+				structCount++;
 			}
 		}
 		loops++;
 	}
+	//	Randomizing a start point for the player
+	//	Want to make sure the start point isn't on or too close to a structure
+	//	loops variable protects against looping too many times/infinite loops
+	loops=0;
 	do{
-		this.startPoint = this.randomNode();
+		this.startPoint = this.mapGraph.randomNode();
+		loops++;
 	}
-	while(this.findStructure(-1,this.startPoint.id,this.fuel/2));
+	while(this.findStructure(-1,this.startPoint.id,this.fuel-loops/2));
 }
 /*
-	
+	Recursive check for a nearby structure that can be reached with
+	the fuel specified by fuelAmt
 */
 MapGenerator.prototype.findStructure = function(nodeFrom, nodeIn, fuelAmt){
-	//console.log("In findStructure:",nodeFrom,nodeIn,fuelAmt)
-	if(fuelAmt <= (this.fuel/3.5))
+	if(fuelAmt <= 0)
 		return false;
 	var structureAtNode = this.getStructureFromList(nodeIn);
 	if(structureAtNode)
 		return true;
 	var node=this.mapGraph.nodeDictionary[nodeIn];
-	//if(node.connectionsLength > 1){
-		for(var index in node.connections){
-			if(index!=nodeFrom){
-				var rv=this.findStructure(nodeIn,index,fuelAmt-node.connections[index].numerator);
-				if(rv) return rv;
-			}
+	for(var index in node.connections){
+		if(index!=nodeFrom){
+			var rv=this.findStructure(nodeIn,index,fuelAmt-node.connections[index].numerator);
+			if(rv) return rv;
 		}
-	//}
+	}
 	return false;
 }
-MapGenerator.prototype.emptyPoints = function(nodeFrom, nodeIn, fuelAmt){
-	var node=this.mapGraph.nodeDictionary[nodeIn];
-	if(fuelAmt <= 0)
-		return node;
-	var rvList=[];
-
-	if(node.connectionsLength > 1){
-		for(var index in node.connections){
-			if(index!=nodeFrom){
-				rv=this.emptyPoints(nodeIn,index,fuelAmt-node.connections[index].numerator);
-				if(rv instanceof Node) rvList.push(rv);
-				else rvList=rvList.concat(rv);
-			}
-		}
-		return rvList;
-	}
-	return node;
-}
 /*
-	Returns a random node within the Graph object
+	Returns the structure in structureList at the specified node ID
 */
-MapGenerator.prototype.randomNode = function() {
-	var loops = rng(0,this.mapGraph.length);
-	var nodes = this.mapGraph.nodeDictionary;
-	var i=0;
-	for(var index in nodes){
-		if(i++ == loops)
-			return nodes[index];
-	}
-}
 MapGenerator.prototype.getStructureFromList = function(nodeID) {
 	for (var i = this.structureList.length - 1; i >= 0; i--) {
 		if(this.structureList[i].nodeID == nodeID)
