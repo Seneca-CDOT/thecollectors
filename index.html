@@ -23,7 +23,16 @@
     <script type="text/javascript" src="Map.js"></script>
     <script type="text/javascript" src="MapGenerator.js"></script>
     
-    <script src="locale/en-us.jsonp"></script>
+    <script src="locale/text.jsonp"></script>
+    <script type="text/javascript">
+	try {
+	  var language = window.navigator.userLanguage || window.navigator.language;
+	  //Load the tutorial text from the json file
+	  var pageText = JSON.parse(language);
+	} catch(err) {
+	  var pageText = JSON.parse(en_us);
+	}
+    </script>
 
 	<style>
 	  canvas {outline:none;width:960px;height:640px;}
@@ -56,15 +65,23 @@
 
     <canvas onmouseenter="$('canvas').focus()" data-processing-sources="codebase.pde assetPreloader.pde game.pde"></canvas>
     <div id="menuDiv" style="display:block;position:fixed;top:650px;left:0px;">
-        <button id="campaignButton">Campaign</button><br />
-        <button id="quickPlayButton">Quick Play</button><br />
-        <button id="optionsButton">Options</button>
+        <button id="campaignButton"></button><br />
+        <button id="quickPlayButton"></button><br />
+        <button id="optionsButton"></button>
     </div>
     <div id="difficultyDiv" style="display:none;position:fixed;top:100px;left:250px;">
-        <button id="easyButton">Easy</button><br />
-        <button id="mediumButton">Normal</button><br />
-        <button id="hardButton">Hard</button><br />
+        <button id="easyButton"></button><br />
+        <button id="mediumButton"></button><br />
+        <button id="hardButton"></button><br />
     </div>
+    <script type="text/javascript" >
+	document.getElementById("campaignButton").innerHTML = pageText.campaignButton;
+	document.getElementById("quickPlayButton").innerHTML = pageText.quickPlayButton;
+	document.getElementById("optionsButton").innerHTML = pageText.optionsButton;
+	document.getElementById("easyButton").innerHTML = pageText.easyButton;
+	document.getElementById("mediumButton").innerHTML = pageText.mediumButton;
+	document.getElementById("hardButton").innerHTML = pageText.hardButton;
+    </script>
     <div id="tutorialTextDiv" class="textBox visible" style="position:fixed;left:200px;top:500px;width:500px;height:110px;">
         <p id="tutorialTextElement">
         </p>
@@ -75,10 +92,9 @@
     </div>
 
     <script type="text/javascript">
-	//Load the tutorial text from the json file
-        var tutorialText = JSON.parse(tutorial), tutorialIndex = 1;
-	
+	var tutorialText = pageText.tutorial;
 	document.getElementById("legendElement").innerHTML = tutorialText[0];
+	var tutorialIndex = 1;
         document.getElementById("tutorialTextElement").innerHTML = tutorialText[tutorialIndex];
 
         // Event listener for the <p> element containing tutorial instructions.
