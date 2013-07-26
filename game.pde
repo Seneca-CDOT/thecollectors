@@ -16,7 +16,7 @@ int currentLevel = 1;
 strokeWeight(4);
 
 /*debugging tools*/
-boolean debugging=true;
+boolean debugging=false;
 
 
 var mapType="gen";              //change between "xml" or "gen"
@@ -528,16 +528,16 @@ class Road extends Interactor {
     }
 }
 class Struct extends InputInteractor {
-    var vertex, structLabel, sBox;
+    var vertex, structObject, sBox;
     var hovering;
-    Struct(vert, structObjectIn) {
+    Struct(vert, _structObject) {
         super("Structure");
         setPosition(vert.x, vert.y);
         vertex = vert;
         setStates();
         sBox = getBoundingBox();
         hovering = false;
-        structObject=structObjectIn;
+        structObject=_structObject;
     }
     void setStates() {
         addState(new State("default",assetsFolder+"gas.png"));

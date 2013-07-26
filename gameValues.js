@@ -17,7 +17,7 @@ var StructureValues={
 	factory:850,
 	lumber_yard:750,
 	cafe:750,
-	fuel:1000	//refers to the COST of one full tank of fuel on Hard difficulty
+	fuel:1000			//refers to the COST of one full tank of fuel on Hard difficulty
 };
 var StructureCaptions={
 	office:"Office",
@@ -32,10 +32,15 @@ var StructureCaptions={
 	cafe:"Cafe",
 	fuel:"Fuel Station"
 };
+var fuelCost={			//I think 60% fuel cost for easy may be TOO easy. To be tweaked
+	easy: 0.6,
+	normal: 0.8,
+	hard: 1
+};
 var DenominatorPool={	//denominations subject to change (read : likely)
-	easy: [6,8,10],			// 6,8,10
-	normal: [9,12,14],      // 9,12,14
-	hard: [7,15,16]             // 7,15,16
+	easy: [6,8,10],
+	normal: [9,12,14],
+	hard: [7,15,16]
 };
 var clearMultipliers={
 	easy: 1,
@@ -43,9 +48,11 @@ var clearMultipliers={
 	hard: 4
 };
 var answerBonus={
-	//dont really know about this one yet
+						//dont really know about this one yet
 };
 
 //	Map Generator Values //
 var roadsPerStructure = 5;
 var baseRoadLength = 100;
+var	numStructureTypes = 10;
+var structsPerPoints = 2;
