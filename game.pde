@@ -19,15 +19,37 @@ strokeWeight(4);
 boolean debugging=true;
 
 
-var mapType="gen";              //change between "xml" or "gen"
+var mapType="xml";              //change between "xml" or "gen"
 var showMenus=false;
-var GEN_TUTORIAL = false;       //since game difficulty and level are both 1, this can stay false for now
+var GEN_TUTORIAL = true;       //since game difficulty and level are both 1, this can stay false for now
 var DISPLAY_SHADOWMAP = false;
 var ROAD_ALPHA = 50;
 var ROAD_DELTA = 10;
 var mouseOffsetX = 0;
 var mouseOffsetY = 0;
 
+bindCanvasOverlay();
+
+boolean getMousePressed(){
+    return mousePressed;
+}
+void changeMousePressed(boolean _in){
+    mousePressed = _in;
+}
+void changeMousePressed(boolean _in, String buttonPressed){
+    switch(buttonPressed){
+        case "LEFT":
+            mouseButton = LEFT;
+            break;
+        case "CENTER":
+            mouseButton = CENTER;
+            break;
+        case "RIGHT":
+            mouseButton = RIGHT;
+            break;
+    }
+    mousePressed = _in;
+}
 void mouseOver() {
     canvasHasFocus = true;
 }

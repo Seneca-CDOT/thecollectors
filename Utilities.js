@@ -1,10 +1,7 @@
+
+
 $(document).ready(function(){
-  $(".inCanvas").bind("mouseover",function(){
-    $('canvas').focus();
-  });
-  $(".inCanvas").bind("click",function(){
-    $('canvas').focus();
-  });
+
 });
 
 //only works for native object types
