@@ -25,7 +25,7 @@ var driveFlag;
 strokeWeight(4);
 
 /*debugging tools*/
-boolean debugging=false;
+boolean debugging=true;
 
 
 var mapType="xml";              //change between "xml" or "gen"

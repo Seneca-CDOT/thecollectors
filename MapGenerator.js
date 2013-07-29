@@ -225,6 +225,7 @@ MapGenerator.prototype.generateStructures = function(){
 		}
 		loops++;
 	}
+	
 	//	Randomizing a start point for the player
 	//	Want to make sure the start point isn't on or too close to a structure
 	//	loops variable protects against looping too many times/infinite loops
@@ -239,19 +240,35 @@ MapGenerator.prototype.generateStructures = function(){
 	Recursive check for a nearby structure that can be reached with
 	the fuel specified by fuelAmt
 */
-MapGenerator.prototype.findStructure = function(nodeFrom, nodeIn, fuelAmt){
+MapGenerator.prototype.findStructure = function(nodeFrom, nodeIn, fuelAmt, findFuel){
 	if(fuelAmt <= 0)
 		return false;
 	var structureAtNode = this.getStructureFromList(nodeIn);
-	if(structureAtNode)
-		return true;
+	if(structureAtNode){
+		if(structureAtNode.StructType == "fuel" && findFuel)
+			return fuelAmt;
+		else if(structureAtNode.StructType != "fuel" && !findFuel)
+			return true;
+	}
 	var node=this.mapGraph.nodeDictionary[nodeIn];
 	for(var index in node.connections){
 		if(index!=nodeFrom){
-			var rv=this.findStructure(nodeIn,index,fuelAmt-node.connections[index].numerator);
-			if(rv) return rv;
+			var rv=this.findStructure(nodeIn,index,fuelAmt-node.connections[index].numerator,findFuel);
+			if(rv!=false) return rv;
 		}
 	}
+	return false;
+}
+MapGenerator.prototype.placeFuelStation = function(nodeID){
+	var rv = this.findStructure(-1,nodeID,this.fuel/2,true);
+	if(!rv){
+		if(!this.getStructureFromList(nodeID)){
+			this.structureList.push(new Structure(nodeID,"fuel"));
+			return true;
+		}
+		console.log("why would you try that?");
+	}
+	console.log("too close!");
 	return false;
 }
 /*

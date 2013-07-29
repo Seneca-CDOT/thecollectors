@@ -54,7 +54,7 @@ var answerBonus={
 };
 
 //	Map Generator Values //
-var roadsPerStructure = 5;
+var roadsPerStructure = 4;
 var baseRoadLength = 100;
 var	numStructureTypes = 10;
 var structsPerPoints = 2;
