@@ -27,7 +27,7 @@ boolean debugging=false;
 
 var mapType="gen";              //change between "xml" or "gen"
 var showMenus=false;
-var GEN_TUTORIAL = true;//false;       //since game difficulty and level are both 1, this can stay false for now
+var GEN_TUTORIAL = false;       //since game difficulty and level are both 1, this can stay false for now
 var DISPLAY_SHADOWMAP = false;
 var ROAD_ALPHA = 50;
 var ROAD_DELTA = 10;
@@ -97,7 +97,7 @@ void loadDifficulty(diffVal, gameMode) {
 
 if(!GEN_TUTORIAL){
   $("#tutorialTextDiv").hide();
-  $("#legendDiv").hide();
+  //$("#legendDiv").hide();
 }
 
 void initialize() {
@@ -196,6 +196,7 @@ class CampaignMap extends Level {
             setViewBox(0, 0, screenWidth, screenHeight);
             addLevelLayer("Win Screen", new WinScreen(this));
             renderedEndScreen = true;
+            campaignCash += levelCash;
             document.getElementById("legendDiv").style.cssText = 'display:none';
             document.getElementById("fuelDiv").style.cssText = 'display:none';
         } else if (gameOver && !renderedEndScreen) {
@@ -205,6 +206,7 @@ class CampaignMap extends Level {
             setViewBox(0, 0, screenWidth, screenHeight);
             addLevelLayer("Game Over Screen", new GameOverScreen(this));
             renderedEndScreen = true;
+            roadSelectedDictionary = null;
             document.getElementById("legendDiv").style.cssText = 'display:none';
             document.getElementById("fuelDiv").style.cssText = 'display:none';
         }
@@ -343,6 +345,7 @@ class Driver extends Player{
     var edgeDelta = 0, roadDeltaX = 0, roadDeltaY = 0, direction = 0;
     var currDestColorID, driveFlag, nodeMap, fuelGauge, fuelCost;
     var destinationWeight, deltaPerTick, tickDelta = 0, previousVehicleDelta = 0;
+    var fuelGaugeHUD, cashHUD;
     Driver(map) {
         super("Driver");
         setStates();
@@ -361,14 +364,18 @@ class Driver extends Player{
         currDestColorID = [];
         driveFlag = false;
         fuelGauge = new Fraction(nodeMap.fuel.numerator, nodeMap.fuel.denominator);
-        document.getElementById("fuelElement").children[1].innerHTML = fuelGauge.toString();
-        document.getElementById("legendElement").children[1].innerHTML = levelCash;
+        fuelGaugeHUD = document.getElementById("fuelElement2");
+        fuelGaugeHUD.innerHTML = fuelGauge.numerator.toString();
+        fuelGaugeHUD.innerHTML += "<br />——<br />";
+        fuelGaugeHUD.innerHTML += fuelGauge.denominator.toString();
+        cashHUD = document.getElementById("legendElement").children[1];
+        cashHUD.innerHTML = levelCash;
         var fuelCostWeight = 1.0 - (0.6 - gameDifficulty * 0.2);
         fuelCost = Math.floor(StructureValues.fuel * fuelCostWeight / fuelGauge.denominator);
         setScale(0.8);
     }
     void handleInput(){
-        if (canvasHasFocus) {
+        if (canvasHasFocus && mapScreen) {
             if (keyCode){
                 ViewBox box=layer.parent.viewbox;
                 int _x=0, _y=0;
@@ -468,7 +475,7 @@ class Driver extends Player{
                     levelCash += sL[i].Points;
                     sL[i].visited = true;
                     deliveriesLeft--;
-                    document.getElementById("legendElement").children[1].innerHTML = levelCash;
+                    cashHUD.innerHTML = levelCash;
                 } else if (sL[i].StructType == "Fuel Station" && !refueled) {
                     refueled = true;
                     var fuelMissing = fuelGauge.denominator - fuelGauge.numerator;
@@ -495,8 +502,18 @@ class Driver extends Player{
                             fuelGauge.numerator += ticksToFill;
                         }
                     }
-                    document.getElementById("legendElement").children[1].innerHTML = levelCash;
-                    document.getElementById("fuelElement").children[1].innerHTML = fuelGauge.toString();
+                    cashHUD.innerHTML = levelCash;
+                    var fuelLevel = fuelGauge.evaluate();
+                    if (fuelLevel <= 0.2) {
+                        fuelGaugeHUD.style.cssText = "color:red";
+                    } else if (fuelLevel <= 0.5) {
+                        fuelGaugeHUD.style.cssText = "color:yellow";
+                    } else {
+                        fuelGaugeHUD.style.cssText = "color:white";
+                    }
+                    fuelGaugeHUD.innerHTML = fuelGauge.numerator.toString();
+                    fuelGaugeHUD.innerHTML += "<br />——<br />";
+                    fuelGaugeHUD.innerHTML += fuelGauge.denominator.toString();
                 }
             }
         }
@@ -533,7 +550,7 @@ class Driver extends Player{
             checkIfFuelEmpty();
 
             // Keep driving as long as we haven't run out of destinations
-            if (destination.length != 0 && deliveriesLeft > 0) {
+            if (!gameOver && destination.length != 0 && deliveriesLeft > 0) {
                 driveToDestination();
             } else {
                 driveFlag = false;
@@ -553,7 +570,17 @@ class Driver extends Player{
     // Subtract the fraction from the fuel gauge and update the HUD
     void consumeFuel() {
         fuelGauge.numerator -= 1;
-        document.getElementById("fuelElement").children[1].innerHTML = fuelGauge.toString();
+        var fuelLevel = fuelGauge.evaluate();
+        if (fuelLevel <= 0.2) {
+            fuelGaugeHUD.style.cssText = "color:red";
+        } else if (fuelLevel <= 0.5) {
+            fuelGaugeHUD.style.cssText = "color:yellow";
+        } else {
+            fuelGaugeHUD.style.cssText = "color:white";
+        }
+        fuelGaugeHUD.innerHTML = fuelGauge.numerator.toString();
+        fuelGaugeHUD.innerHTML += "<br />——<br />";
+        fuelGaugeHUD.innerHTML += fuelGauge.denominator.toString();
     }
     // If we're out of fuel and all deliveries have not been completed,
     // the game is over
@@ -594,6 +621,7 @@ class Driver extends Player{
         if(layer.debug){
             //println("x:"+mx+" || "+"y:"+my);
         }
+        if (!mapScreen) return;
         if (driveFlag) return;
 
         // The mouse co-ordinates must be offset by the position of the ViewBox
@@ -669,7 +697,7 @@ class Road extends Interactor {
         fracFont = loadFont("EurekaMonoCond-Bold.ttf");
         textFont(fracFont, 14);
         textLeading(9);
-        fracText = frac.numerator.toString() + "\n--\n" + frac.denominator.toString();
+        fracText = frac.numerator.toString() + "\n—\n" + frac.denominator.toString();
         // Associate the road segment with its shadowMap road's hexadecimal colour code
         cID = id;
         calculateBounds();
@@ -708,7 +736,7 @@ class Road extends Interactor {
 
         // If the road has been selected or the mouse is within the road bounds,
         // draw the road highlight
-        if (roadSelectedDictionary[cID] > ROAD_ALPHA) {// ||
+        if (roadSelectedDictionary != null && roadSelectedDictionary[cID] > ROAD_ALPHA) {// ||
                /* (pmouseX >= roadBounds[0] && pmouseX <= roadBounds[2] &&*/
                /* pmouseY >= roadBounds[1] && pmouseY <= roadBounds[3])) {*/
             fill(173-roadSelectedDictionary[cID], 216-roadSelectedDictionary[cID], 230, ROAD_ALPHA
@@ -786,6 +814,8 @@ class Struct extends InputInteractor {
         }
     }
     void mouseMoved(int mx, int my) {
+        if (!mapScreen) return;
+
         // The mouse co-ordinates must be offset by the position of the ViewBox
         // for scrolling and zooming to work properly
         var layerCoords = layer.mapCoordinateFromScreen(mx, my);

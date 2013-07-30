@@ -62,6 +62,11 @@
           color:#ffffff;
           margin: 10px 10px;
       }
+      p.center
+      {
+          text-align:center;
+          font-weight:bold;
+      }
 	</style>
   </head>
   <body>
@@ -96,6 +101,8 @@
     <div id="fuelDiv" class="labelBox visible" style="position:fixed;left:865px;top:500px;width:80px;height:110px;">
         <p id="fuelElement">
         </p>
+        <p id="fuelElement2" class="center">
+        </p>
     </div>
 
     <script type="text/javascript">
@@ -104,7 +111,7 @@
 	var tutorialIndex = 1;
         document.getElementById("tutorialTextElement").innerHTML = tutorialText[tutorialIndex];
         document.getElementById("legendElement").innerHTML = "Cash<br /><h1></h1>";
-        document.getElementById("fuelElement").innerHTML = "Fuel<br /><h1></h1>";
+        document.getElementById("fuelElement").innerHTML = "Fuel";
 
         // Event listener for the <p> element containing tutorial instructions.
         document.getElementById("tutorialTextDiv").addEventListener("click", function(event) {
