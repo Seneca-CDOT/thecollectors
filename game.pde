@@ -51,10 +51,12 @@ void changeMousePressed(boolean _in, String buttonPressed){
     mousePressed = _in;
 }
 void mouseOver() {
+    if(stopDragging) mousePressed = false;
     canvasHasFocus = true;
 }
 
 void mouseOut() {
+    stopDragging = true;
     canvasHasFocus = false;
 }
 
