@@ -551,16 +551,16 @@ class Road extends Interactor {
     }
 }
 class Struct extends InputInteractor {
-    var vertex, structLabel, sBox;
+    var vertex, structObject, sBox;
     var hovering;
-    Struct(vert, structObjectIn) {
+    Struct(vert, _structObject) {
         super("Structure");
         setPosition(vert.x, vert.y);
         vertex = vert;
         setStates();
         sBox = getBoundingBox();
         hovering = false;
-        structObject=structObjectIn;
+        structObject=_structObject;
     }
     void setStates() {
         addState(new State("default",assetsFolder+"gas.png"));

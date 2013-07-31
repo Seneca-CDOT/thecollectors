@@ -198,21 +198,28 @@ MapGenerator.prototype.minConnections = function(nodeFrom, nodeIn, hops){
 MapGenerator.prototype.generateStructures = function(){
 	var nodes = this.mapGraph.nodeDictionary;
 	var structCount=0;
+	if(numStructureTypes%structsPerPoints == 0)
+		var hopSize=2;
+	else
+		var hopSize=3;
+	hopSize=hopSize*structsPerPoints;
 	//	generates structures at dead-ends
 	for(var index in nodes){
 		if(nodes[index].connectionsLength==1 && !this.findStructure(-1,index,this.fuel)){
-			this.structureList.push(new Structure(index,"fuel"));
+			this.structureList.push(new Structure(index,
+				this.randomStructureType(hopSize*structCount%numStructureTypes)));
 			structCount++;
 		}
 	}
 	//	Every loop reduces the fuel amount passed into findStructure
 	//	This makes it easier to return false, and then generate a structure
 	var loops = 0;
-	while(structCount != this.numStructs && loops<=5){
+	while(structCount != this.numStructs){
 		for(var index in nodes){
 			if(structCount == this.numStructs) break;
 			if(!this.findStructure(-1,index, this.fuel-loops)){
-				this.structureList.push(new Structure(index,"fuel"));
+				this.structureList.push(new Structure(index,
+					this.randomStructureType(hopSize*structCount%numStructureTypes)));
 				structCount++;
 			}
 		}
@@ -256,4 +263,25 @@ MapGenerator.prototype.getStructureFromList = function(nodeID) {
 			return this.structureList[i];
 	}
 	return false;
+}
+/*
+	Returns a structure type ot use for generation
+*/
+MapGenerator.prototype.randomStructureType = function(_loops){
+	var loops = 0;
+	var returnNext = 0;
+	for(var index in StructureValues){
+		if(returnNext){
+			if(returnNext==1)
+				return index;
+			else
+				returnNext--;
+		}
+		if(loops == _loops){
+			var rand = rng(1,structsPerPoints);
+			if(rand==1) return index;
+			else returnNext = structsPerPoints-1;
+		}
+		loops++;
+	}
 }
