@@ -1,4 +1,9 @@
 
+
+$(document).ready(function(){
+
+});
+
 //only works for native object types
 function getType(obj){
 	var tmp=Object.prototype.toString.call(obj);

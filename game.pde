@@ -16,7 +16,7 @@ int currentLevel = 1;
 strokeWeight(4);
 
 /*debugging tools*/
-boolean debugging=true;
+boolean debugging=false;
 
 
 var mapType="gen";              //change between "xml" or "gen"
@@ -28,6 +28,28 @@ var ROAD_DELTA = 10;
 var mouseOffsetX = 0;
 var mouseOffsetY = 0;
 
+bindCanvasOverlay();
+
+boolean getMousePressed(){
+    return mousePressed;
+}
+void changeMousePressed(boolean _in){
+    mousePressed = _in;
+}
+void changeMousePressed(boolean _in, String buttonPressed){
+    switch(buttonPressed){
+        case "LEFT":
+            mouseButton = LEFT;
+            break;
+        case "CENTER":
+            mouseButton = CENTER;
+            break;
+        case "RIGHT":
+            mouseButton = RIGHT;
+            break;
+    }
+    mousePressed = _in;
+}
 void mouseOver() {
     canvasHasFocus = true;
 }
@@ -71,6 +93,7 @@ if(!GEN_TUTORIAL){
 }
 
 void initialize() {
+    sketch = Processing.instances[0];
     clearScreens(); // reset the screen
     if(showMenus){
         addScreen("Title Screen", new TitleScreen(screenWidth, screenHeight));
@@ -228,8 +251,8 @@ class MapLevel extends LevelLayer {
 		}
     }
     void initializePlayer() {
-        playerAvatar = new Driver(generatedMap.startPoint.clone());
-        addPlayer(playerAvatar);
+        player = new Driver(generatedMap.startPoint.clone());
+        addPlayer(player);
         initializeStructures();
     }
 }
