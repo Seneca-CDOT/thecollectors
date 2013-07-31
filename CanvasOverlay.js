@@ -1,6 +1,8 @@
 var prevX,prevY;
+var stopDragging = false;
 function bindCanvasOverlay(){ 
   $(".inCanvas").bind("mouseover",function(event){
+    stopDragging=false;
     prevX = sketch.mouseX;
     prevY = sketch.mouseY;
   });

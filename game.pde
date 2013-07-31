@@ -16,12 +16,12 @@ int currentLevel = 1;
 strokeWeight(4);
 
 /*debugging tools*/
-boolean debugging=true;
+boolean debugging=false;
 
 
-var mapType="xml";              //change between "xml" or "gen"
+var mapType="gen";              //change between "xml" or "gen"
 var showMenus=false;
-var GEN_TUTORIAL = true;       //since game difficulty and level are both 1, this can stay false for now
+var GEN_TUTORIAL = false;       //since game difficulty and level are both 1, this can stay false for now
 var DISPLAY_SHADOWMAP = false;
 var ROAD_ALPHA = 50;
 var ROAD_DELTA = 10;
@@ -51,10 +51,12 @@ void changeMousePressed(boolean _in, String buttonPressed){
     mousePressed = _in;
 }
 void mouseOver() {
+    if(stopDragging) mousePressed = false;
     canvasHasFocus = true;
 }
 
 void mouseOut() {
+    stopDragging = true;
     canvasHasFocus = false;
 }
 
