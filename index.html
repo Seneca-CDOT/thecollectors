@@ -38,7 +38,7 @@
     </script>
 
 	<style>
-	  canvas {outline:none;width:960px;height:640px;}
+	  canvas {outline:none;width:940px;height:600px;}
       button { width:120px; }
       div.textBox
       {
@@ -47,29 +47,65 @@
       }
       div.labelBox
       {
+          background-color: #A9DEB9;
+          opacity:1.0;
+      }
+      div.fuelBox
+      {
           background-color: #000000;
-          opacity:0.9;
+          opacity:0.8;
       }
       div.visible { display:block; }
       div.hidden { display:none; }
+      div.labelBox p
+      {
+          color:#000000;
+          margin: 10px 10px 10px 10px;
+      }
       div.textBox p
       {
           color:#ffffff;
           margin: 10px 10px;
       }
-      div.labelBox p
+      div.fuelBox p
       {
           color:#ffffff;
-          margin: 10px 10px;
+          margin: 10px 10px 10px 10px;
       }
       p.center
       {
           text-align:center;
           font-weight:bold;
+          font-size:28px;
+      }
+      div.fuelGauge
+      {
+          position:fixed;
+          left:692px;
+          top:395px;
+          width:256px;
+          height:256px;
+          opacity:1.0;
       }
 	</style>
   </head>
   <body>
+  <div style="width:940px;height:44px;background-color:#A9DEB9;">
+    <div id="cashImgDiv" class="labelBox" style="position:absolute;width:40px;height:44px;">
+        <img src="./assets/items/money.svg" alt="Money Bag" width="40px" height="40px" />
+    <div>
+    <div id="cashTextDiv" class="labelBox" style="position:absolute;left:40px;top:0px;width:150px;height:44px;">
+        <p id="cashElement" style="font-size:28px;margin:5px;">
+        </p>
+    </div>
+    <div id="parcelImgDiv" class="labelBox" style="position:absolute;left:190px;top:0px;width:40px;height:44px;">
+        <img src="./assets/items/parcel.svg" alt="Parcel" width="40px" height="40px" />
+    </div>
+    <div id="parcelTextDiv" class="labelBox" style="position:absolute;left:230px;top:0px;width:80px;height:44px;">
+        <p id="parcelElement" style="font-size:28px;margin:5px;">
+        </p>
+    </div>
+  </div>
 
     <canvas onmouseenter="$('canvas').focus()" data-processing-sources="codebase.pde assetPreloader.pde game.pde"></canvas>
     <div id="menuDiv" style="display:block;position:fixed;top:650px;left:0px;">
@@ -90,28 +126,23 @@
 	document.getElementById("mediumButton").innerHTML = pageText.mediumButton;
 	document.getElementById("hardButton").innerHTML = pageText.hardButton;
     </script>
-    <div id="tutorialTextDiv" class="textBox visible inCanvas" style="position:fixed;left:200px;top:500px;width:500px;height:110px;">
+    <div id="tutorialTextDiv" class="textBox hidden inCanvas" style="position:fixed;left:200px;top:500px;width:500px;height:110px;">
         <p id="tutorialTextElement">
         </p>
     </div>
-    <div id="legendDiv" class="labelBox visible inCanvas" style="position:fixed;left:730px;top:500px;width:130px;height:110px;">
-        <p id="legendElement">
-        </p>
-    </div>
-    <div id="fuelDiv" class="labelBox visible" style="position:fixed;left:865px;top:500px;width:80px;height:110px;">
-        <p id="fuelElement">
-        </p>
+    <div id="fuelDiv" class="fuelBox visible inCanvas" style="position:fixed;left:620px;top:540px;width:80px;height:110px;">
         <p id="fuelElement2" class="center">
         </p>
     </div>
 
+    <div id="fuelGaugeDiv" class="fuelGauge">
+        <img src="assets/items/fuel_gauge.svg" alt="Fuel Gauge" width="256px" height="256px" />
+    </div>
+
     <script type="text/javascript">
 	var tutorialText = pageText.tutorial;
-	document.getElementById("legendElement").innerHTML = tutorialText[0];
 	var tutorialIndex = 1;
         document.getElementById("tutorialTextElement").innerHTML = tutorialText[tutorialIndex];
-        document.getElementById("legendElement").innerHTML = "Cash<br /><h1></h1>";
-        document.getElementById("fuelElement").innerHTML = "Fuel";
 
         // Event listener for the <p> element containing tutorial instructions.
         document.getElementById("tutorialTextDiv").addEventListener("click", function(event) {
