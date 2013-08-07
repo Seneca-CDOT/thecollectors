@@ -5,33 +5,34 @@ var screenSizeY=640;
 
 //	Assets Folder		//
 var assetsFolder = "assets/";
+var structureFolder	= "assets/buildings/";
 
 //	Static Game Values 	//
 var StructureValues={
-	office:1100,
-	restaurant:1100,
-	power_plant:1000,
-	apartments:1000,
-	school:900,
-	house:900,
-	farm:850,
-	factory:850,
-	lumber_yard:750,
-	cafe:750,
-	fuel:1000			//refers to the COST of one full tank of fuel on Hard difficulty
+	airport:1100,
+	powerplant:1100,
+	hospital:1000,
+	train_stn:1000,
+	barn:900,
+	art_gallery:900,
+	cafe:850,
+	restaurant:850,
+	house:750,
+	bakery:750,
+	fuel_stn:1000			//refers to the COST of one full tank of fuel on Hard difficulty
 };
 var StructureCaptions={
-	office:"Office",
-	restaurant:"Restaurant",
-	power_plant:"Power Plant",
-	apartments:"Apartments",
-	school:"School",
-	house:"House",
-	farm:"Farm",
-	factory:"Factory",
-	lumber_yard:"Lumber Yard",
+	airport:"Airport",
+	powerplant:"Power Plant",
+	hospital:"Hospital",
+	train_stn:"Train Station",
+	barn:"Farm",
+	art_gallery:"Art Gallery",
 	cafe:"Cafe",
-	fuel:"Fuel Station"
+	restaurant:"Restaurant",
+	house:"House",
+	bakery:"Bakery",
+	fuel_stn:"Fuel Station"
 };
 var fuelCost={			//I think 60% fuel cost for easy may be TOO easy. To be tweaked
 	easy: 0.6,

@@ -50,19 +50,19 @@
                 </road>
             </roads>
             <places>
-                <place type="Power Plant" caption="Power Plant" value="1000">
+                <place type="powerplant" caption="Power Plant" value="1100">
                     <point x="300" y="100" />
                 </place>
-                <place type="Factory" caption="Factory" value="850">
+                <place type="restaurant" caption="Restaurant" value="850">
                     <point x="500" y="200" />
                 </place>
-                <place type="Office" caption="Office" value="1100">
+                <place type="train_stn" caption="Train Station" value="1000">
                     <point x="500" y="400" />
                 </place>
-                <place type="School" caption="School" value="900">
+                <place type="art_gallery" caption="Art Gallery" value="900">
                     <point x="300" y="400" />
                 </place>
-                <place type="Fuel Station" caption="Fuel" value="-1">
+                <place type="fuel_stn" caption="Fuel" value="-1">
                     <point x="300" y="300" />
                 </place>
             </places>
