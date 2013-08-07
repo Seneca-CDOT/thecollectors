@@ -255,6 +255,8 @@ class MapLevel extends LevelLayer {
     void initializePlayer() {
         player = new Driver(generatedMap.startPoint.clone());
         addPlayer(player);
+        var depot = new Depot(generatedMap.startPoint.clone());
+        addInteractor(depot);
         initializeStructures();
     }
 }
@@ -550,6 +552,18 @@ class Road extends Interactor {
         text(fracText, (vertex1.x - vertex2.x) == 0 ? vertex1.x + 12 : ((vertex1.x + vertex2.x) * 0.5),
             (vertex1.y - vertex2.y) == 0 ? vertex1.y - 32 : ((vertex1.y + vertex2.y) * 0.5));
         if (DISPLAY_SHADOWMAP) image(shadowMap, 0, 0);
+    }
+}
+class Depot extends Interactor {
+    var vertex;
+    Depot(vert){
+        super("Depot");
+        setPosition(vert.x, vert.y);
+        vertex=vert;
+        setStates();
+    }
+    void setStates(){
+        addState(new State("default",structureFolder+"depot.png"));
     }
 }
 class Struct extends InputInteractor {
