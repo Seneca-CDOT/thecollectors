@@ -559,13 +559,13 @@ class Struct extends InputInteractor {
         super("Structure");
         setPosition(vert.x, vert.y);
         vertex = vert;
-        setStates();
-        sBox = getBoundingBox();
         hovering = false;
         structObject=_structObject;
+        setStates();
+        sBox = getBoundingBox();
     }
     void setStates() {
-        addState(new State("default",assetsFolder+"gas.png"));
+        addState(new State("default",structureFolder+structObject.StructType+".png"));
     }
     void draw(float v1x,float v1y,float v2x, float v2y){
         super.draw(v1x,v1y,v2x,v2y);
