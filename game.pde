@@ -1039,7 +1039,7 @@ class StructDebug extends Struct{
     void draw(float v1x,float v1y,float v2x, float v2y){
         pushMatrix();
         //scale(zoomLevel);
-        if(structObject.StructType=="fuel")
+        if(structObject.StructType=="fuel_stn")
             stroke(0,255,0);
         else
             stroke(255,0,0);
