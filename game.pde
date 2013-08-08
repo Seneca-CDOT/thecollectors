@@ -18,6 +18,7 @@ int deliveriesLeft = 0;
 var mapScreen = false;
 var gameOver = false;
 var refueled = false;
+var driveFlag;
 
 //line width
 strokeWeight(4);
@@ -30,7 +31,7 @@ var mapType="xml";              //change between "xml" or "gen"
 var showMenus=false;
 var GEN_TUTORIAL = true;       //since game difficulty and level are both 1, this can stay false for now
 var DISPLAY_SHADOWMAP = false;
-var ROAD_ALPHA = 50;
+var ROAD_ALPHA = 70;
 var ROAD_DELTA = 10;
 var mouseOffsetX = 0;
 var mouseOffsetY = 0;
@@ -298,9 +299,9 @@ class MapLevel extends LevelLayer {
                 addInteractor(roadSegment);
 
                 // Initialize road selection alpha values
-                roadSelectedDictionary[colorID] = ROAD_ALPHA;
-                //roadSelectedDictionary[colorID][0] = ROAD_ALPHA;
-                //roadSelectedDictionary[colorID][1] = ROAD_ALPHA;
+                roadSelectedDictionary[colorID] = [];
+                roadSelectedDictionary[colorID][0] = ROAD_ALPHA;
+                roadSelectedDictionary[colorID][1] = ROAD_ALPHA;
 
                 // Increment color values for the shadow roads; stay within bounds
                 if (r >= 255) { r = 0; g++; }
@@ -345,7 +346,7 @@ class MapLevel extends LevelLayer {
 class Driver extends Player{
     var currentPosition, previousPosition, destination, currDest;
     var edgeDelta = 0, roadDeltaX = 0, roadDeltaY = 0, direction = 0;
-    var currDestColorID, driveFlag, nodeMap, fuelGauge, fuelCost;
+    var currDestColorID, nodeMap, fuelGauge, fuelCost;
     var destinationWeight, deltaPerTick, tickDelta = 0, previousVehicleDelta = 0;
     var fuelGaugeHUD, cashHUD;
     Driver(map) {
@@ -375,7 +376,7 @@ class Driver extends Player{
         parcelHUD = document.getElementById("parcelElement");
         parcelHUD.innerHTML = "x " + deliveriesLeft;
         var fuelCostWeight = 1.0 - (0.6 - gameDifficulty * 0.2);
-        fuelCost = Math.floor(StructureValues.fuel * fuelCostWeight / fuelGauge.denominator);
+        fuelCost = Math.floor(StructureValues.fuel_stn * fuelCostWeight / fuelGauge.denominator);
         setScale(0.8);
     }
     void handleInput(){
@@ -475,13 +476,13 @@ class Driver extends Player{
             if (sL[i].nodeID == currentNodeID) {
                 // If the current structure is a delivery location, add points,
                 // if it is a fuel station reduce cash but increase fuel capacity
-                if (sL[i].StructType != "Fuel Station" && !sL[i].visited) {
+                if (sL[i].StructType != "fuel_stn" && !sL[i].visited) {
                     levelCash += sL[i].Points;
                     sL[i].visited = true;
                     deliveriesLeft--;
                     cashHUD.innerHTML = "$" + levelCash;
                     parcelHUD.innerHTML = "x " + deliveriesLeft;
-                } else if (sL[i].StructType == "Fuel Station" && !refueled) {
+                } else if (sL[i].StructType == "fuel_stn" && !refueled) {
                     refueled = true;
                     var fuelMissing = fuelGauge.denominator - fuelGauge.numerator;
                     var totalFuelCost = fuelMissing * fuelCost;
@@ -538,6 +539,18 @@ class Driver extends Player{
          */
         if (edgeDelta > 0 && vehicleDelta > 0 && vehicleDelta > edgeDelta) {
             stopVehicle();
+
+            // De-select the road we finished driving over
+            var index, delta;
+            if (currDest.vertex.x - previousPosition.x == 0) {
+                delta = currDest.vertex.y - previousPosition.y;
+                index = delta < 0 ? 1 : 0;
+            } else if (currDest.vertex.y - previousPosition.y == 0) {
+                delta = currDest.vertex.x - previousPosition.x;
+                index = delta < 0 ? 1 : 0;
+            }
+            roadSelectedDictionary[currDestColorID.shift()][index] -= ROAD_DELTA;
+
             setPosition(currDest.vertex.x, currDest.vertex.y);
             previousPosition.x = currentPosition.x = getX();
             previousPosition.y = currentPosition.y = getY();
@@ -560,8 +573,6 @@ class Driver extends Player{
             } else {
                 driveFlag = false;
             }
-            // De-select the road we finished driving over
-            roadSelectedDictionary[currDestColorID.shift()] -= ROAD_DELTA;
         }
 
         if (!gameOver && edgeDelta > 0 && tickDelta >= deltaPerTick) {
@@ -652,23 +663,51 @@ class Driver extends Player{
              * final destination to the previous node in the route.
              */
             if (shadowMapColorDictionary[c] != null && button == LEFT) {
+                var flippedVertexX = shadowMapColorDictionary[c][0].vertex.x -
+                    shadowMapColorDictionary[c][1].vertex.x > 0 ? true : false;
+                var flippedVertexY = shadowMapColorDictionary[c][0].vertex.y -
+                    shadowMapColorDictionary[c][1].vertex.y > 0 ? true : false;
                 if (shadowMapColorDictionary[c][0].vertex.equals(futurePosition)) {
                     destination.push(shadowMapColorDictionary[c][1]);
-                    roadSelectedDictionary[c] += ROAD_DELTA;
+                    if (!flippedVertexX && !flippedVertexY) {
+                        roadSelectedDictionary[c][0] += ROAD_DELTA;
+                    } else if (flippedVertexX || flippedVertexY) {
+                        roadSelectedDictionary[c][1] += ROAD_DELTA;
+                    }
                     futurePosition = shadowMapColorDictionary[c][1].vertex;
                     currDestColorID.push(c);
                 } else if (shadowMapColorDictionary[c][1].vertex.equals(futurePosition)) {
                     destination.push(shadowMapColorDictionary[c][0]);
-                    roadSelectedDictionary[c] += ROAD_DELTA;
+                    if (!flippedVertexX && !flippedVertexY) {
+                        roadSelectedDictionary[c][1] += ROAD_DELTA;
+                    } else if (flippedVertexX || flippedVertexY) {
+                        roadSelectedDictionary[c][0] += ROAD_DELTA;
+                    }
                     futurePosition = shadowMapColorDictionary[c][0].vertex;
                     currDestColorID.push(c);
-                } else {
-                    console.log("Registered click on invalid road");
                 }
             } else if (shadowMapColorDictionary[c] != null && button == RIGHT) {
-                if (roadSelectedDictionary[c] > ROAD_ALPHA &&
+                var prevDest, index, delta = 0;
+
+                if (destination.length > 1) {
+                    prevDest = destination[destination.length - 2].vertex;
+                } else if (destination.length == 1) {
+                    prevDest = destination[0].vertex;
+                } else {
+                    return;
+                }
+
+                if (futurePosition.x - prevDest.x == 0) {
+                    delta = futurePosition.y - prevDest.y;
+                    index = delta < 0 ? 1 : 0;
+                } else if (futurePosition.y - prevDest.y == 0) {
+                    delta = futurePosition.x - prevDest.x;
+                    index = delta < 0 ? 1 : 0;
+                }
+
+                if (roadSelectedDictionary[c][index] > ROAD_ALPHA &&
                         c == currDestColorID[currDestColorID.length - 1]) {
-                    roadSelectedDictionary[c] -= ROAD_DELTA;
+                    roadSelectedDictionary[c][index] -= ROAD_DELTA;
                     destination.pop();
                     if (destination.length > 0) {
                         futurePosition = destination[destination.length - 1].vertex;
@@ -695,8 +734,8 @@ class Road extends Interactor {
     PFont fracFont;
     var fracText = "";
     var currX = 0, currY = 0;
-    var roadBounds = [];
-    var cID;
+    var roadBounds = [], roadSelection = [], roadSelection2 = [];
+    var cID, vFlippedX, vFlippedY;
     Road(id, vert1, vert2, frac) {
         super("Road");
         vertex1 = vert1;
@@ -704,37 +743,133 @@ class Road extends Interactor {
         fracFont = loadFont("EurekaMonoCond-Bold.ttf");
         textFont(fracFont, 14);
         textLeading(9);
-        fracText = frac.numerator.toString() + "\n—\n" + frac.denominator.toString();
+        fracText = frac.numerator.toString() + /*"\n—\n"*/"\n--\n" + frac.denominator.toString();
         // Associate the road segment with its shadowMap road's hexadecimal colour code
         cID = id;
         calculateBounds();
     }
     // Calculate the box that acts as the highlight for the road segment
     void calculateBounds() {
-        var vFlippedX = (vertex1.x - vertex2.x) < 0 ? false : true;
-        var vFlippedY = (vertex1.y - vertex2.y) < 0 ? false : true;
+        vFlippedX = (vertex1.x - vertex2.x) <= 0 ? false : true;
+        vFlippedY = (vertex1.y - vertex2.y) <= 0 ? false : true;
         if (vertex1.x - vertex2.x == 0 && !vFlippedY) {
+            roadSelection[0] = vertex1.x - 9;
+            roadSelection[1] = vertex1.y + 30;
+            roadSelection[2] = vertex2.x - 3;
+            roadSelection[3] = vertex2.y - 50;
+            roadSelection[4] = vertex2.x - 6;
+            roadSelection[5] = vertex2.y - 40;
+            roadSelection[6] = vertex1.x - 9;
+            roadSelection[7] = vertex2.y - 50;
+            roadSelection[8] = vertex2.x - 3;
+            roadSelection[9] = vertex2.y - 50;
+            roadSelection2[0] = vertex1.x + 3;
+            roadSelection2[1] = vertex1.y + 50;
+            roadSelection2[2] = vertex2.x + 9;
+            roadSelection2[3] = vertex2.y - 30;
+            roadSelection2[4] = vertex1.x + 6;
+            roadSelection2[5] = vertex1.y + 40;
+            roadSelection2[6] = vertex1.x + 9;
+            roadSelection2[7] = vertex1.y + 50;
+            roadSelection2[8] = vertex1.x + 3;
+            roadSelection2[9] = vertex1.y + 50;
             roadBounds[0] = vertex1.x - 12;
             roadBounds[1] = vertex1.y + 11;
             roadBounds[2] = vertex2.x + 12;
             roadBounds[3] = vertex2.y - 11;
         } else if (vertex1.x - vertex2.x == 0 && vFlippedY) {
+            roadSelection[0] = vertex2.x - 9;
+            roadSelection[1] = vertex2.y + 30;
+            roadSelection[2] = vertex1.x - 3;
+            roadSelection[3] = vertex1.y - 50;
+            roadSelection[4] = vertex1.x - 6;
+            roadSelection[5] = vertex1.y - 40;
+            roadSelection[6] = vertex1.x - 9;
+            roadSelection[7] = vertex1.y - 50;
+            roadSelection[8] = vertex1.x - 3;
+            roadSelection[9] = vertex1.y - 50;
+            roadSelection2[0] = vertex2.x + 3;
+            roadSelection2[1] = vertex2.y + 50;
+            roadSelection2[2] = vertex1.x + 9;
+            roadSelection2[3] = vertex1.y - 30;
+            roadSelection2[4] = vertex2.x + 6;
+            roadSelection2[5] = vertex2.y + 40;
+            roadSelection2[6] = vertex2.x + 9;
+            roadSelection2[7] = vertex2.y + 50;
+            roadSelection2[8] = vertex2.x + 3;
+            roadSelection2[9] = vertex2.y + 50;
             roadBounds[0] = vertex1.x - 12;
             roadBounds[1] = vertex2.y + 11;
             roadBounds[2] = vertex2.x + 12;
             roadBounds[3] = vertex1.y - 11;
         }
         if (vertex1.y - vertex2.y == 0 && !vFlippedX) {
+            roadSelection[0] = vertex1.x + 30;
+            roadSelection[1] = vertex1.y + 3;
+            roadSelection[2] = vertex2.x - 50;
+            roadSelection[3] = vertex2.y + 9;
+            roadSelection[4] = vertex2.x - 40;
+            roadSelection[5] = vertex2.y + 6;
+            roadSelection[6] = vertex2.x - 50;
+            roadSelection[7] = vertex1.y + 3;
+            roadSelection[8] = vertex2.x - 50;
+            roadSelection[9] = vertex2.y + 9;
+            roadSelection2[0] = vertex1.x + 50;
+            roadSelection2[1] = vertex1.y - 9;
+            roadSelection2[2] = vertex2.x - 30;
+            roadSelection2[3] = vertex2.y - 3;
+            roadSelection2[4] = vertex1.x + 40;
+            roadSelection2[5] = vertex1.y - 6;
+            roadSelection2[6] = vertex1.x + 50;
+            roadSelection2[7] = vertex1.y - 9;
+            roadSelection2[8] = vertex1.x + 50;
+            roadSelection2[9] = vertex2.y - 3;
             roadBounds[0] = vertex1.x + 11;
             roadBounds[1] = vertex1.y - 12;
             roadBounds[2] = vertex2.x - 11;
             roadBounds[3] = vertex2.y + 12;
         } else if (vertex1.y - vertex2.y == 0 && vFlippedX) {
+            roadSelection[0] = vertex2.x + 30;
+            roadSelection[1] = vertex2.y + 3;
+            roadSelection[2] = vertex1.x - 50;
+            roadSelection[3] = vertex1.y + 9;
+            roadSelection[4] = vertex1.x - 40;
+            roadSelection[5] = vertex1.y + 6;
+            roadSelection[6] = vertex1.x - 50;
+            roadSelection[7] = vertex1.y + 3;
+            roadSelection[8] = vertex1.x - 50;
+            roadSelection[9] = vertex1.y + 9;
+            roadSelection2[0] = vertex2.x + 50;
+            roadSelection2[1] = vertex2.y - 9;
+            roadSelection2[2] = vertex1.x - 30;
+            roadSelection2[3] = vertex1.y - 3;
+            roadSelection2[4] = vertex2.x + 40;
+            roadSelection2[5] = vertex2.y - 6;
+            roadSelection2[6] = vertex2.x + 50;
+            roadSelection2[7] = vertex2.y - 9;
+            roadSelection2[8] = vertex2.x + 50;
+            roadSelection2[9] = vertex2.y - 3;
             roadBounds[0] = vertex2.x + 11;
             roadBounds[1] = vertex1.y - 12;
             roadBounds[2] = vertex1.x - 11;
             roadBounds[3] = vertex2.y + 12;
         }
+    }
+    void drawSelectionEastSouth() {
+        fill(173-roadSelectedDictionary[cID][0], 216-roadSelectedDictionary[cID][0], 230, ROAD_ALPHA
+                +(roadSelectedDictionary[cID][0]));
+        rect(roadSelection[0], roadSelection[1], roadSelection[2] - roadSelection[0],
+                roadSelection[3] - roadSelection[1]);
+        triangle(roadSelection[4], roadSelection[5], roadSelection[6], roadSelection[7],
+                roadSelection[8], roadSelection[9]);
+    }
+    void drawSelectionWestNorth() {
+        fill(173-roadSelectedDictionary[cID][1], 216-roadSelectedDictionary[cID][1], 230, ROAD_ALPHA
+                +(roadSelectedDictionary[cID][1]));
+        rect(roadSelection2[0], roadSelection2[1], roadSelection2[2] - roadSelection2[0],
+                roadSelection2[3] - roadSelection2[1]);
+        triangle(roadSelection2[4], roadSelection2[5], roadSelection2[6], roadSelection2[7],
+                roadSelection2[8], roadSelection2[9]);
     }
     void draw(float v1x,float v1y,float v2x, float v2y){
         if(debugging)
@@ -742,26 +877,45 @@ class Road extends Interactor {
         line(vertex1.x, vertex1.y, vertex2.x, vertex2.y);
 
         // If the road has been selected or the mouse is within the road bounds,
-        // draw the road highlight
-        if (roadSelectedDictionary != null && roadSelectedDictionary[cID] > ROAD_ALPHA) {// ||
-               /* (mouseOffsetX >= roadBounds[0] && mouseOffsetX <= roadBounds[2] &&*/
-               /* mouseOffsetY >= roadBounds[1] && mouseOffsetY <= roadBounds[3])) {*/
-            fill(173-roadSelectedDictionary[cID], 216-roadSelectedDictionary[cID], 230, ROAD_ALPHA
-                    +(roadSelectedDictionary[cID]));
+        // draw the road highlight in the valid direction
+        if (roadSelectedDictionary != null && roadSelectedDictionary[cID][0] > ROAD_ALPHA) {
             noStroke();
-            rect(roadBounds[0], roadBounds[1], roadBounds[2] - roadBounds[0],
-                    roadBounds[3] - roadBounds[1]);
+            drawSelectionEastSouth();
+            stroke(0);
+        }
+        if (roadSelectedDictionary != null && roadSelectedDictionary[cID][1] > ROAD_ALPHA) {
+            noStroke();
+            drawSelectionWestNorth();
             stroke(0);
         }
 
-        // Render the fraction text next to the road segment
+        // Render the fraction text next to the road segment and highlight the direction
+        // the vehicle will travel in (if the road is adjacent to the vehicle's current location)
         fill(126);
-        if ((mouseOffsetX >= roadBounds[0] && mouseOffsetX <= roadBounds[2] &&
+        if (!driveFlag && (mouseOffsetX >= roadBounds[0] && mouseOffsetX <= roadBounds[2] &&
                 mouseOffsetY >= roadBounds[1] && mouseOffsetY <= roadBounds[3])) {
+            if (futurePosition.x == vertex1.x && futurePosition.y == vertex1.y) {
+                noStroke();
+                if (!vFlippedX && !vFlippedY) {
+                    drawSelectionEastSouth();
+                } else if (vFlippedX || vFlippedY) {
+                    drawSelectionWestNorth();
+                }
+                stroke(0);
+            } else if (futurePosition.x == vertex2.x && futurePosition.y == vertex2.y) {
+                noStroke();
+                if (!vFlippedX && !vFlippedY) {
+                    drawSelectionWestNorth();
+                } else if (vFlippedX || vFlippedY) {
+                    drawSelectionEastSouth();
+                }
+                stroke(0);
+            }
             fill(0);
         }
         text(fracText, (vertex1.x - vertex2.x) == 0 ? vertex1.x + 12 : ((vertex1.x + vertex2.x) * 0.5),
             (vertex1.y - vertex2.y) == 0 ? vertex1.y - 32 : ((vertex1.y + vertex2.y) * 0.5));
+        fill(126);
         if (DISPLAY_SHADOWMAP) image(shadowMap, 0, 0);
     }
 }
@@ -789,7 +943,7 @@ class Struct extends InputInteractor {
         setStates();
         sBox = getBoundingBox();
         fuelCaption = "";
-        if (structObject.StructType == "Fuel Station") {
+        if (structObject.StructType == "fuel_stn") {
             fuelCaption = "Costs $" + costOfFuel.toString() + " per 1/" + tankDenominator.toString();
         }
     }
@@ -801,16 +955,16 @@ class Struct extends InputInteractor {
         if (hovering) {
             noStroke();
             fill(0, 0, 0, 170);
-            rect(sBox[0] - 8, sBox[1] - 23, 90, 30);
-            if (structObject.StructType == "Fuel Station") {
+            rect(sBox[0] - 19, sBox[1] - 23, 110, 30);
+            if (structObject.StructType == "fuel_stn") {
                 rect(sBox[0] - 39, sBox[1] + 60, 150, 30);
             } else {
                 rect(sBox[0] - 8, sBox[1] + 60, 90, 30);
             }
             fill(255);
             textAlign(CENTER);
-            text(structObject.StructCaption, sBox[0] - 8, sBox[1] - 14, 90, 30);
-            if (structObject.StructType == "Fuel Station") {
+            text(structObject.StructCaption, sBox[0] - 19, sBox[1] - 14, 110, 30);
+            if (structObject.StructType == "fuel_stn") {
                 text(fuelCaption, sBox[0] - 39, sBox[1] + 68, 150, 30);
             } else {
                 text(structObject.visited ? "Delivered" : "$"+structObject.pointsString(),

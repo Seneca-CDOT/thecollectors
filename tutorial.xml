@@ -62,7 +62,7 @@
                 <place type="art_gallery" caption="Art Gallery" value="900">
                     <point x="300" y="400" />
                 </place>
-                <place type="fuel_stn" caption="Fuel" value="-1">
+                <place type="fuel_stn" caption="Fuel Station" value="-1">
                     <point x="300" y="300" />
                 </place>
             </places>
