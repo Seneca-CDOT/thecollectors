@@ -145,13 +145,15 @@ MapGenerator.prototype.cleanGraph = function(){
 														node3.vertex.x, node3.vertex.y);
 					//colinear lines found that connect to the same node
 					if(intersectCheck.colinear){
-						var dist1=distance(node1.vertex,node2.vertex);
-						var dist2=distance(node1.vertex,node3.vertex);
 						//if both lines have the same "direction", remove the connection with the farther node
 						//possible bug here...further testing is necessary
 						if(node1.vertex.extendedSlope(node2.vertex) == node1.vertex.extendedSlope(node3.vertex)){
+							var dist1=distance(node1.vertex,node2.vertex);
+							var dist2=distance(node1.vertex,node3.vertex);
 							if(dist1<dist2){
 								tmpGraph.removeConnection(node1.id, node3.id);
+								tmpGraph.addConnection(node2.id, node3.id,
+									new Fraction(distance(node2.vertex, node3.vertex)/baseRoadLength,this.fuel));
 							}
 						}
 					}
@@ -237,12 +239,7 @@ MapGenerator.prototype.generateStructures = function(){
 		loops++;
 	}
 	while(this.getStructureFromList(this.startPoint.id) && this.findStructure(-1,this.startPoint.id,this.fuel-loops/2));
-	/*for (var i = this.structureList.length - 1; i >= 0; i--) {
-		var rv=this.findFuel(-1,this.structureList[i].nodeID,this.fuel/3);
-		for (var j = rv.length - 1; j >= 0; j--) {
-			this.placeFuelStation(rv[j]);
-		}
-	}*/
+
 	this.startPoint = this.startPoint.vertex;
 }
 /*
@@ -250,7 +247,6 @@ MapGenerator.prototype.generateStructures = function(){
 	the fuel specified by fuelAmt
 */
 MapGenerator.prototype.findStructure = function(nodeFrom, nodeIn, fuelAmt){
-	console.log(fuelAmt);
 	if(fuelAmt <= 0)
 		return false;
 	var structureAtNode = this.getStructureFromList(nodeIn);
@@ -266,7 +262,7 @@ MapGenerator.prototype.findStructure = function(nodeFrom, nodeIn, fuelAmt){
 	return false;
 }
 MapGenerator.prototype.findFuel = function(nodeFrom,nodeIn, fuelAmt){
-	if(fuelAmt <=0)
+	if(fuelAmt < 0)
 		return nodeIn;
 	var structureAtNode = this.getStructureFromList(nodeIn);
 	if(structureAtNode && structureAtNode.StructType == "fuel_stn")
@@ -290,9 +286,8 @@ MapGenerator.prototype.findFuel = function(nodeFrom,nodeIn, fuelAmt){
 	return nodeArray;
 }
 MapGenerator.prototype.placeFuelStation = function(nodeID){
-	console.log(nodeID+"================================");
-	var rv = this.findStructure(-1,nodeID,Math.round(this.fuel/4));
-	var rv2 = this.findFuel(-1,nodeID,Math.floor(this.fuel/2));
+	var rv = this.findStructure(-1,nodeID,fuelToStructMin(this.fuel));
+	var rv2 = this.findFuel(-1,nodeID,fuelToFuelMin(this.fuel));
 	if(!rv && rv2!=true){
 		if(!this.getStructureFromList(nodeID)){
 			this.structureList.push(new Structure(nodeID,"fuel_stn"));

@@ -12,7 +12,7 @@ int arrowSpeed=10;
 
 //tracking game values
 int gameDifficulty = 1;
-int currentLevel = 1;
+int currentLevel = 1;       //change difficuly or level from 1 & 1 to generate a map, rather then the tutorial
 int levelCash = 0;
 int campaignCash = 0;
 int deliveriesLeft = 0;
@@ -25,12 +25,10 @@ var driveFlag;
 strokeWeight(4);
 
 /*debugging tools*/
-boolean debugging=true;
-
-
-var mapType="xml";              //change between "xml" or "gen"
+boolean debugging=false;
+var GEN_TUTORIAL=true;
 var showMenus=false;
-var GEN_TUTORIAL = true;       //since game difficulty and level are both 1, this can stay false for now
+
 var DISPLAY_SHADOWMAP = false;
 var mouseOffsetX = 0;
 var mouseOffsetY = 0;
@@ -96,10 +94,6 @@ void loadDifficulty(diffVal, gameMode) {
 }
 */
 
-if(!GEN_TUTORIAL){
-  $("#tutorialTextDiv").hide();
-}
-
 void initialize() {
     sketch = Processing.instances[0];
     clearScreens(); // reset the screen
@@ -107,14 +101,7 @@ void initialize() {
         addScreen("Title Screen", new TitleScreen(screenWidth, screenHeight));
         setActiveScreen("Title Screen"); // useful for when more screens are added
     }
-    if(mapType=="xml"){
-        addScreen("testing", new CampaignMap(screenWidth * 2, screenHeight * 2));
-    }
-    else{
-        gameDifficulty=3;
-        currentLevel=2;
-        addScreen("testing",new CampaignMap(screenWidth*2,screenHeight*2));
-    }
+    addScreen("testing",new CampaignMap(screenWidth*2,screenHeight*2));
 }
 
 class TitleScreen extends Level {
@@ -154,7 +141,7 @@ class CampaignMap extends Level {
         super(mWidth, mHeight);
         setViewBox(0, 0, screenWidth, screenHeight);
 
-        if (GEN_TUTORIAL || (gameDifficulty == 1 && currentLevel == 1)) {
+        if (GEN_TUTORIAL) {
             generateTutorial();
         } else {
             generateMap();
