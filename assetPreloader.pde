@@ -1,7 +1,5 @@
 /*@pjs preload="
 assets/car.png,
-assets/gas.png,
-assets/titleScreenTest.jpg,
 assets/buildings/airport.png,
 assets/buildings/art_gallery.png,
 assets/buildings/bakery.png,
