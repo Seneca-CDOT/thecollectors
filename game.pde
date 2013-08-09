@@ -6,6 +6,7 @@ var shadowMapColorDictionary;
 var roadSelectedDictionary;
 var futurePosition;
 float VEHICLE_SPEED = 1.5;
+var NEEDLE_RANGE = 90; // degrees
 float zoomLevel = 1.0;
 int arrowSpeed=10;
 
@@ -31,8 +32,6 @@ var mapType="xml";              //change between "xml" or "gen"
 var showMenus=false;
 var GEN_TUTORIAL = true;       //since game difficulty and level are both 1, this can stay false for now
 var DISPLAY_SHADOWMAP = false;
-var ROAD_ALPHA = 70;
-var ROAD_DELTA = 10;
 var mouseOffsetX = 0;
 var mouseOffsetY = 0;
 
@@ -129,23 +128,21 @@ class TitleScreenLayer extends LevelLayer {
     TitleScreenLayer(Level owner) {
         super(owner);
         addBackgroundSprite(new TilingSprite(
-            new Sprite(assetsFolder+"titleScreenTest.jpg"), 0, 0, screenWidth, screenHeight));
+            new Sprite(assetsFolder+"titleScreenPlaceholder.png"), 0, 0, screenWidth, screenHeight));
     }
 }
 
 class WinScreen extends LevelLayer {
     WinScreen(Level owner) {
         super(owner);
-        addBackgroundSprite(new TilingSprite(
-            new Sprite(assetsFolder+"winner.jpg"), 188, 93, 563, 454));
+        alert("Winner!");
     }
 }
 
 class GameOverScreen extends LevelLayer {
     GameOverScreen(Level owner) {
         super(owner);
-        addBackgroundSprite(new TilingSprite(
-            new Sprite(assetsFolder+"gameOver.jpg"), 245, 193, 450, 253));
+        alert("Game Over. Try Again!");
     }
 }
 
@@ -198,8 +195,9 @@ class CampaignMap extends Level {
             addLevelLayer("Win Screen", new WinScreen(this));
             renderedEndScreen = true;
             campaignCash += levelCash;
-            document.getElementById("fuelDiv").style.cssText = 'display:none';
-            document.getElementById("fuelGaugeDiv").style.cssText = 'display:none';
+            //document.getElementById("fuelDiv").style.cssText = 'display:none';
+            //document.getElementById("fuelGaugeDiv").style.cssText = 'display:none';
+            //document.getElementById("fuelNeedleDiv").style.cssText = 'display:none';
         } else if (gameOver && !renderedEndScreen) {
             cleanUp();
             end();
@@ -208,8 +206,9 @@ class CampaignMap extends Level {
             addLevelLayer("Game Over Screen", new GameOverScreen(this));
             renderedEndScreen = true;
             roadSelectedDictionary = null;
-            document.getElementById("fuelDiv").style.cssText = 'display:none';
-            document.getElementById("fuelGaugeDiv").style.cssText = 'display:none';
+            //document.getElementById("fuelDiv").style.cssText = 'display:none';
+            //document.getElementById("fuelGaugeDiv").style.cssText = 'display:none';
+            //document.getElementById("fuelNeedleDiv").style.cssText = 'display:none';
         }
     }
 }
@@ -298,10 +297,10 @@ class MapLevel extends LevelLayer {
                 Road roadSegment = new Road(colorID, primaryNode.vertex, connectedNode.vertex, fraction);
                 addInteractor(roadSegment);
 
-                // Initialize road selection alpha values
+                // Initialize road selected values
                 roadSelectedDictionary[colorID] = [];
-                roadSelectedDictionary[colorID][0] = ROAD_ALPHA;
-                roadSelectedDictionary[colorID][1] = ROAD_ALPHA;
+                roadSelectedDictionary[colorID][0] = 0;
+                roadSelectedDictionary[colorID][1] = 0;
 
                 // Increment color values for the shadow roads; stay within bounds
                 if (r >= 255) { r = 0; g++; }
@@ -348,7 +347,7 @@ class Driver extends Player{
     var edgeDelta = 0, roadDeltaX = 0, roadDeltaY = 0, direction = 0;
     var currDestColorID, nodeMap, fuelGauge, fuelCost;
     var destinationWeight, deltaPerTick, tickDelta = 0, previousVehicleDelta = 0;
-    var fuelGaugeHUD, cashHUD;
+    var fuelGaugeHUD, fuelNeedleHUD, cashHUD, needlePosition = 0, needleDelta = 0;
     Driver(map) {
         super("Driver");
         setStates();
@@ -371,6 +370,8 @@ class Driver extends Player{
         fuelGaugeHUD.innerHTML = fuelGauge.numerator.toString();
         fuelGaugeHUD.innerHTML += "<br /><hr />";
         fuelGaugeHUD.innerHTML += fuelGauge.denominator.toString();
+        needleDelta = NEEDLE_RANGE / fuelGauge.denominator;
+        fuelNeedleHUD = document.getElementById("fuelNeedleDiv");
         cashHUD = document.getElementById("cashElement");
         cashHUD.innerHTML = "$" + levelCash;
         parcelHUD = document.getElementById("parcelElement");
@@ -490,6 +491,7 @@ class Driver extends Player{
                     if (enoughCash) {
                         levelCash -= totalFuelCost;
                         fuelGauge.numerator += fuelMissing;
+                        needlePosition += fuelMissing * needleDelta;
                     } else {
                         var total = 0;
                         var ticksToFill = 0;
@@ -506,6 +508,7 @@ class Driver extends Player{
                         if (ticksToFill) {
                             levelCash -= total;
                             fuelGauge.numerator += ticksToFill;
+                            needlePosition += ticksToFill * needleDelta;
                         }
                     }
                     cashHUD.innerHTML = "$" + levelCash;
@@ -520,6 +523,7 @@ class Driver extends Player{
                     fuelGaugeHUD.innerHTML = fuelGauge.numerator.toString();
                     fuelGaugeHUD.innerHTML += "<br /><hr />";
                     fuelGaugeHUD.innerHTML += fuelGauge.denominator.toString();
+                    fuelNeedleHUD.style.cssText = "transform:rotate("+ needlePosition +"deg);";
                 }
             }
         }
@@ -549,7 +553,7 @@ class Driver extends Player{
                 delta = currDest.vertex.x - previousPosition.x;
                 index = delta < 0 ? 1 : 0;
             }
-            roadSelectedDictionary[currDestColorID.shift()][index] -= ROAD_DELTA;
+            roadSelectedDictionary[currDestColorID.shift()][index] -= 1;
 
             setPosition(currDest.vertex.x, currDest.vertex.y);
             previousPosition.x = currentPosition.x = getX();
@@ -586,6 +590,7 @@ class Driver extends Player{
     // Subtract the fraction from the fuel gauge and update the HUD
     void consumeFuel() {
         fuelGauge.numerator -= 1;
+        if (needlePosition > -NEEDLE_RANGE) needlePosition -= needleDelta;
         var fuelLevel = fuelGauge.evaluate();
         if (fuelLevel <= 0.2) {
             fuelGaugeHUD.style.cssText = "color:red";
@@ -597,6 +602,7 @@ class Driver extends Player{
         fuelGaugeHUD.innerHTML = fuelGauge.numerator.toString();
         fuelGaugeHUD.innerHTML += "<br /><hr />";
         fuelGaugeHUD.innerHTML += fuelGauge.denominator.toString();
+        fuelNeedleHUD.style.cssText = "transform:rotate("+ needlePosition +"deg);";
     }
     // If we're out of fuel and all deliveries have not been completed,
     // the game is over
@@ -667,21 +673,22 @@ class Driver extends Player{
                     shadowMapColorDictionary[c][1].vertex.x > 0 ? true : false;
                 var flippedVertexY = shadowMapColorDictionary[c][0].vertex.y -
                     shadowMapColorDictionary[c][1].vertex.y > 0 ? true : false;
+
                 if (shadowMapColorDictionary[c][0].vertex.equals(futurePosition)) {
                     destination.push(shadowMapColorDictionary[c][1]);
                     if (!flippedVertexX && !flippedVertexY) {
-                        roadSelectedDictionary[c][0] += ROAD_DELTA;
+                        roadSelectedDictionary[c][0] += 1;
                     } else if (flippedVertexX || flippedVertexY) {
-                        roadSelectedDictionary[c][1] += ROAD_DELTA;
+                        roadSelectedDictionary[c][1] += 1;
                     }
                     futurePosition = shadowMapColorDictionary[c][1].vertex;
                     currDestColorID.push(c);
                 } else if (shadowMapColorDictionary[c][1].vertex.equals(futurePosition)) {
                     destination.push(shadowMapColorDictionary[c][0]);
                     if (!flippedVertexX && !flippedVertexY) {
-                        roadSelectedDictionary[c][1] += ROAD_DELTA;
+                        roadSelectedDictionary[c][1] += 1;
                     } else if (flippedVertexX || flippedVertexY) {
-                        roadSelectedDictionary[c][0] += ROAD_DELTA;
+                        roadSelectedDictionary[c][0] += 1;
                     }
                     futurePosition = shadowMapColorDictionary[c][0].vertex;
                     currDestColorID.push(c);
@@ -692,7 +699,7 @@ class Driver extends Player{
                 if (destination.length > 1) {
                     prevDest = destination[destination.length - 2].vertex;
                 } else if (destination.length == 1) {
-                    prevDest = destination[0].vertex;
+                    prevDest = currentPosition;
                 } else {
                     return;
                 }
@@ -705,9 +712,9 @@ class Driver extends Player{
                     index = delta < 0 ? 1 : 0;
                 }
 
-                if (roadSelectedDictionary[c][index] > ROAD_ALPHA &&
+                if (roadSelectedDictionary[c][index] > 0 &&
                         c == currDestColorID[currDestColorID.length - 1]) {
-                    roadSelectedDictionary[c][index] -= ROAD_DELTA;
+                    roadSelectedDictionary[c][index] -= 1;
                     destination.pop();
                     if (destination.length > 0) {
                         futurePosition = destination[destination.length - 1].vertex;
@@ -735,7 +742,7 @@ class Road extends Interactor {
     var fracText = "";
     var currX = 0, currY = 0;
     var roadBounds = [], roadSelection = [], roadSelection2 = [];
-    var cID, vFlippedX, vFlippedY;
+    var cID, vFlippedX, vFlippedY, horizontal, vertical;
     Road(id, vert1, vert2, frac) {
         super("Road");
         vertex1 = vert1;
@@ -743,9 +750,11 @@ class Road extends Interactor {
         fracFont = loadFont("EurekaMonoCond-Bold.ttf");
         textFont(fracFont, 14);
         textLeading(9);
-        fracText = frac.numerator.toString() + /*"\n—\n"*/"\n--\n" + frac.denominator.toString();
+        fracText = frac.numerator.toString() + "\n—\n" + frac.denominator.toString();
         // Associate the road segment with its shadowMap road's hexadecimal colour code
         cID = id;
+        horizontal = vertex1.y - vertex2.y == 0 ? true : false;
+        vertical = vertex1.x - vertex2.x == 0 ? true : false;
         calculateBounds();
     }
     // Calculate the box that acts as the highlight for the road segment
@@ -856,20 +865,44 @@ class Road extends Interactor {
         }
     }
     void drawSelectionEastSouth() {
-        fill(173-roadSelectedDictionary[cID][0], 216-roadSelectedDictionary[cID][0], 230, ROAD_ALPHA
-                +(roadSelectedDictionary[cID][0]));
+        // Draw the arrow
+        fill(51,206,195);
         rect(roadSelection[0], roadSelection[1], roadSelection[2] - roadSelection[0],
                 roadSelection[3] - roadSelection[1]);
         triangle(roadSelection[4], roadSelection[5], roadSelection[6], roadSelection[7],
                 roadSelection[8], roadSelection[9]);
+
+        // Draw number denoting how many times the vehicle will drive in that direction
+        if (roadSelectedDictionary[cID][0] > 0) {
+            fill(0);
+            textAlign(LEFT, CENTER);
+            if (horizontal) {
+                text(roadSelectedDictionary[cID][0].toString(), roadSelection[4]-18, roadSelection[5]+10);
+            } else {
+                text(roadSelectedDictionary[cID][0].toString(), roadSelection[4]-15, roadSelection[5]-10);
+            }
+            textAlign(LEFT);
+        }
     }
     void drawSelectionWestNorth() {
-        fill(173-roadSelectedDictionary[cID][1], 216-roadSelectedDictionary[cID][1], 230, ROAD_ALPHA
-                +(roadSelectedDictionary[cID][1]));
+        // Draw the arrow
+        fill(51,206,195);
         rect(roadSelection2[0], roadSelection2[1], roadSelection2[2] - roadSelection2[0],
                 roadSelection2[3] - roadSelection2[1]);
         triangle(roadSelection2[4], roadSelection2[5], roadSelection2[6], roadSelection2[7],
                 roadSelection2[8], roadSelection2[9]);
+
+        // Draw number denoting how many times the vehicle will drive in that direction
+        if (roadSelectedDictionary[cID][1] > 0) {
+            fill(0);
+            textAlign(LEFT, CENTER);
+            if (horizontal) {
+                text(roadSelectedDictionary[cID][1].toString(), roadSelection[4]-28, roadSelection[5]-20);
+            } else {
+                text(roadSelectedDictionary[cID][1].toString(), roadSelection[4]+10, roadSelection[5]-30);
+            }
+            textAlign(LEFT);
+        }
     }
     void draw(float v1x,float v1y,float v2x, float v2y){
         if(debugging)
@@ -878,12 +911,12 @@ class Road extends Interactor {
 
         // If the road has been selected or the mouse is within the road bounds,
         // draw the road highlight in the valid direction
-        if (roadSelectedDictionary != null && roadSelectedDictionary[cID][0] > ROAD_ALPHA) {
+        if (roadSelectedDictionary != null && roadSelectedDictionary[cID][0] > 0) {
             noStroke();
             drawSelectionEastSouth();
             stroke(0);
         }
-        if (roadSelectedDictionary != null && roadSelectedDictionary[cID][1] > ROAD_ALPHA) {
+        if (roadSelectedDictionary != null && roadSelectedDictionary[cID][1] > 0) {
             noStroke();
             drawSelectionWestNorth();
             stroke(0);
@@ -913,8 +946,10 @@ class Road extends Interactor {
             }
             fill(0);
         }
-        text(fracText, (vertex1.x - vertex2.x) == 0 ? vertex1.x + 12 : ((vertex1.x + vertex2.x) * 0.5),
-            (vertex1.y - vertex2.y) == 0 ? vertex1.y - 32 : ((vertex1.y + vertex2.y) * 0.5));
+        textAlign(CENTER);
+        text(fracText, vertical ? vertex1.x + 12 : ((vertex1.x + vertex2.x) * 0.5),
+            horizontal ? vertex1.y - 32 : ((vertex1.y + vertex2.y) * 0.5));
+        textAlign(LEFT);
         fill(126);
         if (DISPLAY_SHADOWMAP) image(shadowMap, 0, 0);
     }
