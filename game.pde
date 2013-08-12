@@ -737,7 +737,9 @@ class Road extends Interactor {
         fracFont = loadFont("EurekaMonoCond-Bold.ttf");
         textFont(fracFont, 14);
         textLeading(9);
-        fracText = frac.numerator.toString() + "\n—\n" + frac.denominator.toString();
+        frac.genAltDisplay();
+        fracText = frac.toString();
+        //fracText = frac.numerator.toString() + "\n—\n" + frac.denominator.toString();
         // Associate the road segment with its shadowMap road's hexadecimal colour code
         cID = id;
         horizontal = vertex1.y - vertex2.y == 0 ? true : false;
