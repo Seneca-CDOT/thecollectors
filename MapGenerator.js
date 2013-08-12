@@ -145,13 +145,15 @@ MapGenerator.prototype.cleanGraph = function(){
 														node3.vertex.x, node3.vertex.y);
 					//colinear lines found that connect to the same node
 					if(intersectCheck.colinear){
-						var dist1=distance(node1.vertex,node2.vertex);
-						var dist2=distance(node1.vertex,node3.vertex);
 						//if both lines have the same "direction", remove the connection with the farther node
 						//possible bug here...further testing is necessary
 						if(node1.vertex.extendedSlope(node2.vertex) == node1.vertex.extendedSlope(node3.vertex)){
+							var dist1=distance(node1.vertex,node2.vertex);
+							var dist2=distance(node1.vertex,node3.vertex);
 							if(dist1<dist2){
 								tmpGraph.removeConnection(node1.id, node3.id);
+								tmpGraph.addConnection(node2.id, node3.id,
+									new Fraction(distance(node2.vertex, node3.vertex)/baseRoadLength,this.fuel));
 							}
 						}
 					}
@@ -225,6 +227,9 @@ MapGenerator.prototype.generateStructures = function(){
 		}
 		loops++;
 	}
+	for(var index in nodes){
+		this.placeFuelStation(index);
+	}
 	//	Randomizing a start point for the player
 	//	Want to make sure the start point isn't on or too close to a structure
 	//	loops variable protects against looping too many times/infinite loops
@@ -233,7 +238,9 @@ MapGenerator.prototype.generateStructures = function(){
 		this.startPoint = this.mapGraph.randomNode();
 		loops++;
 	}
-	while(this.findStructure(-1,this.startPoint.id,this.fuel-loops/2));
+	while(this.getStructureFromList(this.startPoint.id) && this.findStructure(-1,this.startPoint.id,this.fuel-loops/2));
+
+	this.startPoint = this.startPoint.vertex;
 }
 /*
 	Recursive check for a nearby structure that can be reached with
@@ -243,13 +250,48 @@ MapGenerator.prototype.findStructure = function(nodeFrom, nodeIn, fuelAmt){
 	if(fuelAmt <= 0)
 		return false;
 	var structureAtNode = this.getStructureFromList(nodeIn);
-	if(structureAtNode)
+	if(structureAtNode && structureAtNode.StructType != "fuel_stn")
 		return true;
 	var node=this.mapGraph.nodeDictionary[nodeIn];
 	for(var index in node.connections){
 		if(index!=nodeFrom){
 			var rv=this.findStructure(nodeIn,index,fuelAmt-node.connections[index].numerator);
-			if(rv) return rv;
+			if(rv!=false) return rv;
+		}
+	}
+	return false;
+}
+MapGenerator.prototype.findFuel = function(nodeFrom,nodeIn, fuelAmt){
+	if(fuelAmt < 0)
+		return nodeIn;
+	var structureAtNode = this.getStructureFromList(nodeIn);
+	if(structureAtNode && structureAtNode.StructType == "fuel_stn")
+		return true;
+
+	var node=this.mapGraph.nodeDictionary[nodeIn];
+	var nodeArray = [];
+	for(var index in node.connections){
+		if(index!=nodeFrom){
+			var rv=this.findFuel(nodeIn,index,fuelAmt-node.connections[index].numerator);
+			if(rv){
+				if(getType(rv) == "Array"){
+					nodeArray = nodeArray.concat(rv);
+				}
+				else if(rv != true)
+					nodeArray.push(rv);
+				else return rv;
+			}
+		}
+	}
+	return nodeArray;
+}
+MapGenerator.prototype.placeFuelStation = function(nodeID){
+	var rv = this.findStructure(-1,nodeID,fuelToStructMin(this.fuel));
+	var rv2 = this.findFuel(-1,nodeID,fuelToFuelMin(this.fuel));
+	if(!rv && rv2!=true){
+		if(!this.getStructureFromList(nodeID)){
+			this.structureList.push(new Structure(nodeID,"fuel_stn"));
+			return true;
 		}
 	}
 	return false;

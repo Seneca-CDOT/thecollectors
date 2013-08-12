@@ -54,7 +54,10 @@ var answerBonus={
 };
 
 //	Map Generator Values //
-var roadsPerStructure = 5;
+var roadsPerStructure = 4;
 var baseRoadLength = 100;
 var	numStructureTypes = 10;
-var structsPerPoints = 2;
+var structsPerPoints = 2;		//refers to the number of structures with equivalent point values
+
+function fuelToStructMin(fuel){return Math.round(fuel/4);}
+function fuelToFuelMin(fuel){return Math.ceil(fuel/3);}
