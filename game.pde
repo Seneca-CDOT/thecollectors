@@ -950,7 +950,8 @@ class Depot extends Interactor {
         setStates();
     }
     void setStates(){
-        addState(new State("default",structureFolder+"depot.png"));
+        setScale(0.5);
+        addState(new State("default",structureFolder+"depot.svg"));
     }
 }
 class Struct extends InputInteractor {
@@ -970,7 +971,8 @@ class Struct extends InputInteractor {
         }
     }
     void setStates() {
-        addState(new State("default",structureFolder+structObject.StructType+".png"));
+        setScale(0.5);
+        addState(new State("default",structureFolder+structObject.StructType+".svg"));
     }
     void draw(float v1x,float v1y,float v2x, float v2y){
         super.draw(v1x,v1y,v2x,v2y);
@@ -1011,10 +1013,10 @@ class Struct extends InputInteractor {
 
         if (over(mx, my)) {
             hovering = true;
-            setScale(1.2);
+            setScale(0.7);
         } else if (hovering) {
             hovering = false;
-            setScale(1.0);
+            setScale(0.5);
         }
     }
 }
