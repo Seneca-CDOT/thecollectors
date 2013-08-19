@@ -7094,7 +7094,13 @@
           if (img.__isDirty) img.updatePixels();
           curContext.drawImage(htmlElement, 0, 0, htmlElement.width, htmlElement.height, bounds.x, bounds.y, bounds.w, bounds.h)
         } else {
-          var obj = img.toImageData();
+           var obj;
+          if (img instanceof Processing) {
+            obj = img.toImageData();
+          }
+          else {
+            obj = img.get().imageData;
+          } 
           if (curTint !== null) {
             curTint(obj);
             img.__isDirty = true

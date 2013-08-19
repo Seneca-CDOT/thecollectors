@@ -1,6 +1,7 @@
 function Map(numStructs, difficulty, filename){
 	this.mapGraph=new Graph();
 	this.structureList=[];
+    this.pjsStructureList={};
 	this.fuel=new Fraction(0,0);
 	this.startPoint;
     //if a filename exists, load the map from an XML file
@@ -18,6 +19,13 @@ function Map(numStructs, difficulty, filename){
         this.fuel=new Fraction(gen.fuel,gen.fuel);
         this.startPoint=gen.startPoint;
 	}
+}
+Map.prototype.getStructById=function(nodeID){
+    for (var i = this.structureList.length - 1; i >= 0; i--) {
+        if(this.structureList[i].nodeID == nodeID)
+            return i;
+    }
+    return null;
 }
 Map.prototype.getEdgeList=function(){
 	return this.mapGraph.getEdgeList();

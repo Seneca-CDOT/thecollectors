@@ -2375,6 +2375,7 @@ class Position {
   float ox=0, oy=0;        // offset in world coordinates
   float sx=1, sy=1;        // scale factor
   float r=0;               // rotation (in radians)
+  int alpha = 255;
 
   // impulse "vector"
   float ix=0, iy=0;
@@ -2500,6 +2501,7 @@ class Position {
     if(vflip) { scale(1,-1); }
     scale(sx,sy);
     translate((int)ox, (int)oy);
+    tint(255,alpha);
   }
 
   /**
@@ -2781,6 +2783,13 @@ abstract class Positionable extends Position implements Drawable {
     jsupdate();
   }
 
+  /**
+   * set the transparency to the specified value.
+   */
+  void setTransparency(int _alpha){
+    alpha = _alpha;
+  } 
+  
   /**
    * flip this object horizontally.
    */
