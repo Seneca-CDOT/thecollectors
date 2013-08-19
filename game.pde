@@ -11,8 +11,8 @@ float zoomLevel = 1.0;
 int arrowSpeed=10;
 
 //tracking game values
-int gameDifficulty = 1;
-int currentLevel = 1;       //change difficuly or level from 1 & 1 to generate a map, rather then the tutorial
+int gameDifficulty = 2;
+int currentLevel = 2;       //change difficuly or level from 1 & 1 to generate a map, rather then the tutorial
 int levelCash = 0;
 int campaignCash = 0;
 int deliveriesLeft = 0;
@@ -26,7 +26,7 @@ strokeWeight(4);
 
 /*debugging tools*/
 boolean debugging=false;
-var GEN_TUTORIAL=true;
+var GEN_TUTORIAL=false;
 var showMenus=false;
 
 var DISPLAY_SHADOWMAP = false;
@@ -737,7 +737,12 @@ class Road extends Interactor {
         fracFont = loadFont("EurekaMonoCond-Bold.ttf");
         textFont(fracFont, 14);
         textLeading(9);
-        fracText = frac.numerator.toString() + "\n—\n" + frac.denominator.toString();
+        if(gameDifficulty>1 || currentLevel==5){
+            if(rng(1,10)<=(2+gameDifficulty+currentLevel))
+               frac.genAltDisplay();
+        }
+        fracText = frac.toString();
+        //fracText = frac.numerator.toString() + "\n—\n" + frac.denominator.toString();
         // Associate the road segment with its shadowMap road's hexadecimal colour code
         cID = id;
         horizontal = vertex1.y - vertex2.y == 0 ? true : false;
