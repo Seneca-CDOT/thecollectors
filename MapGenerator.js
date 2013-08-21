@@ -62,7 +62,6 @@ MapGenerator.prototype.generateRawGraph = function(){
 				distance-=baseRoadLength;
 			}
 			switch(heading){
-				//case 0:
 				case 1:
 				case 2:
 					x=node.vertex.x;
@@ -158,6 +157,7 @@ MapGenerator.prototype.mapIntersections = function(){
 			}
 		}
 	}
+	//Extensive testing showed this needed to be done 3 times
 	this.cleanGraph(tmpGraph);
 	this.cleanGraph(tmpGraph);
 	this.cleanGraph(tmpGraph);
