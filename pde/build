@@ -1,0 +1,5 @@
+if [ -e "../game.pde" ]
+then
+rm ../game.pde
+fi
+cat *.pde > ../game.pde

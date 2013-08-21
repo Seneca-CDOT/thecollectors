@@ -1,3 +1,7 @@
+/**
+ *  Handles initialization of game variables and processing instance.
+ */
+
 final int screenWidth=screenSizeX;
 final int screenHeight=screenSizeY;
 
@@ -103,35 +107,9 @@ void initialize() {
     }
     addScreen("testing",new CampaignMap(screenWidth*2,screenHeight*2));
 }
-
-class TitleScreen extends Level {
-    TitleScreen(int sWidth, int sHeight) {
-        super(sWidth, sHeight);
-        addLevelLayer("Title Screen Layer", new TitleScreenLayer(this));
-    }
-}
-
-class TitleScreenLayer extends LevelLayer {
-    TitleScreenLayer(Level owner) {
-        super(owner);
-        addBackgroundSprite(new TilingSprite(
-            new Sprite(assetsFolder+"titleScreenPlaceholder.png"), 0, 0, screenWidth, screenHeight));
-    }
-}
-
-class WinScreen extends LevelLayer {
-    WinScreen(Level owner) {
-        super(owner);
-        alert("Winner!");
-    }
-}
-
-class GameOverScreen extends LevelLayer {
-    GameOverScreen(Level owner) {
-        super(owner);
-        alert("Game Over. Try Again!");
-    }
-}
+/**
+ *  Handles setup of campaign maps.
+ */
 
 class CampaignMap extends Level {
     var denominator = 0;
@@ -335,6 +313,10 @@ class MapLevel extends LevelLayer {
         initializeStructures(player.fuelCost);
     }
 }
+/**
+ *  Controls the car. Handles user input.
+ */
+
 class Driver extends Player{
     var currentPosition, previousPosition, destination, currDest;
     var edgeDelta = 0, roadDeltaX = 0, roadDeltaY = 0, direction = 0;
@@ -735,6 +717,10 @@ class Driver extends Player{
         edgeDelta = 0;
     }
 }
+/**
+ *  Handles drawing of roads and their fraction values.
+ */
+
 class Road extends Interactor {
     var vertex1;
     var vertex2;
@@ -960,6 +946,42 @@ class Road extends Interactor {
         if (DISPLAY_SHADOWMAP) image(shadowMap, 0, 0);
     }
 }
+/**
+ *  Screens other then the main game.
+ */
+
+class TitleScreen extends Level {
+    TitleScreen(int sWidth, int sHeight) {
+        super(sWidth, sHeight);
+        addLevelLayer("Title Screen Layer", new TitleScreenLayer(this));
+    }
+}
+
+class TitleScreenLayer extends LevelLayer {
+    TitleScreenLayer(Level owner) {
+        super(owner);
+        addBackgroundSprite(new TilingSprite(
+            new Sprite(assetsFolder+"titleScreenPlaceholder.png"), 0, 0, screenWidth, screenHeight));
+    }
+}
+
+class WinScreen extends LevelLayer {
+    WinScreen(Level owner) {
+        super(owner);
+        alert("Winner!");
+    }
+}
+
+class GameOverScreen extends LevelLayer {
+    GameOverScreen(Level owner) {
+        super(owner);
+        alert("Game Over. Try Again!");
+    }
+}
+/**
+ *  Handles drawing of all structures.
+ */
+
 class Depot extends Interactor {
     var vertex;
     Depot(vert){
@@ -1039,6 +1061,9 @@ class Struct extends InputInteractor {
         }
     }
 }
+/*
+**  Debugging Classes. Remove at release.
+ */
 class StructDebug extends Struct{
 
     StructDebug(vert,structObject){
