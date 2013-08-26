@@ -15,8 +15,8 @@ float zoomLevel = 1.0;
 int arrowSpeed=10;
 
 //tracking game values
-int gameDifficulty = 2;
-int currentLevel = 2;       //change difficuly or level from 1 & 1 to generate a map, rather then the tutorial
+int gameDifficulty = 1;
+int currentLevel = 1;       //change difficuly or level from 1 & 1 to generate a map, rather then the tutorial
 int levelCash = 0;
 int campaignCash = 0;
 int deliveriesLeft = 0;
@@ -105,5 +105,5 @@ void initialize() {
         addScreen("Title Screen", new TitleScreen(screenWidth, screenHeight));
         setActiveScreen("Title Screen"); // useful for when more screens are added
     }
-    addScreen("testing",new LevelController(screenWidth*2,screenHeight*2));
+    addScreen("testing",new CampaignMap(screenWidth*2,screenHeight*2));
 }

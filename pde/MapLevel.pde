@@ -108,22 +108,24 @@ class MapLevel extends LevelLayer {
         }
     }
     void initializeStructures(fuelCost) {
-		var structureListLength = generatedMap.structureList.length;
-		for(var i = 0; i < structureListLength; i++) {
-			var structObject = generatedMap.structureList[i];
-			var vert = generatedMap.mapGraph.findNodeArray(structObject.nodeID).vertex;
+        var structureListLength = generatedMap.structureList.length;
+        for(var i = 0; i < structureListLength; i++) {
+            var structObject = generatedMap.structureList[i];
+            var vert = generatedMap.mapGraph.findNodeArray(structObject.nodeID).vertex;
             if (debugging)
                 StructDebug structure = new StructDebug(vert,structObject);
             else
                 Struct structure = new Struct(vert,structObject, generatedMap.fuel.denominator, fuelCost);
             addInputInteractor(structure);
-		}
+            generatedMap.pjsStructureList[structObject.nodeID]=structure;
+        }
     }
     void initializePlayer() {
         player = new Driver(generatedMap);
         addPlayer(player);
         var depot = new Depot(generatedMap.startPoint.clone());
         addInteractor(depot);
+        depot.setTransparency(128);
         initializeStructures(player.fuelCost);
     }
 }

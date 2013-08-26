@@ -2,11 +2,11 @@
  *  Handles setup of campaign maps.
  */
 
-class LevelController extends Level {
+class CampaignMap extends Level {
     var denominator = 0;
     var renderedEndScreen = false;
 
-    LevelController(float mWidth, float mHeight) {
+    CampaignMap(float mWidth, float mHeight) {
         super(mWidth, mHeight);
         setViewBox(0, 0, screenWidth, screenHeight);
 
@@ -23,25 +23,25 @@ class LevelController extends Level {
         deliveriesLeft = 4;
         map = new Map(0,0,"tutorial.xml");
         renderMap(map);
-        //overlayTutorialInterface();
+        overlayTutorialInterface();
     }
     // For the tutorial, we need to enable a custom overlay that shows the player
     // the parts of the game in a certain order and guides them through the gameplay.
     void overlayTutorialInterface() {
+        $("#tutorialTextDiv").show();
+        $("#legendDiv").show();
     }
     void generateMap() {
-        deliveriesLeft = 2 * currentLevel + 2;
+        deliveriesLeft = levelToDeliveries(currentLevel);
         var simpleMultiples = true;
         var map=new Map(deliveriesLeft,gameDifficulty);
+        width = map.width;
+        height = map.height;
         renderMap(map);
     }
     void renderMap(generatedMap) {
         mapScreen = true;
         addLevelLayer("Level", new MapLevel(this, generatedMap));
-    }
-    void nextMap(){
-        if(currentLevel<5) currentLevel++;
-        else{} //call some end of difficulty screen
     }
     void draw() {
         super.draw();

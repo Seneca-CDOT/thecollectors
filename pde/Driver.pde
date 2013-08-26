@@ -84,6 +84,7 @@ class Driver extends Player{
         canvasHasFocus=true;
     }
     void driveToDestination() {
+
         var impulseX = 0, impulseY = 0;
 
         refueled = false;
@@ -122,70 +123,75 @@ class Driver extends Player{
         var startNode = nodeMap.mapGraph.nodeDictionary[idx];
         destinationWeight = startNode.connections[currDest.id];
 
+        if(structureCheck(startNode.id))
+            nodeMap.pjsStructureList[startNode.id].setTransparency(255);
         // Calculate the distance that the vehicle travels
         // across the current edge on one "tick" of fuel
         deltaPerTick = edgeDelta / destinationWeight.numerator;
 
         driveFlag = true;
     }
-    void structureCheck(currentNodeID) {
+    boolean structureCheck(currentNodeID) {
         // Get the structure list
-        var sLen = nodeMap.structureList.length;
-        var sL = nodeMap.structureList;
-
-        for (var i = 0; i < sLen; i++) {
-            if (sL[i].nodeID == currentNodeID) {
-                // If the current structure is a delivery location, add points,
-                // if it is a fuel station reduce cash but increase fuel capacity
-                if (sL[i].StructType != "fuel_stn" && !sL[i].visited) {
-                    levelCash += sL[i].Points;
-                    sL[i].visited = true;
-                    deliveriesLeft--;
-                    cashHUD.innerHTML = "$" + levelCash;
-                    parcelHUD.innerHTML = "x " + deliveriesLeft;
-                } else if (sL[i].StructType == "fuel_stn" && !refueled) {
-                    refueled = true;
-                    var fuelMissing = fuelGauge.denominator - fuelGauge.numerator;
-                    var totalFuelCost = fuelMissing * fuelCost;
-                    var enoughCash = (levelCash - totalFuelCost) >= 0 ? true : false;
-                    if (enoughCash) {
-                        levelCash -= totalFuelCost;
-                        fuelGauge.numerator += fuelMissing;
-                        needlePosition += fuelMissing * needleDelta;
-                    } else {
-                        var total = 0;
-                        var ticksToFill = 0;
-                        var keepFilling = true;
-                        for (var i = 1; i <= fuelMissing && keepFilling; i++) {
-                            total += fuelCost;
-                            if (total > levelCash) {
-                                keepFilling = false;
-                                ticksToFill = i - 1;
-                                total = ticksToFill * fuelCost;
-                            }
-                        }
-
-                        if (ticksToFill) {
-                            levelCash -= total;
-                            fuelGauge.numerator += ticksToFill;
-                            needlePosition += ticksToFill * needleDelta;
-                        }
+        if(!currentNodeID) return false;
+        var sL = nodeMap.pjsStructureList;
+        var s = sL[currentNodeID];
+        if(s){
+            s.setTransparency(128);
+            return true;
+        }
+        return false;
+    }
+    // If the current structure is a delivery location, add points,
+    // if it is a fuel station reduce cash but increase fuel capacity
+    void updateInfo(atStruct){
+        if (atStruct.StructType != "fuel_stn" && !atStruct.visited) {
+            levelCash += atStruct.Points;
+            atStruct.visited = true;
+            deliveriesLeft--;
+            cashHUD.innerHTML = "$" + levelCash;
+            parcelHUD.innerHTML = "x " + deliveriesLeft;
+        } 
+        else if (atStruct.StructType == "fuel_stn" && !refueled) {
+            refueled = true;
+            var fuelMissing = fuelGauge.denominator - fuelGauge.numerator;
+            var totalFuelCost = fuelMissing * fuelCost;
+            var enoughCash = (levelCash - totalFuelCost) >= 0 ? true : false;
+            if (enoughCash) {
+                levelCash -= totalFuelCost;
+                fuelGauge.numerator += fuelMissing;
+                needlePosition += fuelMissing * needleDelta;
+            } else {
+                var total = 0;
+                var ticksToFill = 0;
+                var keepFilling = true;
+                for (var i = 1; i <= fuelMissing && keepFilling; i++) {
+                    total += fuelCost;
+                    if (total > levelCash) {
+                        keepFilling = false;
+                        ticksToFill = i - 1;
+                        total = ticksToFill * fuelCost;
                     }
-                    cashHUD.innerHTML = "$" + levelCash;
-                    var fuelLevel = fuelGauge.evaluate();
-                    if (fuelLevel <= 0.2) {
-                        fuelGaugeHUD.style.cssText = "color:red";
-                    } else if (fuelLevel <= 0.5) {
-                        fuelGaugeHUD.style.cssText = "color:#ff6600";
-                    } else {
-                        fuelGaugeHUD.style.cssText = "color:white";
-                    }
-                    fuelGaugeHUD.innerHTML = fuelGauge.numerator.toString();
-                    fuelGaugeHUD.innerHTML += "<br /><hr />";
-                    fuelGaugeHUD.innerHTML += fuelGauge.denominator.toString();
-                    fuelNeedleHUD.style.cssText = "transform:rotate("+ needlePosition +"deg);";
+                }
+                if (ticksToFill) {
+                    levelCash -= total;
+                    fuelGauge.numerator += ticksToFill;
+                    needlePosition += ticksToFill * needleDelta;
                 }
             }
+            cashHUD.innerHTML = "$" + levelCash;
+            var fuelLevel = fuelGauge.evaluate();
+            if (fuelLevel <= 0.2) {
+                fuelGaugeHUD.style.cssText = "color:red";
+            } else if (fuelLevel <= 0.5) {
+                fuelGaugeHUD.style.cssText = "color:#ff6600";
+            } else {
+                fuelGaugeHUD.style.cssText = "color:white";
+            }
+            fuelGaugeHUD.innerHTML = fuelGauge.numerator.toString();
+            fuelGaugeHUD.innerHTML += "<br /><hr />";
+            fuelGaugeHUD.innerHTML += fuelGauge.denominator.toString();
+            fuelNeedleHUD.style.cssText = "transform:rotate("+ needlePosition +"deg);";
         }
     }
     void drawObject() {
@@ -227,7 +233,9 @@ class Driver extends Player{
             consumeFuel();
 
             // Check if we've driven over a structure
-            structureCheck(currDest.id);
+            if(structureCheck(currDest.id)){
+                updateInfo(nodeMap.pjsStructureList[currDest.id].structObject);
+            }
 
             checkIfFuelEmpty();
 

@@ -179,7 +179,7 @@ class Road extends Interactor {
     }
     void draw(float v1x,float v1y,float v2x, float v2y){
         if(debugging)
-			stroke(0,0,0);
+            stroke(0,0,0);
         line(vertex1.x, vertex1.y, vertex2.x, vertex2.y);
 
         // If the road has been selected or the mouse is within the road bounds,
