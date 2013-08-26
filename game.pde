@@ -106,7 +106,8 @@ void initialize() {
         setActiveScreen("Title Screen"); // useful for when more screens are added
     }
     addScreen("testing",new CampaignMap(screenWidth*2,screenHeight*2));
-}/**
+}
+/**
  *  Handles setup of campaign maps.
  */
 
@@ -151,10 +152,9 @@ class CampaignMap extends Level {
         mapScreen = true;
         addLevelLayer("Level", new MapLevel(this, generatedMap));
     }
-    void draw() {
+/*    void draw() {
         super.draw();
 
-/*
         // Check if all deliveries for the level have been satisfied
         if (deliveriesLeft <= 0 && !renderedEndScreen) {
             cleanUp();
@@ -179,8 +179,8 @@ class CampaignMap extends Level {
             //document.getElementById("fuelGaugeDiv").style.cssText = 'display:none';
             //document.getElementById("fuelNeedleDiv").style.cssText = 'display:none';
         }
-*/
     }
+*/
 }
 /**
  *  Controls the car. Handles user input.
@@ -949,14 +949,19 @@ class Road extends Interactor {
         fill(126);
         if (DISPLAY_SHADOWMAP) image(shadowMap, 0, 0);
     }
-}void newMap(){
+}
+void newMap(){
 	removeScreen("Campaign Level");
     if(currentLevel<=5){
     	addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
     	setActiveScreen("Campaign Level");
-    	$("#fuelElement2")
+    	resetFuelGuage();
     }
     else{} //call some end of difficulty screen
+}
+void resetFuelGuage(){
+	$("#fuelElement2").css("color","white");
+	$("#fuelNeedleDiv").css("transform","rotate(0deg)");
 }
 /**
  *  Screens other then the main game.

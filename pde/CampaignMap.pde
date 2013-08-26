@@ -43,10 +43,9 @@ class CampaignMap extends Level {
         mapScreen = true;
         addLevelLayer("Level", new MapLevel(this, generatedMap));
     }
-    void draw() {
+/*    void draw() {
         super.draw();
 
-/*
         // Check if all deliveries for the level have been satisfied
         if (deliveriesLeft <= 0 && !renderedEndScreen) {
             cleanUp();
@@ -71,6 +70,6 @@ class CampaignMap extends Level {
             //document.getElementById("fuelGaugeDiv").style.cssText = 'display:none';
             //document.getElementById("fuelNeedleDiv").style.cssText = 'display:none';
         }
-*/
     }
+*/
 }
