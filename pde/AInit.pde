@@ -105,5 +105,5 @@ void initialize() {
         addScreen("Title Screen", new TitleScreen(screenWidth, screenHeight));
         setActiveScreen("Title Screen"); // useful for when more screens are added
     }
-    addScreen("testing",new CampaignMap(screenWidth*2,screenHeight*2));
+    addScreen("testing",new LevelController(screenWidth*2,screenHeight*2));
 }
