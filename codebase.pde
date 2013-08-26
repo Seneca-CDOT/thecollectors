@@ -1448,9 +1448,12 @@ Screen setActiveScreen(String name) {
  * as long as they are not the active screen.
  */
 void removeScreen(String name) {
-  if (screenSet.get(name) != activeScreen) {
-    screenSet.remove(name);
+  screenToRmv=screenSet.get(name);
+  if (screenToRmv == activeScreen) {
+    screenToRmv.cleanUp();
+    SoundManager.stop(screenToRmv);
   }
+  screenSet.remove(name);
 }
 
 /**
