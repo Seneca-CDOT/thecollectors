@@ -133,7 +133,7 @@ class Driver extends Player{
     }
     boolean structureCheck(currentNodeID) {
         // Get the structure list
-        if(!currentNodeID) return false;
+        
         var sL = nodeMap.pjsStructureList;
         var s = sL[currentNodeID];
         if(s){
@@ -195,6 +195,10 @@ class Driver extends Player{
         }
     }
     void drawObject() {
+        if(deliveriesLeft <= 0){
+            newMap();
+            return;
+        }
         currentPosition.x = getX();
         currentPosition.y = getY();
         var vehicleDelta = distance(currentPosition, previousPosition);

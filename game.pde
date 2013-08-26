@@ -154,6 +154,7 @@ class CampaignMap extends Level {
     void draw() {
         super.draw();
 
+/*
         // Check if all deliveries for the level have been satisfied
         if (deliveriesLeft <= 0 && !renderedEndScreen) {
             cleanUp();
@@ -178,6 +179,7 @@ class CampaignMap extends Level {
             //document.getElementById("fuelGaugeDiv").style.cssText = 'display:none';
             //document.getElementById("fuelNeedleDiv").style.cssText = 'display:none';
         }
+*/
     }
 }
 /**
@@ -315,7 +317,7 @@ class Driver extends Player{
     }
     boolean structureCheck(currentNodeID) {
         // Get the structure list
-        if(!currentNodeID) return false;
+        
         var sL = nodeMap.pjsStructureList;
         var s = sL[currentNodeID];
         if(s){
@@ -377,6 +379,10 @@ class Driver extends Player{
         }
     }
     void drawObject() {
+        if(deliveriesLeft <= 0){
+            newMap();
+            return;
+        }
         currentPosition.x = getX();
         currentPosition.y = getY();
         var vehicleDelta = distance(currentPosition, previousPosition);
@@ -948,6 +954,7 @@ class Road extends Interactor {
     if(currentLevel<=5){
     	addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
     	setActiveScreen("Campaign Level");
+    	$("#fuelElement2")
     }
     else{} //call some end of difficulty screen
 }
