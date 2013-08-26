@@ -47,3 +47,7 @@ $(".inCanvas").css('-webkit-user-select','none');
 $(".inCanvas").css('ms-user-select','none');
 $(".inCanvas").css('user-select','none');
 */
+$(document).ready(function(){
+  $("#tutorialTextDiv").hide();
+  $("#legendDiv").hide();
+});

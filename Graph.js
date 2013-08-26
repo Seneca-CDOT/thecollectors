@@ -5,7 +5,6 @@ function Graph() {
 }
 Graph.prototype.addNode = function(node) {
     if (this.nodeDictionary[node.id] != undefined) {
-        //console.warn("Node already exists in the graph. Duplicate attempt to add node terminated.");
         return node.id;
     }
     var check=this.vertexExists(node.vertex);
@@ -96,6 +95,12 @@ Graph.prototype.getEdgeList=function(){
         }
     }
     return matrix;
+}
+Graph.prototype.removeNode=function(nodeId){
+    if(this.nodeDictionary[nodeId]){
+        delete this.nodeDictionary[nodeId];
+        this.length--;
+    }
 }
 Graph.prototype.Length=function(){
     return this.length;

@@ -18,6 +18,8 @@ function Map(numStructs, difficulty, filename){
 		this.structureList=gen.structureList;
         this.fuel=new Fraction(gen.fuel,gen.fuel);
         this.startPoint=gen.startPoint;
+        this.width=gen.maxWidth + rightPadding;
+        this.height=gen.maxHeight + botPadding;
 	}
 }
 Map.prototype.getStructById=function(nodeID){

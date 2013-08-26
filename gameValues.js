@@ -41,8 +41,8 @@ var fuelCost={			//I think 60% fuel cost for easy may be TOO easy. To be tweaked
 };
 var DenominatorPool={	//denominations subject to change (read : likely)
 	easy: [6,8,10],
-	normal: [9,12,14],
-	hard: [7,15,16]
+	normal: [9,12,16],
+	hard: [7,15,14]
 };
 var clearMultipliers={
 	easy: 1,
@@ -61,3 +61,15 @@ var structsPerPoints = 2;		//refers to the number of structures with equivalent 
 
 function fuelToStructMin(fuel){return Math.round(fuel/4);}
 function fuelToFuelMin(fuel){return Math.ceil(fuel/3);}
+
+var topPadding = 50;
+var botPadding = 50;
+var leftPadding = 50;
+var rightPadding = 50;
+
+function levelToDeliveries(currLevel){
+	return 2*currLevel+2;
+}
+function deliveriesToLevel(deliveries){
+	return (deliveries-2)/2;
+}

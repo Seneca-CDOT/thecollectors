@@ -154,16 +154,20 @@ class CampaignMap extends Level {
         deliveriesLeft = 4;
         map = new Map(0,0,"tutorial.xml");
         renderMap(map);
-        //overlayTutorialInterface();
+        overlayTutorialInterface();
     }
     // For the tutorial, we need to enable a custom overlay that shows the player
     // the parts of the game in a certain order and guides them through the gameplay.
     void overlayTutorialInterface() {
+        $("#tutorialTextDiv").show();
+        $("#legendDiv").show();
     }
     void generateMap() {
-        deliveriesLeft = 2 * currentLevel + 2;
+        deliveriesLeft = levelToDeliveries(currentLevel);
         var simpleMultiples = true;
         var map=new Map(deliveriesLeft,gameDifficulty);
+        width = map.width;
+        height = map.height;
         renderMap(map);
     }
     void renderMap(generatedMap) {
