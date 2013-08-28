@@ -215,7 +215,7 @@ class Driver extends Player{
         fuelGaugeHUD.innerHTML += "<br /><hr />";
         fuelGaugeHUD.innerHTML += fuelGauge.denominator.toString();
         needleDelta = NEEDLE_RANGE / fuelGauge.denominator;
-        fuelNeedleHUD = document.getElementById("fuelNeedleDiv");
+        fuelNeedleHUD = document.getElementById("fuelNeedle");
         cashHUD = document.getElementById("cashElement");
         cashHUD.innerHTML = "$" + levelCash;
         parcelHUD = document.getElementById("parcelElement");
@@ -950,6 +950,9 @@ class Road extends Interactor {
         if (DISPLAY_SHADOWMAP) image(shadowMap, 0, 0);
     }
 }
+/*
+	Generates a new map. This does not increment the current level.
+*/
 void newMap(){
 	removeScreen("Campaign Level");
     if(currentLevel<=5){
@@ -959,9 +962,12 @@ void newMap(){
     }
     else{} //call some end of difficulty screen
 }
+/*
+	Reset the fuel needle to its original position, and the fuel text to its original colour.
+*/
 void resetFuelGuage(){
 	$("#fuelElement2").css("color","white");
-	$("#fuelNeedleDiv").css("transform","rotate(0deg)");
+	$("#fuelNeedle").css("transform","rotate(0deg)");
 }
 /**
  *  Screens other then the main game.

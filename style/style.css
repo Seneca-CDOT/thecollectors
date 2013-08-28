@@ -5,11 +5,6 @@ div.textBox
     background-color: #000000;
     opacity:0.6;
 }
-div.labelBox
-{
-    background-color: #A9DEB9;
-    opacity:1.0;
-}
 div.fuelBox
 {
     background-color: #000000;
@@ -38,20 +33,77 @@ p.center
     font-weight:bold;
     font-size:28px;
 }
-div.fuelGauge
+/*
+    Top bar, and all elements contained by it.
+*/
+#topBar
 {
-    position:fixed;
-    left:756px;
-    top:459px;
+   /* position: absolute;*/
+    width: 940px;
+    height: 44px;
+    background-color: #A9DEB9;
+}
+#cashImg
+{
+    position: absolute;
+    left: 0px;
+    width: 40px;
+    height: 44px;
+}
+#cashText
+{
+    position: absolute;
+    left: 40px;
+    width: 150px;
+    height: 44px;
+}
+#parcelImg
+{
+    position: absolute;
+    left: 190px;
+    width: 40px;
+    height: 44px;
+}
+#parcelText
+{
+    position: absolute;
+    left: 230px;
+    width: 80px;
+    height: 44px;
+}
+/*
+    Elements related to the fuel gauge.
+*/
+#fuelWrap
+{
+    position: absolute;
+    right:0px;
+    bottom:0px;
+    height: 192px;
+    width: 300px;
+}
+#fuelGauge
+{
+    position:absolute;
+    right:0px;
+    bottom:13px;
     width:192px;
     height:192px;
     opacity:1.0;
 }
-div.fuelNeedle
+#fuelNeedle
 {
-    position:fixed;
-    left:908px;
-    top:433px;
+    position:absolute;
+    bottom:-170px;
+    right:-8px;
     width:48px;
     height:400px;
+}
+#fuelText
+{
+    position: absolute;
+    left: 0px;
+    bottom:15px;
+    width: 80px;
+    height: 110px;
 }
