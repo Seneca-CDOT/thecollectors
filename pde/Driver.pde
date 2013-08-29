@@ -31,7 +31,7 @@ class Driver extends Player{
         fuelGaugeHUD.innerHTML += "<br /><hr />";
         fuelGaugeHUD.innerHTML += fuelGauge.denominator.toString();
         needleDelta = NEEDLE_RANGE / fuelGauge.denominator;
-        fuelNeedleHUD = document.getElementById("fuelNeedleDiv");
+        fuelNeedleHUD = document.getElementById("fuelNeedle");
         cashHUD = document.getElementById("cashElement");
         cashHUD.innerHTML = "$" + levelCash;
         parcelHUD = document.getElementById("parcelElement");
@@ -196,7 +196,7 @@ class Driver extends Player{
     }
     void drawObject() {
         if(deliveriesLeft <= 0){
-            newMap();
+            nextMap();
             return;
         }
         currentPosition.x = getX();

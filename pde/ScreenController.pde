@@ -3,17 +3,27 @@
 */
 void newMap(){
 	removeScreen("Campaign Level");
-    if(currentLevel<=5){
-    	addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
-    	setActiveScreen("Campaign Level");
-    	resetFuelGuage();
+    addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
+    setActiveScreen("Campaign Level");
+    levelCash=0;
+    resetHUD();
+}
+void nextMap(){
+    if(currentLevel<5){
+        currentLevel++;
+        campaignCash+=levelCash;
+        newMap();
     }
-    else{} //call some end of difficulty screen
+    else{
+        alert("End of difficulty");
+    }
 }
 /*
 	Reset the fuel needle to its original position, and the fuel text to its original colour.
 */
-void resetFuelGuage(){
+void resetHUD(){
+
 	$("#fuelElement2").css("color","white");
 	$("#fuelNeedle").css("transform","rotate(0deg)");
+    $("#cashElement").html("$" + levelCash);
 }

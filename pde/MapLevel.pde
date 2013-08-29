@@ -125,7 +125,6 @@ class MapLevel extends LevelLayer {
         addPlayer(player);
         var depot = new Depot(generatedMap.startPoint.clone());
         addInteractor(depot);
-        depot.setTransparency(128);
         initializeStructures(player.fuelCost);
     }
 }

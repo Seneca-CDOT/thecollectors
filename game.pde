@@ -380,7 +380,7 @@ class Driver extends Player{
     }
     void drawObject() {
         if(deliveriesLeft <= 0){
-            newMap();
+            nextMap();
             return;
         }
         currentPosition.x = getX();
@@ -717,7 +717,6 @@ class MapLevel extends LevelLayer {
         addPlayer(player);
         var depot = new Depot(generatedMap.startPoint.clone());
         addInteractor(depot);
-        depot.setTransparency(128);
         initializeStructures(player.fuelCost);
     }
 }
@@ -955,19 +954,29 @@ class Road extends Interactor {
 */
 void newMap(){
 	removeScreen("Campaign Level");
-    if(currentLevel<=5){
-    	addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
-    	setActiveScreen("Campaign Level");
-    	resetFuelGuage();
+    addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
+    setActiveScreen("Campaign Level");
+    levelCash=0;
+    resetHUD();
+}
+void nextMap(){
+    if(currentLevel<5){
+        currentLevel++;
+        campaignCash+=levelCash;
+        newMap();
     }
-    else{} //call some end of difficulty screen
+    else{
+        alert("End of difficulty");
+    }
 }
 /*
 	Reset the fuel needle to its original position, and the fuel text to its original colour.
 */
-void resetFuelGuage(){
+void resetHUD(){
+
 	$("#fuelElement2").css("color","white");
 	$("#fuelNeedle").css("transform","rotate(0deg)");
+    $("#cashElement").html("$" + levelCash);
 }
 /**
  *  Screens other then the main game.
@@ -1015,7 +1024,7 @@ class Depot extends Interactor {
     }
     void setStates(){
         setScale(0.5);
-        addState(new State("default",structureFolder+"depot.svg"));
+        addState(new State("default",structureFolder+"depot_20.svg"));
     }
 }
 class Struct extends InputInteractor {
