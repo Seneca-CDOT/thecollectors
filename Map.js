@@ -22,6 +22,9 @@ function Map(numStructs, difficulty, filename){
         this.height=gen.maxHeight + botPadding;
 	}
 }
+/* 
+    Returns the structure with the specified Id, or null if it doesn't exist.
+*/
 Map.prototype.getStructById=function(nodeID){
     for (var i = this.structureList.length - 1; i >= 0; i--) {
         if(this.structureList[i].nodeID == nodeID)
@@ -78,7 +81,9 @@ Map.prototype.initStructuresFromXML=function(xmlDoc){
 		this.structureList.push(new Structure(nodeID,structType,caption,points));
 	}
 }
-
+/*
+    Exports the map information into an XML string.
+*/
 Map.prototype.exportToXML = function() {
     var edgeList = this.getEdgeList(); // Contains the list node connections as indices
     var xmlWriter = new XMLWriter('UTF-8');

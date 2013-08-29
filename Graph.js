@@ -105,6 +105,7 @@ Graph.prototype.removeNode=function(nodeId){
 Graph.prototype.Length=function(){
     return this.length;
 }
+//This doesn't work
 Graph.prototype.numConnections=function(){
     var rv=0;
     for(index in this.nodeDictionary){
