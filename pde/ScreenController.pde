@@ -2,12 +2,15 @@
 	Generates a new map. This does not increment the current level.
 */
 void newMap(){
+    levelCash=0;
 	removeScreen("Campaign Level");
     addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
     setActiveScreen("Campaign Level");
-    levelCash=0;
     resetHUD();
 }
+/*
+    Increment the current level and creates a new map.
+*/
 void nextMap(){
     if(currentLevel<5){
         currentLevel++;
@@ -15,6 +18,7 @@ void nextMap(){
         newMap();
     }
     else{
+        //end of campaign logic here
         alert("End of difficulty");
     }
 }
@@ -22,8 +26,10 @@ void nextMap(){
 	Reset the fuel needle to its original position, and the fuel text to its original colour.
 */
 void resetHUD(){
-
 	$("#fuelElement2").css("color","white");
 	$("#fuelNeedle").css("transform","rotate(0deg)");
-    $("#cashElement").html("$" + levelCash);
+}
+void resetMap(){
+    player.layer.resetMap();
+    resetHUD();
 }

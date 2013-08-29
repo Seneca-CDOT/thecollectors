@@ -127,4 +127,15 @@ class MapLevel extends LevelLayer {
         addInteractor(depot);
         initializeStructures(player.fuelCost);
     }
+    void resetMap(){
+        levelCash = 0;
+        deliveriesLeft = levelToDeliveries(currentLevel);
+        clearPlayers();
+        player = new Driver(generatedMap);
+        addPlayer(player);
+        for(index in generatedMap.pjsStructureList){
+            generatedMap.pjsStructureList[index].structObject.visited=false;
+            generatedMap.pjsStructureList[index].setTransparency(255);
+        }
+    }
 }
