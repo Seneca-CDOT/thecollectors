@@ -12,7 +12,7 @@ class Depot extends Interactor {
     }
     void setStates(){
         setScale(0.5);
-        addState(new State("default",structureFolder+"depot.svg"));
+        addState(new State("default",structureFolder+"depot_20.svg"));
     }
 }
 class Struct extends InputInteractor {

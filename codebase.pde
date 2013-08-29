@@ -2504,7 +2504,10 @@ class Position {
     if(vflip) { scale(1,-1); }
     scale(sx,sy);
     translate((int)ox, (int)oy);
-    tint(255,alpha);
+    if(alpha<255)
+      tint(255,alpha);
+    else 
+      noTint();
   }
 
   /**
