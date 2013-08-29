@@ -1,6 +1,7 @@
 /*		customCaption and customPoints are optional parameters
 		if they are not provided, the structure caption and points
 		value are taken from the gameValues.js file
+*/
 function Structure(nodeID, StructType, customCaption, customPoints){
 
 }

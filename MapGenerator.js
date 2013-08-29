@@ -412,7 +412,7 @@ MapGenerator.prototype.getStructureFromList = function(nodeID) {
 	return false;
 }
 /*
-	Returns a structure type ot use for generation
+	Returns a structure type to use for generation
 */
 MapGenerator.prototype.randomStructureType = function(_loops){
 	var loops = 0;

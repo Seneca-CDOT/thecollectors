@@ -29,6 +29,10 @@ void resetHUD(){
 	$("#fuelElement2").css("color","white");
 	$("#fuelNeedle").css("transform","rotate(0deg)");
 }
+/*
+    Returns a map to its original state, returns the player to the start point,
+    and resets game level values
+*/
 void resetMap(){
     player.layer.resetMap();
     resetHUD();
