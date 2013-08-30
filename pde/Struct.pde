@@ -72,7 +72,7 @@ class Struct extends InputInteractor {
         mouseOffsetX = mx;
         mouseOffsetY = my;
 
-        if (over(mx, my)) {
+        if (over(mx, my) && !player.currentPosition.equals(vertex)) {
             hovering = true;
             setScale(0.7);
         } else if (hovering) {
