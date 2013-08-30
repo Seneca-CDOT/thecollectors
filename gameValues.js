@@ -65,7 +65,7 @@ function fuelToFuelMin(fuel){return Math.ceil(fuel/3);}
 var topPadding = 50;
 var botPadding = 50;
 var leftPadding = 50;
-var rightPadding = 50;
+var rightPadding = 350;		//extra 300px to accomadate the fuel guage width
 
 function levelToDeliveries(currLevel){
 	return 2*currLevel+2;
