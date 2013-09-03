@@ -2137,8 +2137,8 @@ abstract class LevelLayer {
 
         // collisions with other sprites?
         if(!a.isDisabled()) {
-          handleActorCollision(x,y,w,h,a,interactors);
-          handleActorCollision(x,y,w,h,a,bounded_interactors);
+          //handleActorCollision(x,y,w,h,a,interactors);
+          //handleActorCollision(x,y,w,h,a,bounded_interactors);
         }
 
         // has the player tripped any triggers?
@@ -2378,7 +2378,6 @@ class Position {
   float ox=0, oy=0;        // offset in world coordinates
   float sx=1, sy=1;        // scale factor
   float r=0;               // rotation (in radians)
-  int alpha = 255;
 
   // impulse "vector"
   float ix=0, iy=0;
@@ -2790,13 +2789,6 @@ abstract class Positionable extends Position implements Drawable {
   }
 
   /**
-   * set the transparency to the specified value.
-   */
-  void setTransparency(int _alpha){
-    alpha = _alpha;
-  } 
-  
-  /**
    * flip this object horizontally.
    */
   void setHorizontalFlip(boolean _hflip) {
@@ -2887,7 +2879,7 @@ abstract class Positionable extends Position implements Drawable {
    */
   void update() {
     // cache frame information
-    previous.copyFrom(this);
+    //previous.copyFrom(this);
 
     // work external forces into our current impulse
     addImpulse(fx,fy);

@@ -307,8 +307,6 @@ class Driver extends Player{
         var startNode = nodeMap.mapGraph.nodeDictionary[idx];
         destinationWeight = startNode.connections[currDest.id];
 
-        if(structureCheck(startNode.id))
-            nodeMap.pjsStructureList[startNode.id].setTransparency(255);
         // Calculate the distance that the vehicle travels
         // across the current edge on one "tick" of fuel
         deltaPerTick = edgeDelta / destinationWeight.numerator;
@@ -321,7 +319,6 @@ class Driver extends Player{
         var sL = nodeMap.pjsStructureList;
         var s = sL[currentNodeID];
         if(s){
-            s.setTransparency(128);
             return true;
         }
         return false;
@@ -741,7 +738,7 @@ class Road extends Interactor {
 
     PFont fracFont;
     var fracText = "";
-    var currX = 0, currY = 0;
+    var currX = 0, currY = 0, textPosX, textPosY;
     var roadBounds = [], roadSelection = [], roadSelection2 = [];
     var cID, vFlippedX, vFlippedY, horizontal, vertical;
     Road(id, vert1, vert2, frac) {
@@ -761,6 +758,8 @@ class Road extends Interactor {
         cID = id;
         horizontal = vertex1.y - vertex2.y == 0 ? true : false;
         vertical = vertex1.x - vertex2.x == 0 ? true : false;
+        textPosX = vertical ? vertex1.x + 12 : (vertex1.x + vertex2.x) * 0.5;
+        textPosY = horizontal ? vertex1.y - 32 : (vertex1.y + vertex2.y) * 0.5;
         calculateBounds();
     }
     // Calculate the box that acts as the highlight for the road segment
@@ -1045,11 +1044,11 @@ class Depot extends Interactor {
     }
     void setStates(){
         setScale(0.5);
-        addState(new State("default",structureFolder+"depot_20.svg"));
+        addState(new State("default",structureFolder+"depot_default.svg"));
     }
 }
 class Struct extends InputInteractor {
-    var vertex, sBox, structObject;
+    var vertex, sBox, structObject, delivered;
     var hovering, fuelCaption;
     Struct(vert, _structObject, tankDenominator, costOfFuel) {
         super("Structure");
@@ -1066,10 +1065,16 @@ class Struct extends InputInteractor {
     }
     void setStates() {
         setScale(0.5);
+        delivered = false;
+        addState(new State("delivered",structureFolder+structObject.StructType+"_delivered.svg"));
         addState(new State("default",structureFolder+structObject.StructType+".svg"));
     }
     void draw(float v1x,float v1y,float v2x, float v2y){
         super.draw(v1x,v1y,v2x,v2y);
+        if (!delivered && structObject.visited && structObject.StuctType != "fuel_stn") {
+            delivered = true;
+            swapStates(getState("delivered"));
+        }
         if (hovering) {
             noStroke();
             fill(0, 0, 0, 170);

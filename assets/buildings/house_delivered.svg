@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="128px" height="128px" viewBox="0 0 128 128" enable-background="new 0 0 128 128" xml:space="preserve">
+<g opacity="0.5">
+	<defs>
+		<rect id="SVGID_1_" x="1.465" y="3.525" opacity="0.5" width="125.036" height="120.694"/>
+	</defs>
+	<clipPath id="SVGID_2_">
+		<use xlink:href="#SVGID_1_"  overflow="visible"/>
+	</clipPath>
+	
+		<rect x="12.274" y="51.3" clip-path="url(#SVGID_2_)" fill="#00AEEF" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" width="76.04" height="62.332"/>
+	
+		<rect x="16.87" y="23.241" clip-path="url(#SVGID_2_)" stroke="#00AEEF" stroke-width="0.5" stroke-linejoin="round" stroke-miterlimit="10" width="7.521" height="16.154"/>
+	<polygon clip-path="url(#SVGID_2_)" stroke="#00AEEF" stroke-width="0.5" stroke-linejoin="round" stroke-miterlimit="10" points="
+		2.333,51.72 49.606,9.313 96.879,51.72 	"/>
+	
+		<rect x="21.605" y="64.266" clip-path="url(#SVGID_2_)" fill="#FFFFFF" stroke="#000000" stroke-width="2" stroke-linejoin="round" stroke-miterlimit="10" width="21.011" height="18.2"/>
+	
+		<line clip-path="url(#SVGID_2_)" fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="round" stroke-miterlimit="10" x1="32.537" y1="64.266" x2="32.537" y2="82.466"/>
+	
+		<line clip-path="url(#SVGID_2_)" fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="round" stroke-miterlimit="10" x1="21.605" y1="73.363" x2="42.616" y2="73.363"/>
+	
+		<rect x="56.491" y="64.266" clip-path="url(#SVGID_2_)" fill="#FFFFFF" stroke="#000000" stroke-width="2" stroke-linejoin="round" stroke-miterlimit="10" width="21.013" height="18.2"/>
+	
+		<line clip-path="url(#SVGID_2_)" fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="round" stroke-miterlimit="10" x1="67.423" y1="64.266" x2="67.423" y2="82.466"/>
+	
+		<line clip-path="url(#SVGID_2_)" fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="round" stroke-miterlimit="10" x1="56.491" y1="73.363" x2="77.504" y2="73.363"/>
+	<path clip-path="url(#SVGID_2_)" stroke="#FFFFFF" stroke-width="0.5" stroke-linejoin="round" stroke-miterlimit="10" d="
+		M39.614,113.632V92.378c0-2.211-0.029-4.497,2.246-4.497h15.78c2.275,0,2.42,2.602,2.42,4.811v20.94"/>
+	
+		<rect x="39.87" y="99.775" clip-path="url(#SVGID_2_)" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0.5" stroke-miterlimit="10" width="5.708" height="1.864"/>
+	<polygon clip-path="url(#SVGID_2_)" stroke="#00AEEF" stroke-miterlimit="10" points="50.294,9.404 78.685,9.404 125.049,51.3 
+		94.896,51.811 	"/>
+	<polyline clip-path="url(#SVGID_2_)" fill="#00AEEF" stroke="#000000" stroke-miterlimit="10" points="119.265,51.811 
+		119.265,101.766 88.314,113.632 88.314,51.811 	"/>
+	<polygon clip-path="url(#SVGID_2_)" stroke="#00AEEF" stroke-width="0.5" stroke-miterlimit="10" points="17.365,23.241 
+		20.945,21.217 27.157,21.217 24.524,23.241 	"/>
+	<polygon clip-path="url(#SVGID_2_)" stroke="#00AEEF" stroke-width="0.5" stroke-miterlimit="10" points="27.57,21.217 
+		27.57,29.081 24.632,31.716 24.392,23.241 	"/>
+	<g clip-path="url(#SVGID_2_)">
+		<g>
+			<rect x="23.456" y="65.388" fill="#FFFFFF" stroke="#000000" stroke-miterlimit="10" width="5.887" height="53.775"/>
+			<rect x="6.156" y="57.162" fill="#FFFFFF" stroke="#000000" stroke-miterlimit="10" width="40.19" height="39.049"/>
+		</g>
+		<circle stroke="#000000" stroke-miterlimit="10" cx="17.676" cy="81.051" r="2.102"/>
+		<path d="M11.807,93.209h2.929v-2.661h24.035v2.661h2.363v-13.05c0,0-0.025-1.127-1.414-1.127c-0.662,0-1.028,0.937-1.028,0.937
+			l0.079,7.57H14.628V76.564c0,0-0.181-1.257-1.313-1.257c-1.814,0-1.509,1.161-1.509,1.161V93.209z"/>
+		<path d="M15.804,86.235h22.218v-2.382c0,0,0-1.026-1.921-1.45l-14.09-1.673c0,0-1.613-0.021-1.613,1.728v2.073l-4.701,0.046
+			c0,0-0.442,0.23-0.442,0.829C15.254,86.289,15.804,86.235,15.804,86.235z"/>
+		<polyline fill="none" stroke="#000000" stroke-width="3" stroke-miterlimit="10" points="10.2,71.271 10.507,71.12 26.464,63.292 
+			42.295,71.059 42.726,71.271 		"/>
+	</g>
+</g>
+</svg>
