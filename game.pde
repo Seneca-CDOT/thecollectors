@@ -436,7 +436,7 @@ class Driver extends Player{
         }
 
         if (!gameOver && edgeDelta > 0 && tickDelta >= deltaPerTick) {
-            tickDelta -= deltaPerTick;
+            tickDelta = 0;
             consumeFuel();
             checkIfFuelEmpty();
         }
