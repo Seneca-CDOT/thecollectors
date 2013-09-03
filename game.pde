@@ -991,6 +991,10 @@ void resetHUD(){
 	$("#fuelElement2").css("color","white");
 	$("#fuelNeedle").css("transform","rotate(0deg)");
 }
+/*
+    Returns a map to its original state, returns the player to the start point,
+    and resets game level values
+*/
 void resetMap(){
     player.layer.resetMap();
     resetHUD();
@@ -1101,7 +1105,7 @@ class Struct extends InputInteractor {
         mouseOffsetX = mx;
         mouseOffsetY = my;
 
-        if (over(mx, my)) {
+        if (over(mx, my) && !player.currentPosition.equals(vertex)) {
             hovering = true;
             setScale(0.7);
         } else if (hovering) {
