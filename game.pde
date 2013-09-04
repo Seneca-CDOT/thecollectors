@@ -591,6 +591,7 @@ class MapLevel extends LevelLayer {
     var generatedMap = null;
     var r = 0, g = 0, b = 0;
     var shadowBounds = [];
+    var structList = [];
 
     MapLevel(Level owner, map) {
         super(owner);
@@ -706,6 +707,7 @@ class MapLevel extends LevelLayer {
             else
                 Struct structure = new Struct(vert,structObject, generatedMap.fuel.denominator, fuelCost);
             addInputInteractor(structure);
+            structList.push(structure);
             generatedMap.pjsStructureList[structObject.nodeID]=structure;
         }
     }
@@ -717,6 +719,15 @@ class MapLevel extends LevelLayer {
         initializeStructures(player.fuelCost);
     }
     void resetMap(){
+        gameOver = false;
+        for (var i in roadSelectedDictionary) {
+            roadSelectedDictionary[i][0] = 0;
+            roadSelectedDictionary[i][1] = 0;
+        }
+        document.getElementById("fuelElement2").style.cssText = "color:white";
+        for (var i = structList.length; --i;) {
+            structList[i].resetState();
+        }
         levelCash = 0;
         deliveriesLeft = levelToDeliveries(currentLevel);
         clearPlayers();
@@ -952,8 +963,7 @@ class Road extends Interactor {
             fill(0);
         }
         textAlign(CENTER);
-        text(fracText, vertical ? vertex1.x + 12 : ((vertex1.x + vertex2.x) * 0.5),
-            horizontal ? vertex1.y - 32 : ((vertex1.y + vertex2.y) * 0.5));
+        text(fracText, textPosX, textPosY);
         textAlign(LEFT);
         fill(126);
         if (DISPLAY_SHADOWMAP) image(shadowMap, 0, 0);
@@ -1068,6 +1078,10 @@ class Struct extends InputInteractor {
         delivered = false;
         addState(new State("delivered",structureFolder+structObject.StructType+"_delivered.svg"));
         addState(new State("default",structureFolder+structObject.StructType+".svg"));
+    }
+    void resetState() {
+        delivered = false;
+        swapStates(getState("default"));
     }
     void draw(float v1x,float v1y,float v2x, float v2y){
         super.draw(v1x,v1y,v2x,v2y);

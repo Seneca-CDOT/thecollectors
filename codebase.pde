@@ -2689,7 +2689,7 @@ abstract class Positionable extends Position implements Drawable {
     ix += _ix;
     iy += _iy;
     jsupdate();
-    verifyInMotion();
+    //verifyInMotion();
   }
   
   /**
