@@ -209,6 +209,8 @@ class Driver extends Player{
         currDest = null;
         currDestColorID = [];
         driveFlag = false;
+        fractionBox = document.getElementById("fractionBoxDiv");
+        fractionText = document.getElementById("fractionTextDiv");
         fuelGauge = new Fraction(nodeMap.fuel.numerator, nodeMap.fuel.denominator);
         fuelGaugeHUD = document.getElementById("fuelElement2");
         fuelGaugeHUD.innerHTML = fuelGauge.numerator.toString();
@@ -433,6 +435,7 @@ class Driver extends Player{
                 driveToDestination();
             } else {
                 driveFlag = false;
+                bonusFlag = false;
             }
         }
 
@@ -513,8 +516,10 @@ class Driver extends Player{
 
         // Did we click on the vehicle? If not, check if we clicked on a road
         if (button == LEFT && over(mx,my)) {
+            fractionBox.classList.remove("visible");
+            fractionBox.classList.add("hidden");
             if (destination.length > 0) driveToDestination();
-        } else {
+        } else if (destination.length < 10) {
             // Get the hexadecimal colour code at the clicked point on the shadowMap
             color c = shadowMap.get(mx, my);
             c = hex(c);
@@ -530,6 +535,7 @@ class Driver extends Player{
                     shadowMapColorDictionary[c][1].vertex.x > 0 ? true : false;
                 var flippedVertexY = shadowMapColorDictionary[c][0].vertex.y -
                     shadowMapColorDictionary[c][1].vertex.y > 0 ? true : false;
+                var fraction = null;
 
                 if (shadowMapColorDictionary[c][0].vertex.equals(futurePosition)) {
                     destination.push(shadowMapColorDictionary[c][1]);
@@ -538,8 +544,25 @@ class Driver extends Player{
                     } else if (flippedVertexX || flippedVertexY) {
                         roadSelectedDictionary[c][1] += 1;
                     }
+                    fraction = shadowMapColorDictionary[c][0].connections[destination[destination.length - 1].id];
                     futurePosition = shadowMapColorDictionary[c][1].vertex;
                     currDestColorID.push(c);
+
+                    if (destination.length > 1) {
+                        fractionText.innerHTML += "<div style=\"float:left;padding-top:29px;\">+</div>" +
+                            "<div style=\"margin:1px;float:left;width:45px;\">" +
+                            "<div id=\"fraction" + destination.length +
+                            "\" style=\"text-align:center;margin:10px;\"></div></div>";
+
+                        var fracElement = document.getElementById("fraction" + destination.length);
+                        fracElement.innerHTML = fraction.displayNum != undefined ? fraction.displayNum.toString() :
+                            fraction.numerator.toString();
+                        fracElement.innerHTML += "<br /><hr />";
+                        fracElement.innerHTML += fraction.displayDenom != undefined ?
+                            fraction.displayDenom.toString() : fraction.denominator.toString();
+
+                        numeratorArray.push(fraction.numerator);
+                    }
                 } else if (shadowMapColorDictionary[c][1].vertex.equals(futurePosition)) {
                     destination.push(shadowMapColorDictionary[c][0]);
                     if (!flippedVertexX && !flippedVertexY) {
@@ -547,8 +570,58 @@ class Driver extends Player{
                     } else if (flippedVertexX || flippedVertexY) {
                         roadSelectedDictionary[c][0] += 1;
                     }
+                    fraction = shadowMapColorDictionary[c][1].connections[destination[destination.length - 1].id];
                     futurePosition = shadowMapColorDictionary[c][0].vertex;
                     currDestColorID.push(c);
+
+                    if (destination.length > 1) {
+                        fractionText.innerHTML += "<div style=\"float:left;padding-top:29px;\">+</div>" +
+                            "<div style=\"margin:1px;float:left;width:45px;\">" +
+                            "<div id=\"fraction" + destination.length +
+                            "\" style=\"text-align:center;margin:10px;\"></div></div>";
+
+                        var fracElement = document.getElementById("fraction" + destination.length);
+                        fracElement.innerHTML = fraction.displayNum != undefined ? fraction.displayNum.toString() :
+                            fraction.numerator.toString();
+                        fracElement.innerHTML += "<br /><hr />";
+                        fracElement.innerHTML += fraction.displayDenom != undefined ?
+                            fraction.displayDenom.toString() : fraction.denominator.toString();
+
+                        numeratorArray.push(fraction.numerator);
+                    }
+                }
+                if (fraction != null && destination.length == 1) {
+                    fractionText.innerHTML = "<div style=\"margin:1px;float:left;width:45px;\">" +
+                        "<div id=\"fraction" + destination.length +
+                        "\" style=\"text-align:center;margin:10px;\"></div></div>";
+
+                    // Add the div containing the input textboxes to the overlay
+                    fractionText.innerHTML += "<div style=\"margin:1px;float:right;width:45px;\">" +
+                        "<div id=\"fractionSubmit\"" +
+                        "style=\"width:35px;height:68px;background-color:blue;margin:5px;\"" +
+                        "onclick=\"checkFractionSum()\" ></div></div>" +
+                        "<div style=\"margin:1px;float:right;width:45px;\">" +
+                        "<div id=\"fractionSum\" style=\"text-align:center;margin:5px;\"></div></div>" +
+                        "<div style=\"float:right;padding-top:29px;\">=</div>";
+
+                    var fracElement = document.getElementById("fraction" + destination.length);
+                    fracElement.innerHTML = fraction.displayNum != undefined ? fraction.displayNum.toString() :
+                        fraction.numerator.toString();
+                    fracElement.innerHTML += "<br /><hr />";
+                    fracElement.innerHTML += fraction.displayDenom != undefined ?
+                        fraction.displayDenom.toString() : fraction.denominator.toString();
+
+                    numeratorArray.push(fraction.numerator);
+
+                    var fracSum = document.getElementById("fractionSum");
+                    fracSum.innerHTML = "<input type=\"text\" id=\"fracSumNum\" name=\"numerator\" autocomplete=\"off\"" +
+                        "maxlength=\"2\" style=\"width:23px\" />" +
+                        "<br /><hr />" +
+                        "<input type=\"text\" id=\"fracSumDenom\" name=\"denominator\" autocomplete=\"off\"" +
+                        "maxlength=\"2\" style=\"width:23px\" />";
+
+                    fractionBox.classList.add("visible");
+                    fractionBox.classList.remove("hidden");
                 }
             } else if (shadowMapColorDictionary[c] != null && button == RIGHT) {
                 var prevDest, index, delta = 0;
@@ -573,10 +646,20 @@ class Driver extends Player{
                         c == currDestColorID[currDestColorID.length - 1]) {
                     roadSelectedDictionary[c][index] -= 1;
                     destination.pop();
+                    numeratorArray.pop();
                     if (destination.length > 0) {
                         futurePosition = destination[destination.length - 1].vertex;
+
+                        // Remove the div elements containing the fraction and the "+" sign
+                        var node = fractionText.children[fractionText.childElementCount - 1];
+                        node.parentNode.removeChild(node);
+                        node = fractionText.children[fractionText.childElementCount - 1];
+                        node.parentNode.removeChild(node);
                     } else {
                         futurePosition = currentPosition;
+                        fractionBox.classList.remove("visible");
+                        fractionBox.classList.add("hidden");
+                        fractionText.innerHTML = "";
                     }
                     currDestColorID.pop();
                 }

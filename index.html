@@ -86,6 +86,10 @@
 	document.getElementById("mediumButton").innerHTML = pageText.mediumButton;
 	document.getElementById("hardButton").innerHTML = pageText.hardButton;
     </script>
+    <div id="fractionBoxDiv" class="addBox fractionBox hidden">
+        <div id="fractionTextDiv" style="position:relative;">
+        </div>
+    </div>
     <div id="tutorialTextDiv" class="textBox hidden inCanvas" style="position:fixed;left:200px;top:500px;width:500px;height:110px;">
         <p id="tutorialTextElement">
         </p>
@@ -195,6 +199,36 @@
             alert("Invalid button value!");
             break;
         }
+      }
+
+      var numeratorArray = [];
+      var inputRegEx = new RegExp("^[0-9]+$");
+      var bonusFlag = false;
+      function checkFractionSum() {
+          var sum = 0;
+
+          var playerNumerator = document.getElementById("fracSumNum");
+          var playerDenominator = document.getElementById("fracSumDenom");
+          var numTest = inputRegEx.test(playerNumerator.value);
+          var denomTest = inputRegEx.test(playerDenominator.value);
+
+          if (numTest && denomTest) {
+              for (var i = numeratorArray.length; i--;) {
+                  sum += numeratorArray[i];
+              }
+              if (playerNumerator.value == sum) {
+                  bonusFlag = true;
+                  fractionBox.classList.remove("visible");
+                  fractionBox.classList.add("hidden");
+                  console.log("Bonus applied");
+              } else {
+                  fractionBox.classList.remove("visible");
+                  fractionBox.classList.add("hidden");
+                  console.log("Incorrect answer.");
+              }
+          } else {
+               document.getElementById("fractionSum").parentNode.style.backgroundColor = "red";
+          }
       }
     </script>
   </div>
