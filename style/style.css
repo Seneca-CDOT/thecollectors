@@ -86,7 +86,7 @@ p.center
 {
     position:absolute;
     right:0px;
-    bottom:13px;
+    bottom:0px;
     width:192px;
     height:192px;
     opacity:1.0;
@@ -94,7 +94,7 @@ p.center
 #fuelNeedle
 {
     position:absolute;
-    bottom:-170px;
+    bottom:-183px;
     right:-8px;
     width:48px;
     height:400px;
@@ -103,7 +103,7 @@ p.center
 {
     position: absolute;
     left: 0px;
-    bottom:15px;
+    bottom:0px;
     width: 80px;
     height: 110px;
 }

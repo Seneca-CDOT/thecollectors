@@ -2137,8 +2137,8 @@ abstract class LevelLayer {
 
         // collisions with other sprites?
         if(!a.isDisabled()) {
-          handleActorCollision(x,y,w,h,a,interactors);
-          handleActorCollision(x,y,w,h,a,bounded_interactors);
+          //handleActorCollision(x,y,w,h,a,interactors);
+          //handleActorCollision(x,y,w,h,a,bounded_interactors);
         }
 
         // has the player tripped any triggers?
@@ -2690,7 +2690,7 @@ abstract class Positionable extends Position implements Drawable {
     ix += _ix;
     iy += _iy;
     jsupdate();
-    verifyInMotion();
+    //verifyInMotion();
   }
   
   /**
@@ -2790,12 +2790,12 @@ abstract class Positionable extends Position implements Drawable {
   }
 
   /**
-   * set the transparency to the specified value.
+   * set the transparency to the specified value
    */
   void setTransparency(int _alpha){
-    alpha = _alpha;
-  } 
-  
+      alpha = _alpha;
+  }
+
   /**
    * flip this object horizontally.
    */
@@ -2887,7 +2887,7 @@ abstract class Positionable extends Position implements Drawable {
    */
   void update() {
     // cache frame information
-    previous.copyFrom(this);
+    //previous.copyFrom(this);
 
     // work external forces into our current impulse
     addImpulse(fx,fy);
