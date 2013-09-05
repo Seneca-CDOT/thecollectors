@@ -60,7 +60,7 @@ var	numStructureTypes = 10;
 var structsPerPoints = 2;		//refers to the number of structures with equivalent point values
 
 function fuelToStructMin(fuel){return Math.round(fuel/4);}
-function fuelToFuelMin(fuel){return Math.ceil(fuel/3);}
+function fuelToFuelMin(fuel){return Math.ceil(fuel/4);}
 
 var topPadding = 50;
 var botPadding = 50;

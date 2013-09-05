@@ -15,7 +15,7 @@ float zoomLevel = 1.0;
 int arrowSpeed=10;
 
 //tracking game values
-int gameDifficulty = 1;
+int gameDifficulty = 3;
 int currentLevel = 1;       //change difficuly or level from 1 & 1 to generate a map, rather then the tutorial
 int levelCash = 0;
 int campaignCash = 0;
@@ -29,7 +29,7 @@ var driveFlag;
 strokeWeight(4);
 
 /*debugging tools*/
-boolean debugging=false;
+boolean debugging=true;
 var GEN_TUTORIAL=false;
 var showMenus=false;
 
@@ -705,10 +705,8 @@ class MapLevel extends LevelLayer {
         for(var i = 0; i < structureListLength; i++) {
             var structObject = generatedMap.structureList[i];
             var vert = generatedMap.mapGraph.findNodeArray(structObject.nodeID).vertex;
-            if (debugging)
-                StructDebug structure = new StructDebug(vert,structObject);
-            else
-                Struct structure = new Struct(vert,structObject, generatedMap.fuel.denominator, fuelCost);
+
+            Struct structure = new Struct(vert,structObject, generatedMap.fuel.denominator, fuelCost);
             addInputInteractor(structure);
             structList.push(structure);
             generatedMap.pjsStructureList[structObject.nodeID]=structure;
@@ -1149,22 +1147,6 @@ class Struct extends InputInteractor {
 /*
 **  Debugging Classes. Remove at release.
  */
-class StructDebug extends Struct{
-
-    StructDebug(vert,structObject){
-        super(vert,structObject);
-    }
-    void draw(float v1x,float v1y,float v2x, float v2y){
-        pushMatrix();
-        //scale(zoomLevel);
-        if(structObject.StructType=="fuel_stn")
-            stroke(0,255,0);
-        else
-            stroke(255,0,0);
-        ellipse(vertex.x,vertex.y,8,8);
-        popMatrix();
-    }
-}
 class NodeDebug extends Interactor{
     var vertex,flag;
     NodeDebug(vert,flagin){

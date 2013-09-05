@@ -351,9 +351,9 @@ MapGenerator.prototype.generateStructures = function(){
 	Recursive check for a nearby structure that can be reached with
 	the fuel specified by fuelAmt
 */
-MapGenerator.prototype.findStructure = function(nodeFrom, nodeIn, fuelAmt){
+MapGenerator.prototype.findStructure = function(nodeFrom, nodeIn, fuelAmt,genFuelFlag){
 	var node=this.mapGraph.nodeDictionary[nodeIn];
-	if(nodeFrom==-1){
+	if(nodeFrom==-1 && !genFuelFlag){
 		for(var index in node.connections){
 			var tmpStruct = this.getStructureFromList(index);
 			if(tmpStruct && tmpStruct.StructType != "fuel_stn")
@@ -374,7 +374,7 @@ MapGenerator.prototype.findStructure = function(nodeFrom, nodeIn, fuelAmt){
 	return false;
 }
 MapGenerator.prototype.findFuel = function(nodeFrom,nodeIn, fuelAmt){
-	if(fuelAmt < 0)
+	if(fuelAmt <= 0)
 		return nodeIn;
 	var structureAtNode = this.getStructureFromList(nodeIn);
 	if(structureAtNode && structureAtNode.StructType == "fuel_stn")
@@ -389,7 +389,7 @@ MapGenerator.prototype.findFuel = function(nodeFrom,nodeIn, fuelAmt){
 				if(getType(rv) == "Array"){
 					nodeArray = nodeArray.concat(rv);
 				}
-				else if(rv != true)
+				else if(rv !== true)
 					nodeArray.push(rv);
 				else return rv;
 			}
@@ -397,10 +397,16 @@ MapGenerator.prototype.findFuel = function(nodeFrom,nodeIn, fuelAmt){
 	}
 	return nodeArray;
 }
+//this can be restructured to be more efficient
 MapGenerator.prototype.placeFuelStation = function(nodeID){
-	var rv = this.findStructure(-1,nodeID,fuelToStructMin(this.fuel));
+	console.log("============================================");
+	console.log("Checking node:"+nodeID);
+	console.log("Giving struct check:"+fuelToStructMin(this.fuel));
+	console.log("Giving fuel check:"+fuelToFuelMin(this.fuel));
+	var rv = this.findStructure(-1,nodeID,fuelToStructMin(this.fuel),true);
 	var rv2 = this.findFuel(-1,nodeID,fuelToFuelMin(this.fuel));
-	if(!rv && rv2!=true){
+	console.log(rv, rv2);
+	if(!rv && rv2!==true){
 		if(!this.getStructureFromList(nodeID)){
 			this.structureList.push(new Structure(nodeID,"fuel_stn"));
 			return true;
