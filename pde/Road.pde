@@ -8,7 +8,7 @@ class Road extends Interactor {
 
     PFont fracFont;
     var fracText = "";
-    var currX = 0, currY = 0;
+    var currX = 0, currY = 0, textPosX, textPosY;
     var roadBounds = [], roadSelection = [], roadSelection2 = [];
     var cID, vFlippedX, vFlippedY, horizontal, vertical;
     Road(id, vert1, vert2, frac) {
@@ -28,6 +28,8 @@ class Road extends Interactor {
         cID = id;
         horizontal = vertex1.y - vertex2.y == 0 ? true : false;
         vertical = vertex1.x - vertex2.x == 0 ? true : false;
+        textPosX = vertical ? vertex1.x + 12 : (vertex1.x + vertex2.x) * 0.5;
+        textPosY = horizontal ? vertex1.y - 32 : (vertex1.y + vertex2.y) * 0.5;
         calculateBounds();
     }
     // Calculate the box that acts as the highlight for the road segment
@@ -220,8 +222,7 @@ class Road extends Interactor {
             fill(0);
         }
         textAlign(CENTER);
-        text(fracText, vertical ? vertex1.x + 12 : ((vertex1.x + vertex2.x) * 0.5),
-            horizontal ? vertex1.y - 32 : ((vertex1.y + vertex2.y) * 0.5));
+        text(fracText, textPosX, textPosY);
         textAlign(LEFT);
         fill(126);
         if (DISPLAY_SHADOWMAP) image(shadowMap, 0, 0);

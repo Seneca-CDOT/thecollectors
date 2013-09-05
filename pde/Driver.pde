@@ -123,8 +123,6 @@ class Driver extends Player{
         var startNode = nodeMap.mapGraph.nodeDictionary[idx];
         destinationWeight = startNode.connections[currDest.id];
 
-        if(structureCheck(startNode.id))
-            nodeMap.pjsStructureList[startNode.id].setTransparency(255);
         // Calculate the distance that the vehicle travels
         // across the current edge on one "tick" of fuel
         deltaPerTick = edgeDelta / destinationWeight.numerator;
@@ -137,7 +135,9 @@ class Driver extends Player{
         var sL = nodeMap.pjsStructureList;
         var s = sL[currentNodeID];
         if(s){
-            s.setTransparency(128);
+            if (s.structObject.StructType == "fuel_stn") {
+                s.structObject.visited = true;
+            }
             return true;
         }
         return false;

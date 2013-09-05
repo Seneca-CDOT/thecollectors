@@ -2,6 +2,7 @@ class MapLevel extends LevelLayer {
     var generatedMap = null;
     var r = 0, g = 0, b = 0;
     var shadowBounds = [];
+    var structList = [];
 
     MapLevel(Level owner, map) {
         super(owner);
@@ -117,6 +118,7 @@ class MapLevel extends LevelLayer {
             else
                 Struct structure = new Struct(vert,structObject, generatedMap.fuel.denominator, fuelCost);
             addInputInteractor(structure);
+            structList.push(structure);
             generatedMap.pjsStructureList[structObject.nodeID]=structure;
         }
     }
@@ -128,6 +130,15 @@ class MapLevel extends LevelLayer {
         initializeStructures(player.fuelCost);
     }
     void resetMap(){
+        gameOver = false;
+        for (var i in roadSelectedDictionary) {
+            roadSelectedDictionary[i][0] = 0;
+            roadSelectedDictionary[i][1] = 0;
+        }
+        document.getElementById("fuelElement2").style.cssText = "color:white";
+        for (var i = structList.length; i--;) {
+            structList[i].resetState();
+        }
         levelCash = 0;
         deliveriesLeft = levelToDeliveries(currentLevel);
         clearPlayers();

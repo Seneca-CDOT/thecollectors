@@ -319,6 +319,9 @@ class Driver extends Player{
         var sL = nodeMap.pjsStructureList;
         var s = sL[currentNodeID];
         if(s){
+            if (s.structObject.StructType == "fuel_stn") {
+                s.structObject.visited = true;
+            }
             return true;
         }
         return false;
@@ -725,7 +728,7 @@ class MapLevel extends LevelLayer {
             roadSelectedDictionary[i][1] = 0;
         }
         document.getElementById("fuelElement2").style.cssText = "color:white";
-        for (var i = structList.length; --i;) {
+        for (var i = structList.length; i--;) {
             structList[i].resetState();
         }
         levelCash = 0;
@@ -1089,6 +1092,14 @@ class Struct extends InputInteractor {
             delivered = true;
             swapStates(getState("delivered"));
         }
+        if (structObject.StructType == "fuel_stn") {
+            if (refueled && structObject.visited) {
+                swapStates(getState("delivered"));
+            } else if (!refueled && structObject.visited) {
+                structObject.visited = false;
+                swapStates(getState("default"));
+            }
+        }
         if (hovering) {
             noStroke();
             fill(0, 0, 0, 170);
@@ -1124,9 +1135,11 @@ class Struct extends InputInteractor {
         mouseOffsetX = mx;
         mouseOffsetY = my;
 
-        if (over(mx, my) && !player.currentPosition.equals(vertex)) {
-            hovering = true;
-            setScale(0.7);
+        if (over(mx, my)) {
+            if (!player.currentPosition.equals(vertex)) {
+                hovering = true;
+                setScale(0.7);
+            }
         } else if (hovering) {
             hovering = false;
             setScale(0.5);

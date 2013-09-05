@@ -2378,6 +2378,7 @@ class Position {
   float ox=0, oy=0;        // offset in world coordinates
   float sx=1, sy=1;        // scale factor
   float r=0;               // rotation (in radians)
+  int alpha = 255;
 
   // impulse "vector"
   float ix=0, iy=0;
@@ -2786,6 +2787,13 @@ abstract class Positionable extends Position implements Drawable {
   void setRotation(float _r) {
     r = _r % (2*PI);
     jsupdate();
+  }
+
+  /**
+   * set the transparency to the specified value
+   */
+  void setTransparency(int _alpha){
+      alpha = _alpha;
   }
 
   /**

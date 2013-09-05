@@ -12,11 +12,11 @@ class Depot extends Interactor {
     }
     void setStates(){
         setScale(0.5);
-        addState(new State("default",structureFolder+"depot_20.svg"));
+        addState(new State("default",structureFolder+"depot_default.svg"));
     }
 }
 class Struct extends InputInteractor {
-    var vertex, sBox, structObject;
+    var vertex, sBox, structObject, delivered;
     var hovering, fuelCaption;
     Struct(vert, _structObject, tankDenominator, costOfFuel) {
         super("Structure");
@@ -33,10 +33,28 @@ class Struct extends InputInteractor {
     }
     void setStates() {
         setScale(0.5);
+        delivered = false;
+        addState(new State("delivered",structureFolder+structObject.StructType+"_delivered.svg"));
         addState(new State("default",structureFolder+structObject.StructType+".svg"));
+    }
+    void resetState() {
+        delivered = false;
+        swapStates(getState("default"));
     }
     void draw(float v1x,float v1y,float v2x, float v2y){
         super.draw(v1x,v1y,v2x,v2y);
+        if (!delivered && structObject.visited && structObject.StuctType != "fuel_stn") {
+            delivered = true;
+            swapStates(getState("delivered"));
+        }
+        if (structObject.StructType == "fuel_stn") {
+            if (refueled && structObject.visited) {
+                swapStates(getState("delivered"));
+            } else if (!refueled && structObject.visited) {
+                structObject.visited = false;
+                swapStates(getState("default"));
+            }
+        }
         if (hovering) {
             noStroke();
             fill(0, 0, 0, 170);
@@ -72,9 +90,11 @@ class Struct extends InputInteractor {
         mouseOffsetX = mx;
         mouseOffsetY = my;
 
-        if (over(mx, my) && !player.currentPosition.equals(vertex)) {
-            hovering = true;
-            setScale(0.7);
+        if (over(mx, my)) {
+            if (!player.currentPosition.equals(vertex)) {
+                hovering = true;
+                setScale(0.7);
+            }
         } else if (hovering) {
             hovering = false;
             setScale(0.5);
