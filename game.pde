@@ -979,6 +979,7 @@ void newMap(){
     addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
     setActiveScreen("Campaign Level");
     resetHUD();
+    console.log("==========================================");
 }
 /*
     Increment the current level and creates a new map.

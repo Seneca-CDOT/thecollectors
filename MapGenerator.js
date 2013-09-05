@@ -13,6 +13,7 @@ function MapGenerator(numStructs, difficulty){
 	this.maxWidth = screenSizeX * (1+deliveriesToLevel(numStructs)/10);
 	this.maxHeight = screenSizeY * (1+deliveriesToLevel(numStructs)/5);
 	this.generateMapGraph();
+	//console.log(this.mapGraph);
 }
 /*
 	All steps necessary to generate a map.
@@ -162,8 +163,26 @@ MapGenerator.prototype.mapIntersections = function(){
 	this.cleanGraph(tmpGraph);
 	this.cleanGraph(tmpGraph);
 
+	
 
 	this.mapGraph=tmpGraph;
+	this.fixMe();
+}
+MapGenerator.prototype.fixMe=function(){
+	var nodes=this.mapGraph.nodeDictionary;
+	var edges=this.mapGraph.getEdgeList();
+	for(var index in edges){
+		var node1=nodes[index];
+		for (var i = edges[index].length - 1; i >= 0; i--) {
+			var node2=nodes[edges[index][i]];
+			var intersectCheck=this.mapGraph.edgeIntersects(node1.vertex.x,node1.vertex.y,node2.vertex.x,node2.vertex.y);
+			for (var i = intersectCheck.length - 1; i >= 0; i--) {
+				if(intersectCheck[i].colinear){
+					console.log(intersectCheck[i]);
+				}
+			}
+		}
+	}
 }
 /*
 	Searches for colinear and overlapping connections and fixes them.
@@ -185,6 +204,7 @@ MapGenerator.prototype.cleanGraph = function(tmpGraph){
 		}
 	}
 	// Looks for nodes between 2 other nodes
+	// Maybe this belongs in colinearRemove as the else{} 
 	for(var index in nodes){
 		var node1=nodes[index];
 		var node2=null, node3=null;
@@ -205,7 +225,10 @@ MapGenerator.prototype.cleanGraph = function(tmpGraph){
 				if(node1.vertex.extendedSlope(node2.vertex) != node1.vertex.extendedSlope(node3.vertex)){
 					//remove the middle node and connect the other two nodes
 					tmpGraph.removeConnection(node1.id,node2.id);
+					console.log("removed connection between "+node1.id+" and "+node2.id);
 					tmpGraph.removeConnection(node1.id,node3.id);
+					console.log("removed connection between "+node1.id+" and "+node3.id);
+
 					tmpGraph.addConnection(node2.id, node3.id,
 						new Fraction(distance(node2.vertex, node3.vertex)/baseRoadLength,this.fuel));
 					tmpGraph.removeNode(node1.id);
@@ -246,6 +269,7 @@ MapGenerator.prototype.colinearRemove = function(_graph,node1,node2,node3){
 			var dist2=distance(node1.vertex,node3.vertex);
 			if(dist1<dist2){
 				_graph.removeConnection(node1.id, node3.id);
+				console.log("removed connection between "+node1.id+" and "+node3.id);
 				if(node1.connectionsLength==0) _graph.removeNode(node1.id);
 				_graph.addConnection(node2.id, node3.id,
 					new Fraction(distance(node2.vertex, node3.vertex)/baseRoadLength,this.fuel));
@@ -264,6 +288,7 @@ MapGenerator.prototype.validateMap = function(){
 		if(this.mapGraph.nodeDictionary[index].connectionsLength==0)
 			this.mapGraph.removeNode(index);
 	}
+	//if there are too few nodes after removal, generate a new map
 	if(this.mapGraph.length < this.numStructs * (roadsPerStructure-1))
 		this.generateMapGraph();
 	//run minConnections() on each Node to see if a one-direction path has been generated
