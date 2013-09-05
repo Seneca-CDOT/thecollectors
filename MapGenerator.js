@@ -352,12 +352,19 @@ MapGenerator.prototype.generateStructures = function(){
 	the fuel specified by fuelAmt
 */
 MapGenerator.prototype.findStructure = function(nodeFrom, nodeIn, fuelAmt){
+	var node=this.mapGraph.nodeDictionary[nodeIn];
+	if(nodeFrom==-1){
+		for(var index in node.connections){
+			var tmpStruct = this.getStructureFromList(index);
+			if(tmpStruct && tmpStruct.StructType != "fuel_stn")
+				return true;
+		}
+	}
 	if(fuelAmt <= 0)
 		return false;
 	var structureAtNode = this.getStructureFromList(nodeIn);
 	if(structureAtNode && structureAtNode.StructType != "fuel_stn")
 		return true;
-	var node=this.mapGraph.nodeDictionary[nodeIn];
 	for(var index in node.connections){
 		if(index!=nodeFrom){
 			var rv=this.findStructure(nodeIn,index,fuelAmt-node.connections[index].numerator);
