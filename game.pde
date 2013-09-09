@@ -29,7 +29,7 @@ var driveFlag;
 strokeWeight(4);
 
 /*debugging tools*/
-boolean debugging=false;
+boolean debugging=true;
 var GEN_TUTORIAL=false;
 var showMenus=false;
 
@@ -242,7 +242,8 @@ class Driver extends Player{
                     _x+=arrowSpeed;
                 }
                 if (keyCode==ENTER) {
-                    advanceTutorial();
+                    newMap();
+                    //advanceTutorial();
                 }
                 box.translate(_x,_y,layer.parent);
             }
@@ -705,10 +706,8 @@ class MapLevel extends LevelLayer {
         for(var i = 0; i < structureListLength; i++) {
             var structObject = generatedMap.structureList[i];
             var vert = generatedMap.mapGraph.findNodeArray(structObject.nodeID).vertex;
-            if (debugging)
-                StructDebug structure = new StructDebug(vert,structObject);
-            else
-                Struct structure = new Struct(vert,structObject, generatedMap.fuel.denominator, fuelCost);
+
+            Struct structure = new Struct(vert,structObject, generatedMap.fuel.denominator, fuelCost);
             addInputInteractor(structure);
             structList.push(structure);
             generatedMap.pjsStructureList[structObject.nodeID]=structure;
@@ -976,6 +975,7 @@ class Road extends Interactor {
 	Generates a new map. This does not increment the current level.
 */
 void newMap(){
+    console.log("==========================================");
     levelCash=0;
 	removeScreen("Campaign Level");
     addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
@@ -1149,22 +1149,6 @@ class Struct extends InputInteractor {
 /*
 **  Debugging Classes. Remove at release.
  */
-class StructDebug extends Struct{
-
-    StructDebug(vert,structObject){
-        super(vert,structObject);
-    }
-    void draw(float v1x,float v1y,float v2x, float v2y){
-        pushMatrix();
-        //scale(zoomLevel);
-        if(structObject.StructType=="fuel_stn")
-            stroke(0,255,0);
-        else
-            stroke(255,0,0);
-        ellipse(vertex.x,vertex.y,8,8);
-        popMatrix();
-    }
-}
 class NodeDebug extends Interactor{
     var vertex,flag;
     NodeDebug(vert,flagin){

@@ -113,10 +113,8 @@ class MapLevel extends LevelLayer {
         for(var i = 0; i < structureListLength; i++) {
             var structObject = generatedMap.structureList[i];
             var vert = generatedMap.mapGraph.findNodeArray(structObject.nodeID).vertex;
-            if (debugging)
-                StructDebug structure = new StructDebug(vert,structObject);
-            else
-                Struct structure = new Struct(vert,structObject, generatedMap.fuel.denominator, fuelCost);
+
+            Struct structure = new Struct(vert,structObject, generatedMap.fuel.denominator, fuelCost);
             addInputInteractor(structure);
             structList.push(structure);
             generatedMap.pjsStructureList[structObject.nodeID]=structure;

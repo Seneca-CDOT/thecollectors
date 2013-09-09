@@ -58,7 +58,8 @@ class Driver extends Player{
                     _x+=arrowSpeed;
                 }
                 if (keyCode==ENTER) {
-                    advanceTutorial();
+                    newMap();
+                    //advanceTutorial();
                 }
                 box.translate(_x,_y,layer.parent);
             }
