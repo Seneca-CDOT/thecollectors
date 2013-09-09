@@ -245,7 +245,7 @@ class Driver extends Player{
                     newMap();
                     //advanceTutorial();
                 }
-                box.translate(_x,_y,layer.parent);
+                box.translate(_x,_y,layer.parent,layer.xScale, layer.yScale);
             }
             if(mouseScroll!=0){
                 layer.zoom(mouseScroll/10);
@@ -495,7 +495,7 @@ class Driver extends Player{
             else if (deltaX < 0) _x += Math.abs(deltaX);
             if (deltaY < 0) _y += Math.abs(deltaY);
             else if (deltaY > 0) _y -= Math.abs(deltaY);
-            box.translate(_x, _y, layer.parent);
+            box.translate(_x, _y, layer.parent, layer.xScale, layer.yScale);
         }
     }
     void mouseClicked(int mx, int my, int button) {
