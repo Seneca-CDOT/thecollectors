@@ -438,18 +438,59 @@ MapGenerator.prototype.generateStructures = function(){
 	//	This makes it easier to return false, and then generate a structure
 	var loops = 0;
 	while(structCount != this.numStructs){
-		for(var index in nodes){
-			if(structCount == this.numStructs) break;
+		for(var index in nodes){	
 			if(!this.findStructure(-1,index, this.fuel-loops)){
 				this.structureList.push(new Structure(index,
 					this.randomStructureType(hopSize*structCount%numStructureTypes)));
 				structCount++;
+				if(structCount == this.numStructs) break;
 			}
 		}
 		loops++;
 	}
-	for(var index in nodes){
-		this.placeFuelStation(index);
+	var fuelCount = 0;
+	for(var i = 0; fuelCount < this.numStructs; i++){
+		var fuelDist = fuelToStructMin(this.fuel) - i;
+		if(fuelDist <= 1){
+			for (var i = this.structureList.length - 1; i >= 0 && fuelCount<this.numStructs; i--) {
+				if(this.structureList[i].StructType != "fuel_stn"){
+					var structNode = nodes[this.structureList[i].nodeID];
+					var possNodes = [];
+					for(var index in structNode.connections){
+						var connectedStruct = this.getStructureFromList(index);
+						if(connectedStruct && connectedStruct.StructType == "fuel_stn")
+						{	possNodes = null; break;	}
+						if(!connectedStruct)
+							possNodes.push(index);
+					}
+					if(possNodes){
+						var greatestNodes = [];
+						for (var i = possNodes.length - 1; i >= 0; i--) {
+							if(!greatestNodes.length) greatestNodes.push(possNodes[i]);
+							else if(structNode.connections[possNodes[i]] > greatestNodes[0]){
+								greatestNodes = [];
+								greatestNodes.push(possNodes[i]);
+							}
+							else if(structNode.connections[possNodes[i]] == greatestNodes[0])
+								greatestNodes.push(possNodes[i]);
+						}
+						var nodeToPush=0;
+						if(greatestNodes.length>1){
+							nodeToPush = rng(0,greatestNodes.length-1);
+						}
+						this.structureList.push(new Structure(greatestNodes[nodeToPush],"fuel_stn"));
+						fuelCount++;
+					}
+				}
+			}
+		}
+		else{
+			for(var index in nodes){
+				if(this.placeFuelStation(index, fuelDist)){
+					fuelCount++;
+				}
+			}
+		}
 	}
 	//	Randomizing a start point for the player
 	//	Want to make sure the start point isn't on or too close to a structure
@@ -514,9 +555,9 @@ MapGenerator.prototype.findFuel = function(nodeFrom,nodeIn, fuelAmt){
 	return nodeArray;
 }
 //this can be restructured to be more efficient
-MapGenerator.prototype.placeFuelStation = function(nodeID){
-	var rv = this.findStructure(-1,nodeID,fuelToStructMin(this.fuel),true);
-	var rv2 = this.findFuel(-1,nodeID,fuelToFuelMin(this.fuel));
+MapGenerator.prototype.placeFuelStation = function(nodeID, fuelDist){
+	var rv = this.findStructure(-1,nodeID,fuelDist,true);
+	var rv2 = this.findFuel(-1,nodeID,fuelDist);
 	if(!rv && rv2!==true){
 		if(!this.getStructureFromList(nodeID)){
 			this.structureList.push(new Structure(nodeID,"fuel_stn"));
