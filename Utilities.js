@@ -75,7 +75,7 @@ function segIntersection(x1, y1, x2, y2, x3, y3, x4, y4)
     }
     else if(y1==y2){
       if(! (x3<=Math.max(x1,x2) && x3>=Math.min(x1,x2)) || (x4<=Math.max(x1,x2) && x4>=Math.min(x1,x2)) )
-        return null
+        return null;
     }
     var point={x1:x1, y1:y1, x2:x2 , y2:y2 , colinear:true};
   }
