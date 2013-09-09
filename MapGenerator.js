@@ -10,10 +10,11 @@ function MapGenerator(numStructs, difficulty){
 			pool=pool.concat(DenominatorPool.hard);	
 	}
 	this.fuel=pool[rng(0,pool.length-1)];
+	//Width and height scale based on the level number
 	this.maxWidth = screenSizeX * (1+deliveriesToLevel(numStructs)/10);
 	this.maxHeight = screenSizeY * (1+deliveriesToLevel(numStructs)/5);
 	this.generateMapGraph();
-	//console.log(this.mapGraph);
+	console.log(this.mapGraph);
 }
 /*
 	All steps necessary to generate a map.
@@ -39,7 +40,7 @@ MapGenerator.prototype.generateRawGraph = function(){
 	var prevHeading=0;
 
 	//distanceCap is the # of different road distances possible
-	var distanceCap=Math.round(this.fuel / 2);
+	var distanceCap=Math.floor(this.fuel / 2);
 	for(var i=1; i<=roadCap;i++){	
 		var x,y;
 		var distance=rng(1,distanceCap);
@@ -129,6 +130,7 @@ MapGenerator.prototype.mapIntersections = function(){
 		var node1=nodes[index];
 		for (var i = edges[index].length - 1; i >= 0; i--) {
 			var node2=nodes[edges[index][i]];
+			//Check if the line represented by node1 and node2 intersects with another line
 			var intersectCheck=this.mapGraph.edgeIntersects(node1.vertex.x,node1.vertex.y,node2.vertex.x,node2.vertex.y)
 			if(intersectCheck){			
 				var node1ID=new Node(j, node1.vertex.x, node1.vertex.y);
@@ -136,6 +138,7 @@ MapGenerator.prototype.mapIntersections = function(){
 				if(node1ID==j)j++;
 				var node2ID=new Node(j, node2.vertex.x, node2.vertex.y);
 				node2ID=tmpGraph.addNode(node2ID); if(node2ID==j)j++;
+				//Create new nodes at each point of intersection 
 				for (var i = intersectCheck.length - 1; i >= 0; i--) {
 					if(!intersectCheck[i].colinear){
 						var intNode=new Node(j, intersectCheck[i].x, intersectCheck[i].y);
@@ -512,13 +515,8 @@ MapGenerator.prototype.findFuel = function(nodeFrom,nodeIn, fuelAmt){
 }
 //this can be restructured to be more efficient
 MapGenerator.prototype.placeFuelStation = function(nodeID){
-	/*console.log("============================================");
-	console.log("Checking node:"+nodeID);
-	console.log("Giving struct check:"+fuelToStructMin(this.fuel));
-	console.log("Giving fuel check:"+fuelToFuelMin(this.fuel));*/
 	var rv = this.findStructure(-1,nodeID,fuelToStructMin(this.fuel),true);
 	var rv2 = this.findFuel(-1,nodeID,fuelToFuelMin(this.fuel));
-	//console.log(rv, rv2);
 	if(!rv && rv2!==true){
 		if(!this.getStructureFromList(nodeID)){
 			this.structureList.push(new Structure(nodeID,"fuel_stn"));

@@ -15,7 +15,7 @@ float zoomLevel = 1.0;
 int arrowSpeed=10;
 
 //tracking game values
-int gameDifficulty = 3;
+int gameDifficulty = 1;
 int currentLevel = 1;       //change difficuly or level from 1 & 1 to generate a map, rather then the tutorial
 int levelCash = 0;
 int campaignCash = 0;
@@ -975,12 +975,12 @@ class Road extends Interactor {
 	Generates a new map. This does not increment the current level.
 */
 void newMap(){
+    console.log("==========================================");
     levelCash=0;
 	removeScreen("Campaign Level");
     addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
     setActiveScreen("Campaign Level");
     resetHUD();
-    console.log("==========================================");
 }
 /*
     Increment the current level and creates a new map.

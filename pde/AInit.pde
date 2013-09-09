@@ -15,7 +15,7 @@ float zoomLevel = 1.0;
 int arrowSpeed=10;
 
 //tracking game values
-int gameDifficulty = 3;
+int gameDifficulty = 1;
 int currentLevel = 1;       //change difficuly or level from 1 & 1 to generate a map, rather then the tutorial
 int levelCash = 0;
 int campaignCash = 0;
