@@ -4507,15 +4507,11 @@ class ViewBox {
       y+=_y;
   } 
   void translate(int _x,int _y, Level level, float sx, float sy){
-    if(x+_x < 0) 
-      x=0; 
-    else if (x+w+_x > level.width*sx) 
+    if (x+w+_x > level.width*sx) 
       x=level.width*sx-w;
     else 
       x+=_x;
-    if(y+_y < 0) 
-      y=0;
-    else if(y+h+_y > level.height*sy) 
+    if(y+h+_y > level.height*sy) 
       y=level.height*sy-h;
     else 
       y+=_y;
