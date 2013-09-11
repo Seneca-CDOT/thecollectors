@@ -28,6 +28,7 @@ class Driver extends Player{
         fractionBox = document.getElementById("fractionBoxDiv");
         fractionImg = document.getElementById("fractionBonusImg");
         fractionText = document.getElementById("fractionTextDiv");
+        fractionCT = null;
         fuelGauge = new Fraction(nodeMap.fuel.numerator, nodeMap.fuel.denominator);
         fuelGaugeHUD = document.getElementById("fuelElement2");
         fuelGaugeHUD.innerHTML = fuelGauge.numerator.toString();
@@ -156,6 +157,7 @@ class Driver extends Player{
     // if it is a fuel station reduce cash but increase fuel capacity
     void updateInfo(atStruct){
         if (atStruct.StructType != "fuel_stn" && !atStruct.visited) {
+            if (bonusFlag) levelCash += BONUS_CASH_AMT;
             levelCash += atStruct.Points;
             atStruct.visited = true;
             deliveriesLeft--;
@@ -339,7 +341,7 @@ class Driver extends Player{
 
         // Did we click on the vehicle? If not, check if we clicked on a road
         if (button == LEFT && over(mx,my)) {
-            if (destination.length == 1) {
+            if (destination.length == 1 || bonusTracker.initialBonusIndex == -1) {
                 driveToDestination();
             } else {
                 if (destination.length > 0 && !showFractionBox) {
@@ -357,7 +359,7 @@ class Driver extends Player{
                     driveToDestination();
                 }
             }
-        } else if (destination.length < 10) {
+        } else if (destination.length < 10 || button == RIGHT) {
             // Get the hexadecimal colour code at the clicked point on the shadowMap
             color c = shadowMap.get(mx, my);
             c = hex(c);
@@ -375,15 +377,16 @@ class Driver extends Player{
                     shadowMapColorDictionary[c][1].vertex.y > 0 ? true : false;
                 var fraction = null;
 
-                // Hide the bonus system overlay
-                if (showFractionBox) {
-                    fractionBox.classList.remove("visible");
-                    fractionBox.classList.add("hidden");
-                    fractionImg.classList.remove("visible");
-                    fractionImg.classList.add("hidden");
-                    showFractionBox = false;
-                }
                 if (shadowMapColorDictionary[c][0].vertex.equals(futurePosition)) {
+                    // Hide the bonus system overlay
+                    if (showFractionBox) {
+                        fractionBox.classList.remove("visible");
+                        fractionBox.classList.add("hidden");
+                        fractionImg.classList.remove("visible");
+                        fractionImg.classList.add("hidden");
+                        showFractionBox = false;
+                    }
+
                     destination.push(shadowMapColorDictionary[c][1]);
                     if (!flippedVertexX && !flippedVertexY) {
                         roadSelectedDictionary[c][0] += 1;
@@ -408,7 +411,7 @@ class Driver extends Player{
                     currDestColorID.push(c);
 
                     if (destination.length > 1) {
-                        fractionText.innerHTML += "<div style=\"float:left;padding-top:29px;\">+</div>" +
+                        fractionCT.innerHTML += "<div style=\"float:left;padding-top:29px;\">+</div>" +
                             "<div style=\"margin:1px;float:left;width:45px;\">" +
                             "<div id=\"fraction" + destination.length +
                             "\" style=\"text-align:center;margin:10px;\"></div></div>";
@@ -423,6 +426,15 @@ class Driver extends Player{
                         numeratorArray.push(fraction.numerator);
                     }
                 } else if (shadowMapColorDictionary[c][1].vertex.equals(futurePosition)) {
+                    // Hide the bonus system overlay
+                    if (showFractionBox) {
+                        fractionBox.classList.remove("visible");
+                        fractionBox.classList.add("hidden");
+                        fractionImg.classList.remove("visible");
+                        fractionImg.classList.add("hidden");
+                        showFractionBox = false;
+                    }
+
                     destination.push(shadowMapColorDictionary[c][0]);
                     if (!flippedVertexX && !flippedVertexY) {
                         roadSelectedDictionary[c][1] += 1;
@@ -447,7 +459,7 @@ class Driver extends Player{
                     currDestColorID.push(c);
 
                     if (destination.length > 1) {
-                        fractionText.innerHTML += "<div style=\"float:left;padding-top:29px;\">+</div>" +
+                        fractionCT.innerHTML += "<div style=\"float:left;padding-top:29px;\">+</div>" +
                             "<div style=\"margin:1px;float:left;width:45px;\">" +
                             "<div id=\"fraction" + destination.length +
                             "\" style=\"text-align:center;margin:10px;\"></div></div>";
@@ -463,12 +475,17 @@ class Driver extends Player{
                     }
                 }
                 if (fraction != null && destination.length == 1) {
-                    fractionText.innerHTML = "<div style=\"margin:1px;float:left;width:45px;\">" +
+                    fractionText.innerHTML = "<div id=\"fractionCT\" class=\"inCanvas\"" +
+                        "style=\"position:absolute;width:85%;\"></div><div id=\"submitDiv\"" +
+                        "style=\"position:absolute;left:85%;width:15%;\"></div>";
+                    fractionCT = document.getElementById("fractionCT");
+                    fractionCT.innerHTML = "<div style=\"margin:1px;float:left;width:45px;\">" +
                         "<div id=\"fraction" + destination.length +
                         "\" style=\"text-align:center;margin:10px;\"></div></div>";
 
                     // Add the div containing the input textboxes to the overlay
-                    fractionText.innerHTML += "<div style=\"margin:1px;float:right;width:45px;\">" +
+                    var submitBox = document.getElementById("submitDiv");
+                    submitBox.innerHTML += "<div style=\"margin:1px;float:right;width:45px;\">" +
                         "<div id=\"fractionSubmit\"" +
                         "style=\"width:35px;height:68px;background-color:blue;margin:5px;\"" +
                         "onclick=\"checkFractionSum()\" ></div></div>" +
@@ -534,9 +551,9 @@ class Driver extends Player{
                         futurePosition = destination[destination.length - 1].vertex;
 
                         // Remove the div elements containing the fraction and the "+" sign
-                        var node = fractionText.children[fractionText.childElementCount - 1];
+                        var node = fractionCT.children[fractionCT.childElementCount - 1];
                         node.parentNode.removeChild(node);
-                        node = fractionText.children[fractionText.childElementCount - 1];
+                        node = fractionCT.children[fractionCT.childElementCount - 1];
                         node.parentNode.removeChild(node);
                     } else {
                         futurePosition = currentPosition;
@@ -550,7 +567,6 @@ class Driver extends Player{
                 }
             }
         }
-        console.log(bonusTracker.initialBonusIndex);
     }
     void setStates() {
         addState(new State("Player", assetsFolder+"car.png"));

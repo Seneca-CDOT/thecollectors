@@ -31,6 +31,7 @@
     
     <script src="locale/text.jsonp"></script>
     <script type="text/javascript">
+    var fractionCT;
 	try {
 	  var language = window.navigator.userLanguage || window.navigator.language;
 	  //Load the tutorial text from the json file
@@ -88,9 +89,9 @@
     </script>
     <div id="fractionWrap">
       <div id="fractionBonusImg" class="hidden inCanvas" style="position:absolute;left:120px;top:44px;">
-        <img src="./assets/items/solve_img.svg" alt="Solve for Bonus!" width="700px" height="400px" />
+        <img src="./assets/items/solve_img.svg" alt="Solve for Bonus!" class="inCanvas" width="700px" height="400px" />
       </div>
-      <div id="fractionBoxDiv" class="addBox fractionBox hidden inCanvas">
+      <div id="fractionBoxDiv" class="addBox fractionBox hidden">
         <div id="fractionTextDiv" style="position:relative;">
         </div>
       </div>
