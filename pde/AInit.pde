@@ -11,6 +11,7 @@ var roadSelectedDictionary;
 var futurePosition;
 float VEHICLE_SPEED = 1.5;
 var NEEDLE_RANGE = 90; // degrees
+var BONUS_CASH_AMT = 500;
 float zoomLevel = 1.0;
 int arrowSpeed=10;
 

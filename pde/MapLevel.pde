@@ -129,6 +129,10 @@ class MapLevel extends LevelLayer {
     }
     void resetMap(){
         gameOver = false;
+        fractionBox.classList.remove("visible");
+        fractionBox.classList.add("hidden");
+        fractionImg.classList.remove("visible");
+        fractionImg.classList.add("hidden");
         for (var i in roadSelectedDictionary) {
             roadSelectedDictionary[i][0] = 0;
             roadSelectedDictionary[i][1] = 0;
@@ -138,6 +142,7 @@ class MapLevel extends LevelLayer {
             structList[i].resetState();
         }
         levelCash = 0;
+        numeratorArray.length = 0;
         deliveriesLeft = levelToDeliveries(currentLevel);
         clearPlayers();
         player = new Driver(generatedMap);

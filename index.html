@@ -31,6 +31,7 @@
     
     <script src="locale/text.jsonp"></script>
     <script type="text/javascript">
+    var fractionCT;
 	try {
 	  var language = window.navigator.userLanguage || window.navigator.language;
 	  //Load the tutorial text from the json file
@@ -86,6 +87,15 @@
 	document.getElementById("mediumButton").innerHTML = pageText.mediumButton;
 	document.getElementById("hardButton").innerHTML = pageText.hardButton;
     </script>
+    <div id="fractionWrap">
+      <div id="fractionBonusImg" class="hidden inCanvas" style="position:absolute;left:120px;top:44px;">
+        <img src="./assets/items/solve_img.svg" alt="Solve for Bonus!" class="inCanvas" width="700px" height="400px" />
+      </div>
+      <div id="fractionBoxDiv" class="addBox fractionBox hidden">
+        <div id="fractionTextDiv" style="position:relative;">
+        </div>
+      </div>
+    </div>
     <div id="tutorialTextDiv" class="textBox hidden inCanvas" style="position:fixed;left:200px;top:500px;width:500px;height:110px;">
         <p id="tutorialTextElement">
         </p>
@@ -110,6 +120,7 @@
     <script type="text/javascript">
 	var tutorialText = pageText.tutorial;
 	var tutorialIndex = 1;
+    var bonusTracker = {};
         document.getElementById("tutorialTextElement").innerHTML = tutorialText[tutorialIndex];
 
         // Event listener for the <p> element containing tutorial instructions.
@@ -195,6 +206,63 @@
             alert("Invalid button value!");
             break;
         }
+      }
+
+      var numeratorArray = [];
+      var inputRegEx = new RegExp("^[0-9]+$");
+      var bonusFlag = false, showFractionBox = false;
+      var numTest = false, denomTest = false;
+      function checkFractionSum() {
+          var sum = 0;
+          var playerNumerator = document.getElementById("fracSumNum");
+
+          if (numTest && denomTest) {
+              for (var i = numeratorArray.length; i--;) {
+                  sum += numeratorArray[i];
+              }
+              numeratorArray.length = 0;
+              if (bonusTracker.initialBonusIndex > -1 && parseInt(playerNumerator.value) === sum) {
+                  bonusFlag = true;
+                  fractionBox.classList.remove("visible");
+                  fractionBox.classList.add("hidden");
+                  fractionImg.classList.remove("visible");
+                  fractionImg.classList.add("hidden");
+                  console.log("Bonus applied");
+              } else {
+                  fractionBox.classList.remove("visible");
+                  fractionBox.classList.add("hidden");
+                  fractionImg.classList.remove("visible");
+                  fractionImg.classList.add("hidden");
+                  console.log("Incorrect answer.");
+              }
+              player.driveToDestination();
+          } else {
+               //document.getElementById("fractionSum").parentNode.style.backgroundColor = "red";
+          }
+      }
+      function testInput(element) {
+          var testResult = inputRegEx.test(element.value);
+          if (testResult) {
+              element.parentNode.style.backgroundColor = "black";
+              switch (element.name) {
+                  case "numerator":
+                      numTest = true;
+                      break;
+                  case "denominator":
+                      denomTest = true;
+                      break;
+              }
+          } else {
+              element.parentNode.style.backgroundColor = "red";
+              switch (element.name) {
+                  case "numerator":
+                      numTest = false;
+                      break;
+                  case "denominator":
+                      denomTest = false;
+                      break;
+              }
+          }
       }
     </script>
   </div>

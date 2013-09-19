@@ -25,6 +25,10 @@ class Driver extends Player{
         currDest = null;
         currDestColorID = [];
         driveFlag = false;
+        fractionBox = document.getElementById("fractionBoxDiv");
+        fractionImg = document.getElementById("fractionBonusImg");
+        fractionText = document.getElementById("fractionTextDiv");
+        fractionCT = null;
         fuelGauge = new Fraction(nodeMap.fuel.numerator, nodeMap.fuel.denominator);
         fuelGaugeHUD = document.getElementById("fuelElement2");
         fuelGaugeHUD.innerHTML = fuelGauge.numerator.toString();
@@ -38,6 +42,8 @@ class Driver extends Player{
         parcelHUD.innerHTML = "x " + deliveriesLeft;
         var fuelCostWeight = 1.0 - (0.6 - gameDifficulty * 0.2);
         fuelCost = Math.floor(StructureValues.fuel_stn * fuelCostWeight / fuelGauge.denominator);
+        bonusTracker.array = [];
+        bonusTracker.initialBonusIndex = -1;
         setScale(0.8);
     }
     void handleInput(){
@@ -89,6 +95,10 @@ class Driver extends Player{
         var impulseX = 0, impulseY = 0;
 
         refueled = false;
+        if (bonusTracker.array.length > 0) {
+            bonusTracker.array.length = 0;
+            bonusTracker.initialBonusIndex = -1;
+        }
         // Get the current destination from the destination list
         currDest = destination.shift();
         roadDeltaX = currDest.vertex.x - currentPosition.x;
@@ -147,6 +157,7 @@ class Driver extends Player{
     // if it is a fuel station reduce cash but increase fuel capacity
     void updateInfo(atStruct){
         if (atStruct.StructType != "fuel_stn" && !atStruct.visited) {
+            if (bonusFlag) levelCash += BONUS_CASH_AMT;
             levelCash += atStruct.Points;
             atStruct.visited = true;
             deliveriesLeft--;
@@ -249,6 +260,7 @@ class Driver extends Player{
                 driveToDestination();
             } else {
                 driveFlag = false;
+                bonusFlag = false;
             }
         }
 
@@ -329,8 +341,25 @@ class Driver extends Player{
 
         // Did we click on the vehicle? If not, check if we clicked on a road
         if (button == LEFT && over(mx,my)) {
-            if (destination.length > 0) driveToDestination();
-        } else {
+            if (destination.length == 1 || bonusTracker.initialBonusIndex == -1) {
+                driveToDestination();
+            } else {
+                if (destination.length > 0 && !showFractionBox) {
+                    fractionBox.classList.add("visible");
+                    fractionBox.classList.remove("hidden");
+                    fractionImg.classList.add("visible");
+                    fractionImg.classList.remove("hidden");
+                    showFractionBox = true;
+                } else if (destination.length > 0 && showFractionBox) {
+                    fractionBox.classList.remove("visible");
+                    fractionBox.classList.add("hidden");
+                    fractionImg.classList.remove("visible");
+                    fractionImg.classList.add("hidden");
+                    showFractionBox = false;
+                    driveToDestination();
+                }
+            }
+        } else if (destination.length < 10 || button == RIGHT) {
             // Get the hexadecimal colour code at the clicked point on the shadowMap
             color c = shadowMap.get(mx, my);
             c = hex(c);
@@ -346,25 +375,139 @@ class Driver extends Player{
                     shadowMapColorDictionary[c][1].vertex.x > 0 ? true : false;
                 var flippedVertexY = shadowMapColorDictionary[c][0].vertex.y -
                     shadowMapColorDictionary[c][1].vertex.y > 0 ? true : false;
+                var fraction = null;
 
                 if (shadowMapColorDictionary[c][0].vertex.equals(futurePosition)) {
+                    // Hide the bonus system overlay
+                    if (showFractionBox) {
+                        fractionBox.classList.remove("visible");
+                        fractionBox.classList.add("hidden");
+                        fractionImg.classList.remove("visible");
+                        fractionImg.classList.add("hidden");
+                        showFractionBox = false;
+                    }
+
                     destination.push(shadowMapColorDictionary[c][1]);
                     if (!flippedVertexX && !flippedVertexY) {
                         roadSelectedDictionary[c][0] += 1;
                     } else if (flippedVertexX || flippedVertexY) {
                         roadSelectedDictionary[c][1] += 1;
                     }
+                    fraction = shadowMapColorDictionary[c][0].connections[destination[destination.length - 1].id];
                     futurePosition = shadowMapColorDictionary[c][1].vertex;
+                    var st = nodeMap.pjsStructureList[shadowMapColorDictionary[c][1].id];
+                    if (st) {
+                        if (st.structObject.StructType != "fuel_stn" && !st.structObject.visited) {
+                            bonusTracker.array.push(true);
+                            if (bonusTracker.initialBonusIndex == -1) {
+                                bonusTracker.initialBonusIndex = bonusTracker.array.length - 1;
+                            }
+                        } else {
+                            bonusTracker.array.push(false);
+                        }
+                    } else {
+                        bonusTracker.array.push(false);
+                    }
                     currDestColorID.push(c);
+
+                    if (destination.length > 1) {
+                        fractionCT.innerHTML += "<div style=\"float:left;padding-top:29px;\">+</div>" +
+                            "<div style=\"margin:1px;float:left;width:45px;\">" +
+                            "<div id=\"fraction" + destination.length +
+                            "\" style=\"text-align:center;margin:10px;\"></div></div>";
+
+                        var fracElement = document.getElementById("fraction" + destination.length);
+                        fracElement.innerHTML = fraction.displayNum != undefined ? fraction.displayNum.toString() :
+                            fraction.numerator.toString();
+                        fracElement.innerHTML += "<br /><hr />";
+                        fracElement.innerHTML += fraction.displayDenom != undefined ?
+                            fraction.displayDenom.toString() : fraction.denominator.toString();
+
+                        numeratorArray.push(fraction.numerator);
+                    }
                 } else if (shadowMapColorDictionary[c][1].vertex.equals(futurePosition)) {
+                    // Hide the bonus system overlay
+                    if (showFractionBox) {
+                        fractionBox.classList.remove("visible");
+                        fractionBox.classList.add("hidden");
+                        fractionImg.classList.remove("visible");
+                        fractionImg.classList.add("hidden");
+                        showFractionBox = false;
+                    }
+
                     destination.push(shadowMapColorDictionary[c][0]);
                     if (!flippedVertexX && !flippedVertexY) {
                         roadSelectedDictionary[c][1] += 1;
                     } else if (flippedVertexX || flippedVertexY) {
                         roadSelectedDictionary[c][0] += 1;
                     }
+                    fraction = shadowMapColorDictionary[c][1].connections[destination[destination.length - 1].id];
                     futurePosition = shadowMapColorDictionary[c][0].vertex;
+                    var st = nodeMap.pjsStructureList[shadowMapColorDictionary[c][0].id];
+                    if (st) {
+                        if (st.structObject.StructType != "fuel_stn" && !st.structObject.visited) {
+                            bonusTracker.array.push(true);
+                            if (bonusTracker.initialBonusIndex == -1) {
+                                bonusTracker.initialBonusIndex = bonusTracker.array.length - 1;
+                            }
+                        } else {
+                            bonusTracker.array.push(false);
+                        }
+                    } else {
+                        bonusTracker.array.push(false);
+                    }
                     currDestColorID.push(c);
+
+                    if (destination.length > 1) {
+                        fractionCT.innerHTML += "<div style=\"float:left;padding-top:29px;\">+</div>" +
+                            "<div style=\"margin:1px;float:left;width:45px;\">" +
+                            "<div id=\"fraction" + destination.length +
+                            "\" style=\"text-align:center;margin:10px;\"></div></div>";
+
+                        var fracElement = document.getElementById("fraction" + destination.length);
+                        fracElement.innerHTML = fraction.displayNum != undefined ? fraction.displayNum.toString() :
+                            fraction.numerator.toString();
+                        fracElement.innerHTML += "<br /><hr />";
+                        fracElement.innerHTML += fraction.displayDenom != undefined ?
+                            fraction.displayDenom.toString() : fraction.denominator.toString();
+
+                        numeratorArray.push(fraction.numerator);
+                    }
+                }
+                if (fraction != null && destination.length == 1) {
+                    fractionText.innerHTML = "<div id=\"fractionCT\" class=\"inCanvas\"" +
+                        "style=\"position:absolute;width:85%;\"></div><div id=\"submitDiv\"" +
+                        "style=\"position:absolute;left:85%;width:15%;\"></div>";
+                    fractionCT = document.getElementById("fractionCT");
+                    fractionCT.innerHTML = "<div style=\"margin:1px;float:left;width:45px;\">" +
+                        "<div id=\"fraction" + destination.length +
+                        "\" style=\"text-align:center;margin:10px;\"></div></div>";
+
+                    // Add the div containing the input textboxes to the overlay
+                    var submitBox = document.getElementById("submitDiv");
+                    submitBox.innerHTML += "<div style=\"margin:1px;float:right;width:45px;\">" +
+                        "<div id=\"fractionSubmit\"" +
+                        "style=\"width:35px;height:68px;background-color:blue;margin:5px;\"" +
+                        "onclick=\"checkFractionSum()\" ></div></div>" +
+                        "<div style=\"margin:1px;float:right;width:45px;\">" +
+                        "<div id=\"fractionSum\" style=\"text-align:center;\"></div></div>" +
+                        "<div style=\"float:right;padding-top:29px;\">=</div>";
+
+                    var fracElement = document.getElementById("fraction" + destination.length);
+                    fracElement.innerHTML = fraction.displayNum != undefined ? fraction.displayNum.toString() :
+                        fraction.numerator.toString();
+                    fracElement.innerHTML += "<br /><hr />";
+                    fracElement.innerHTML += fraction.displayDenom != undefined ?
+                        fraction.displayDenom.toString() : fraction.denominator.toString();
+
+                    numeratorArray.push(fraction.numerator);
+
+                    var fracSum = document.getElementById("fractionSum");
+                    fracSum.innerHTML = "<div id=\"fractionNum\" style=\"padding:1px;margin:3px;border-radius:3px;\"><input type=\"text\" id=\"fracSumNum\" name=\"numerator\" autocomplete=\"off\" onblur=\"testInput(this)\"" +
+                        "maxlength=\"2\" style=\"width:23px\" /></div>" +
+                        "<hr />" +
+                        "<div id=\"fractionDenom\" style=\"margin:3px;border-radius:3px;\"><input type=\"text\" id=\"fracSumDenom\" name=\"denominator\" autocomplete=\"off\" onblur=\"testInput(this)\"" +
+                        "maxlength=\"2\" style=\"width:23px\" /></div>";
                 }
             } else if (shadowMapColorDictionary[c] != null && button == RIGHT) {
                 var prevDest, index, delta = 0;
@@ -387,12 +530,38 @@ class Driver extends Player{
 
                 if (roadSelectedDictionary[c][index] > 0 &&
                         c == currDestColorID[currDestColorID.length - 1]) {
+
+                    // Hide the bonus system overlay
+                    if (showFractionBox) {
+                        fractionBox.classList.remove("visible");
+                        fractionBox.classList.add("hidden");
+                        fractionImg.classList.remove("visible");
+                        fractionImg.classList.add("hidden");
+                        showFractionBox = false;
+                    }
+
                     roadSelectedDictionary[c][index] -= 1;
                     destination.pop();
+                    numeratorArray.pop();
+                    bonusTracker.array.pop();
+                    if (bonusTracker.array.length <= bonusTracker.initialBonusIndex) {
+                        bonusTracker.initialBonusIndex = -1;
+                    }
                     if (destination.length > 0) {
                         futurePosition = destination[destination.length - 1].vertex;
+
+                        // Remove the div elements containing the fraction and the "+" sign
+                        var node = fractionCT.children[fractionCT.childElementCount - 1];
+                        node.parentNode.removeChild(node);
+                        node = fractionCT.children[fractionCT.childElementCount - 1];
+                        node.parentNode.removeChild(node);
                     } else {
                         futurePosition = currentPosition;
+                        fractionBox.classList.remove("visible");
+                        fractionBox.classList.add("hidden");
+                        fractionImg.classList.remove("visible");
+                        fractionImg.classList.add("hidden");
+                        fractionText.innerHTML = "";
                     }
                     currDestColorID.pop();
                 }

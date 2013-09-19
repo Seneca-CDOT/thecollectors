@@ -3,12 +3,20 @@ button { width:120px; }
 div.textBox
 {
     background-color: #000000;
+    color:#ffffff;
+    opacity:0.6;
+}
+div.fractionBox
+{
+    background-color: #000000;
+    color:#ffffff;
     opacity:0.6;
 }
 div.fuelBox
 {
     background-color: #000000;
     opacity:0.6;
+    border-radius: 3px;
 }
 div.visible { display:block; }
 div.hidden { display:none; }
@@ -32,6 +40,15 @@ p.center
     text-align:center;
     font-weight:bold;
     font-size:28px;
+}
+div.addBox
+{
+    position:absolute;
+    left:110px;
+    top:344px;
+    width:720px;
+    height:78px;
+    border-radius: 3px;
 }
 /*
     Top bar, and all elements contained by it.
