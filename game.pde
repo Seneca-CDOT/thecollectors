@@ -485,8 +485,12 @@ class Driver extends Player{
             stopVehicle();
         }
     }
+    void mouseReleased(int mx, int my, int button) {
+        cursor(ARROW);
+    }
     void mouseDragged(int mx, int my, int button) {
         if (mapScreen && button == LEFT) {
+            cursor(MOVE);
             ViewBox box = layer.parent.viewbox;
             int _x = 0, _y = 0;
             int deltaX = mx - pmouseX;
