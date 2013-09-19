@@ -75,6 +75,19 @@
     <div id="fuelTooltip" class="tooltip"></div>
     <!-- End tooltips -->
     <canvas onmouseenter="$('canvas').focus()" data-processing-sources="codebase.pde assetPreloader.pde game.pde"></canvas>
+    <div id="cashAnimDiv" class="inCanvas cashAnimBox hidden" >
+        <p id="cashAnimElement" class="inCanvas" style="font-size:28px;margin:5px;">
+        </p>
+    </div>
+    <div id="cashAnimDiv2" class="inCanvas cashAnimBox2 hidden" >
+        <p id="cashAnimElement2" class="inCanvas textColor" style="font-size:28px;margin:5px;">
+        </p>
+    </div>
+    <div id="bonusAnimDiv" class="inCanvas bonusAnimBox hidden" >
+        <p id="bonusAnimElement" class="inCanvas" style="font-size:28px;margin:5px;color:green;">
+        Bonus!
+        </p>
+    </div>
     <div id="menuDiv" style="display:none;position:fixed;top:650px;left:0px;">
         <button id="campaignButton"></button><br />
         <button id="quickPlayButton"></button><br />
@@ -94,10 +107,10 @@
 	document.getElementById("hardButton").innerHTML = pageText.hardButton;
     </script>
     <div id="fractionWrap">
-      <div id="fractionBonusImg" class="hidden inCanvas" style="position:absolute;left:120px;top:44px;">
+      <div id="fractionBonusImg" class="inCanvas" style="position:absolute;left:120px;top:44px;">
         <img src="./assets/items/solve_img.svg" alt="Solve for Bonus!" class="inCanvas" width="700px" height="400px" />
       </div>
-      <div id="fractionBoxDiv" class="addBox fractionBox hidden">
+      <div id="fractionBoxDiv" class="addBox fractionBox">
         <div id="fractionTextDiv" style="position:relative;">
         </div>
       </div>
@@ -229,18 +242,14 @@
               numeratorArray.length = 0;
               if (bonusTracker.initialBonusIndex > -1 && parseInt(playerNumerator.value) === sum) {
                   bonusFlag = true;
-                  fractionBox.classList.remove("visible");
-                  fractionBox.classList.add("hidden");
-                  fractionImg.classList.remove("visible");
-                  fractionImg.classList.add("hidden");
+                  $("#bonusAnimDiv").show();
+                  animateBonusText();
                   console.log("Bonus applied");
               } else {
-                  fractionBox.classList.remove("visible");
-                  fractionBox.classList.add("hidden");
-                  fractionImg.classList.remove("visible");
-                  fractionImg.classList.add("hidden");
                   console.log("Incorrect answer.");
               }
+              $("#fractionBoxDiv").hide();
+              $("#fractionBonusImg").hide();
               player.driveToDestination();
           } else {
                //document.getElementById("fractionSum").parentNode.style.backgroundColor = "red";

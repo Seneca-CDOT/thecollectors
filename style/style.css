@@ -20,6 +20,8 @@ div.fuelBox
 }
 div.visible { display:block; }
 div.hidden { display:none; }
+.textColor { color:blue; }
+.textColor2 { color:red; }
 div.labelBox p
 {
     color:#000000;
@@ -49,6 +51,30 @@ div.addBox
     width:720px;
     height:78px;
     border-radius: 3px;
+}
+div.cashAnimBox
+{
+    position:absolute;
+    left:17px;
+    top:4px;
+    width:125px;
+    height:44px;
+}
+div.cashAnimBox2
+{
+    position:absolute;
+    left:17px;
+    top:4px;
+    width:230px;
+    height:44px;
+}
+div.bonusAnimBox
+{
+    position:absolute;
+    left:415px;
+    top:230px;
+    width:150px;
+    height:44px;
 }
 /*
     Top bar, and all elements contained by it.

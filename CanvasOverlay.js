@@ -41,6 +41,40 @@ function bindCanvasOverlay(){
       sketch.mouseMoved();
   });
 }
+
+function animateCash() {
+  $("#cashAnimDiv").animate({
+    opacity: "toggle",
+    top: "64px"
+  }, 1500, function() {
+    // On completion
+    $("#cashAnimDiv").hide();
+    $("#cashAnimDiv").css("top", "4px");
+    $("#cashAnimDiv").css("opacity", 1.0);
+  });
+}
+function animateBonus() {
+  $("#cashAnimDiv2").delay(400).animate({
+    opacity: "toggle",
+    top: "64px"
+  }, 1500, function() {
+    // On completion
+    $("#cashAnimDiv2").hide();
+    $("#cashAnimDiv2").css("top", "4px");
+    $("#cashAnimDiv2").css("opacity", 1.0);
+  });
+}
+function animateBonusText() {
+  $("#bonusAnimDiv").animate({
+    opacity: "toggle",
+    top: "80px"
+  }, 1500, function() {
+    // On completion
+    $("#bonusAnimDiv").hide();
+    $("#bonusAnimDiv").css("top", "230px");
+    $("#bonusAnimDiv").css("opacity", 1.0);
+  });
+}
 /*  Not sure if this will be necessary, so leaving it here just in case
 $(".inCanvas").css('-moz-user-select','none');
 $(".inCanvas").css('-webkit-user-select','none');
@@ -50,6 +84,8 @@ $(".inCanvas").css('user-select','none');
 $(document).ready(function(){
   $("#tutorialTextDiv").hide();
   $("#legendDiv").hide();
+  $("#fractionBoxDiv").hide();
+  $("#fractionBonusImg").hide();
   initTooltips();
 });
 /*Sets up all the tooltips and their functionality*/

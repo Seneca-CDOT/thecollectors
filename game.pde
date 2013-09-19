@@ -193,6 +193,7 @@ class Driver extends Player{
     var currDestColorID, nodeMap, fuelGauge, fuelCost;
     var destinationWeight, deltaPerTick, tickDelta = 0, previousVehicleDelta = 0;
     var fuelGaugeHUD, fuelNeedleHUD, cashHUD, needlePosition = 0, needleDelta = 0;
+    var cashAnimHUD, cashAnimEl;
     Driver(map) {
         super("Driver");
         setStates();
@@ -214,6 +215,8 @@ class Driver extends Player{
         fractionImg = document.getElementById("fractionBonusImg");
         fractionText = document.getElementById("fractionTextDiv");
         fractionCT = null;
+        cashAnimHUD = document.getElementById("cashAnimDiv");
+        cashAnimEl = cashAnimHUD.children[0];
         fuelGauge = new Fraction(nodeMap.fuel.numerator, nodeMap.fuel.denominator);
         fuelGaugeHUD = document.getElementById("fuelElement2");
         fuelGaugeHUD.innerHTML = fuelGauge.numerator.toString();
@@ -342,20 +345,32 @@ class Driver extends Player{
     // if it is a fuel station reduce cash but increase fuel capacity
     void updateInfo(atStruct){
         if (atStruct.StructType != "fuel_stn" && !atStruct.visited) {
-            if (bonusFlag) levelCash += BONUS_CASH_AMT;
+            if (bonusFlag) {
+                levelCash += BONUS_CASH_AMT;
+                var cashAnimEl2 = document.getElementById("cashAnimElement2");
+                cashAnimEl2.innerHTML = "+$" + BONUS_CASH_AMT + " (Bonus)";
+                animateBonus();
+            }
             levelCash += atStruct.Points;
             atStruct.visited = true;
             deliveriesLeft--;
             cashHUD.innerHTML = "$" + levelCash;
             parcelHUD.innerHTML = "x " + deliveriesLeft;
+            cashAnimEl.classList.add("textColor");
+            cashAnimEl.classList.remove("textColor2");
+            cashAnimEl.innerHTML = "+$" + atStruct.Points;
+            $("#cashAnimDiv").show();
+            animateCash();
         } 
         else if (atStruct.StructType == "fuel_stn" && !refueled) {
             refueled = true;
             var fuelMissing = fuelGauge.denominator - fuelGauge.numerator;
             var totalFuelCost = fuelMissing * fuelCost;
             var enoughCash = (levelCash - totalFuelCost) >= 0 ? true : false;
+            var fuelString = 0;
             if (enoughCash) {
                 levelCash -= totalFuelCost;
+                fuelString = totalFuelCost;
                 fuelGauge.numerator += fuelMissing;
                 needlePosition += fuelMissing * needleDelta;
             } else {
@@ -372,11 +387,19 @@ class Driver extends Player{
                 }
                 if (ticksToFill) {
                     levelCash -= total;
+                    fuelString = total;
                     fuelGauge.numerator += ticksToFill;
                     needlePosition += ticksToFill * needleDelta;
                 }
             }
-            cashHUD.innerHTML = "$" + levelCash;
+            if (fuelString > 0) {
+                cashHUD.innerHTML = "$" + levelCash;
+                cashAnimEl.classList.add("textColor2");
+                cashAnimEl.classList.remove("textColor");
+                cashAnimEl.innerHTML = "-$" + fuelString;
+                $("#cashAnimDiv").show();
+                animateCash();
+            }
             var fuelLevel = fuelGauge.evaluate();
             if (fuelLevel <= 0.2) {
                 fuelGaugeHUD.style.cssText = "color:red";
@@ -534,16 +557,12 @@ class Driver extends Player{
                 driveToDestination();
             } else {
                 if (destination.length > 0 && !showFractionBox) {
-                    fractionBox.classList.add("visible");
-                    fractionBox.classList.remove("hidden");
-                    fractionImg.classList.add("visible");
-                    fractionImg.classList.remove("hidden");
+                    $("#fractionBoxDiv").show();
+                    $("#fractionBonusImg").show();
                     showFractionBox = true;
                 } else if (destination.length > 0 && showFractionBox) {
-                    fractionBox.classList.remove("visible");
-                    fractionBox.classList.add("hidden");
-                    fractionImg.classList.remove("visible");
-                    fractionImg.classList.add("hidden");
+                    $("#fractionBoxDiv").hide();
+                    $("#fractionBonusImg").hide();
                     showFractionBox = false;
                     driveToDestination();
                 }
@@ -569,10 +588,8 @@ class Driver extends Player{
                 if (shadowMapColorDictionary[c][0].vertex.equals(futurePosition)) {
                     // Hide the bonus system overlay
                     if (showFractionBox) {
-                        fractionBox.classList.remove("visible");
-                        fractionBox.classList.add("hidden");
-                        fractionImg.classList.remove("visible");
-                        fractionImg.classList.add("hidden");
+                        $("#fractionBoxDiv").hide();
+                        $("#fractionBonusImg").hide();
                         showFractionBox = false;
                     }
 
@@ -617,10 +634,8 @@ class Driver extends Player{
                 } else if (shadowMapColorDictionary[c][1].vertex.equals(futurePosition)) {
                     // Hide the bonus system overlay
                     if (showFractionBox) {
-                        fractionBox.classList.remove("visible");
-                        fractionBox.classList.add("hidden");
-                        fractionImg.classList.remove("visible");
-                        fractionImg.classList.add("hidden");
+                        $("#fractionBoxDiv").hide();
+                        $("#fractionBonusImg").hide();
                         showFractionBox = false;
                     }
 
@@ -722,10 +737,8 @@ class Driver extends Player{
 
                     // Hide the bonus system overlay
                     if (showFractionBox) {
-                        fractionBox.classList.remove("visible");
-                        fractionBox.classList.add("hidden");
-                        fractionImg.classList.remove("visible");
-                        fractionImg.classList.add("hidden");
+                        $("#fractionBoxDiv").hide();
+                        $("#fractionBonusImg").hide();
                         showFractionBox = false;
                     }
 
@@ -746,10 +759,8 @@ class Driver extends Player{
                         node.parentNode.removeChild(node);
                     } else {
                         futurePosition = currentPosition;
-                        fractionBox.classList.remove("visible");
-                        fractionBox.classList.add("hidden");
-                        fractionImg.classList.remove("visible");
-                        fractionImg.classList.add("hidden");
+                        $("#fractionBoxDiv").hide();
+                        $("#fractionBonusImg").hide();
                         fractionText.innerHTML = "";
                     }
                     currDestColorID.pop();
