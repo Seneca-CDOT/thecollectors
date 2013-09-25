@@ -75,6 +75,20 @@ function animateBonusText() {
     $("#bonusAnimDiv").css("opacity", 1.0);
   });
 }
+function animateNeedle(timeOut, degrees, current, currentStep) {
+  step = degrees / timeOut;
+  currentStep = currentStep || current;
+  currentStep += step;
+  $("#fuelNeedle").css({
+    '-webkit-transform' : 'rotate(' + currentStep + 'deg)',
+    'transform' : 'rotate(' + currentStep + 'deg)'
+  });
+  if (currentStep > current + degrees) {
+    setTimeout(function() {
+      animateNeedle(timeOut, degrees, current, currentStep);
+    }, timeOut);
+  }
+}
 /*  Not sure if this will be necessary, so leaving it here just in case
 $(".inCanvas").css('-moz-user-select','none');
 $(".inCanvas").css('-webkit-user-select','none');

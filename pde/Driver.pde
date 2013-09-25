@@ -142,6 +142,10 @@ class Driver extends Player{
         deltaPerTick = edgeDelta / destinationWeight.numerator;
 
         driveFlag = true;
+        if (needlePosition > -NEEDLE_RANGE) {
+            animateNeedle(30, -needleDelta, needlePosition);
+            needlePosition -= needleDelta;
+        }
     }
     boolean structureCheck(currentNodeID) {
         // Get the structure list
@@ -211,7 +215,7 @@ class Driver extends Player{
                 cashHUD.innerHTML = "$" + levelCash;
                 cashAnimEl.classList.add("textColor2");
                 cashAnimEl.classList.remove("textColor");
-                cashAnimEl.innerHTML = "-$" + fuelString;
+                cashAnimEl.innerHTML = "&nbsp;&#8211;$" + fuelString;
                 $("#cashAnimDiv").show();
                 animateCash();
             }
@@ -289,6 +293,10 @@ class Driver extends Player{
 
         if (!gameOver && edgeDelta > 0 && tickDelta >= deltaPerTick) {
             tickDelta = 0;
+            if (needlePosition > -NEEDLE_RANGE) {
+                animateNeedle(30, -needleDelta, needlePosition);
+                needlePosition -= needleDelta;
+            }
             consumeFuel();
             checkIfFuelEmpty();
         }
@@ -298,7 +306,6 @@ class Driver extends Player{
     // Subtract the fraction from the fuel gauge and update the HUD
     void consumeFuel() {
         fuelGauge.numerator -= 1;
-        if (needlePosition > -NEEDLE_RANGE) needlePosition -= needleDelta;
         var fuelLevel = fuelGauge.evaluate();
         if (fuelLevel <= 0.2) {
             fuelGaugeHUD.style.cssText = "color:red";
@@ -310,7 +317,6 @@ class Driver extends Player{
         fuelGaugeHUD.innerHTML = fuelGauge.numerator.toString();
         fuelGaugeHUD.innerHTML += "<br /><hr />";
         fuelGaugeHUD.innerHTML += fuelGauge.denominator.toString();
-        fuelNeedleHUD.style.cssText = "transform:rotate("+ needlePosition +"deg);";
     }
     // If we're out of fuel and all deliveries have not been completed,
     // the game is over
@@ -368,7 +374,8 @@ class Driver extends Player{
 
         // Did we click on the vehicle? If not, check if we clicked on a road
         if (button == LEFT && over(mx,my)) {
-            if (destination.length == 1 || bonusTracker.initialBonusIndex == -1) {
+            if (destination.length == 1 ||
+                    (destination.length > 0 && bonusTracker.initialBonusIndex == -1)) {
                 driveToDestination();
             } else {
                 if (destination.length > 0 && !showFractionBox) {
