@@ -158,3 +158,9 @@ div.addBox
     left: 525px;
     top: 44px;
 }
+#fuelTooltip
+{
+    position: absolute;
+    left:425px;
+    bottom:5px;
+}

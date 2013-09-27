@@ -90,4 +90,13 @@ function initTooltips(){
     $("#resetTooltip").hide();
   });
   $("#resetTooltip").hide();
+  /*Fuel tooltip init*/
+  $("#fuelTooltip").html(pageText.fuelTooltip);
+    $("#fuelText").bind("mouseover",function(event){
+    $("#fuelTooltip").show();
+  });
+  $("#fuelText").bind("mouseout",function(event){
+    $("#fuelTooltip").hide();
+  });
+  $("#fuelTooltip").hide();
 }
