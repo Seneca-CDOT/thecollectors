@@ -106,5 +106,8 @@ void initialize() {
         addScreen("Title Screen", new TitleScreen(screenWidth, screenHeight));
         setActiveScreen("Title Screen"); // useful for when more screens are added
     }
-    addScreen("testing",new CampaignMap(screenWidth*2,screenHeight*2));
+    
+    addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
+    setActiveScreen("Campaign Level");
+    addScreen("Inter Screen",new InterScreen(screenWidth,screenHeight));
 }

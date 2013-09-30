@@ -10,6 +10,13 @@ void newMap(){
     resetHUD();
 }
 /*
+    Intermediate screen for campaign
+*/
+void interMap(){
+    //addScreen("Inter Screen"),new InterScreen(screenWidth,screenHeight));
+    setActiveScreen("Inter Screen");
+}
+/*
     Increment the current level and creates a new map.
 */
 void nextMap(){

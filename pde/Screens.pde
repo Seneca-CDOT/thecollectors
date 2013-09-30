@@ -30,3 +30,19 @@ class GameOverScreen extends LevelLayer {
         alert("Game Over. Try Again!");
     }
 }
+/*
+ *  Intermediate campaign screen
+ */
+class InterScreen extends Level {
+    InterScreen(int sWidth, int sHeight){
+        super(sWidth, sHeight);
+        addLevelLayer("Inter Screen Layer", new InterScreenLayer(this));
+    }
+}
+class InterScreenLayer extends LevelLayer {
+    InterScreenLayer(Level owner){
+        super(owner);
+        setBackgroundColor(color(197, 233, 203));
+        alert("Inter screen here");
+    }
+}

@@ -106,7 +106,10 @@ void initialize() {
         addScreen("Title Screen", new TitleScreen(screenWidth, screenHeight));
         setActiveScreen("Title Screen"); // useful for when more screens are added
     }
-    addScreen("testing",new CampaignMap(screenWidth*2,screenHeight*2));
+    
+    addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
+    setActiveScreen("Campaign Level");
+    addScreen("Inter Screen",new InterScreen(screenWidth,screenHeight));
 }
 /**
  *  Handles setup of campaign maps.
@@ -1188,6 +1191,13 @@ void newMap(){
     resetHUD();
 }
 /*
+    Intermediate screen for campaign
+*/
+void interMap(){
+    //addScreen("Inter Screen"),new InterScreen(screenWidth,screenHeight));
+    setActiveScreen("Inter Screen");
+}
+/*
     Increment the current level and creates a new map.
 */
 void nextMap(){
@@ -1246,6 +1256,22 @@ class GameOverScreen extends LevelLayer {
     GameOverScreen(Level owner) {
         super(owner);
         alert("Game Over. Try Again!");
+    }
+}
+/*
+ *  Intermediate campaign screen
+ */
+class InterScreen extends Level {
+    InterScreen(int sWidth, int sHeight){
+        super(sWidth, sHeight);
+        addLevelLayer("Inter Screen Layer", new InterScreenLayer(this));
+    }
+}
+class InterScreenLayer extends LevelLayer {
+    InterScreenLayer(Level owner){
+        super(owner);
+        setBackgroundColor(color(197, 233, 203));
+        alert("Inter screen here");
     }
 }
 /**
