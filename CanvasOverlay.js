@@ -50,4 +50,53 @@ $(".inCanvas").css('user-select','none');
 $(document).ready(function(){
   $("#tutorialTextDiv").hide();
   $("#legendDiv").hide();
+  initTooltips();
 });
+/*Sets up all the tooltips and their functionality*/
+function initTooltips(){
+  /*Cash tooltip init*/
+  $("#cashTooltip").html(pageText.cashTooltip);
+  $("#cashImg").bind("mouseover",function(event){
+    $("#cashTooltip").show();
+  });
+  $("#cashImg").bind("mouseout",function(event){
+    $("#cashTooltip").hide();
+  });
+  $("#cashTooltip").hide();
+  /*Parcel tooltip init*/
+  $("#parcelTooltip").html(pageText.parcelTooltip);
+  $("#parcelImg").bind("mouseover",function(event){
+    $("#parcelTooltip").show();
+  });
+  $("#parcelImg").bind("mouseout",function(event){
+    $("#parcelTooltip").hide();
+  });
+  $("#parcelTooltip").hide();
+  /*New map tooltip init*/
+  $("#newMapTooltip").html(pageText.newMapTooltip);
+  $("#newMapButton").bind("mouseover",function(event){
+    $("#newMapTooltip").show();
+  });
+  $("#newMapButton").bind("mouseout",function(event){
+    $("#newMapTooltip").hide();
+  });  
+  $("#newMapTooltip").hide();
+  /*Reset tooltip init*/
+  $("#resetTooltip").html(pageText.resetTooltip);
+  $("#resetButton").bind("mouseover",function(event){
+    $("#resetTooltip").show();
+  });
+  $("#resetButton").bind("mouseout",function(event){
+    $("#resetTooltip").hide();
+  });
+  $("#resetTooltip").hide();
+  /*Fuel tooltip init*/
+  $("#fuelTooltip").html(pageText.fuelTooltip);
+    $("#fuelText").bind("mouseover",function(event){
+    $("#fuelTooltip").show();
+  });
+  $("#fuelText").bind("mouseout",function(event){
+    $("#fuelTooltip").hide();
+  });
+  $("#fuelTooltip").hide();
+}

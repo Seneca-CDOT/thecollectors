@@ -124,3 +124,43 @@ div.addBox
     width: 80px;
     height: 110px;
 }
+/*
+    Tooltip elements.
+*/
+.tooltip
+{
+    background-color: #D4D4CA;
+    border: 5px solid #000000;
+    width: 175px;
+    height: 75px;
+}
+#cashTooltip
+{
+    position: absolute;
+    left: 0px;
+    top: 44px;
+}
+#parcelTooltip
+{
+    position: absolute;
+    left: 175px;
+    top: 44px;
+}
+#newMapTooltip
+{
+    position: absolute;
+    left: 350px;
+    top: 44px;
+}
+#resetTooltip
+{
+    position: absolute;
+    left: 525px;
+    top: 44px;
+}
+#fuelTooltip
+{
+    position: absolute;
+    left:425px;
+    bottom:5px;
+}
