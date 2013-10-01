@@ -422,7 +422,8 @@ class Driver extends Player{
     }
     void drawObject() {
         if(deliveriesLeft <= 0){
-            nextMap();
+            interMap();
+            //nextMap();
             return;
         }
         currentPosition.x = getX();
@@ -1189,11 +1190,16 @@ void newMap(){
     addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
     setActiveScreen("Campaign Level");
     resetHUD();
+        $(".inCanvas").show();
+    $("#topBar").children().show();
+
 }
 /*
     Intermediate screen for campaign
 */
 void interMap(){
+    $(".inCanvas").hide();
+    $("#topBar").children().hide();
     //addScreen("Inter Screen"),new InterScreen(screenWidth,screenHeight));
     setActiveScreen("Inter Screen");
 }
@@ -1261,6 +1267,23 @@ class GameOverScreen extends LevelLayer {
 /*
  *  Intermediate campaign screen
  */
+class VehicleOption extends InputInteractor{
+    var type;
+    VehicleOption(_type){
+        super("Vehicle Option");
+        type=_type;
+        setPosition(type*200,200);
+        setStates();
+    }
+    void setStates(){
+        addState(new State("default",assetsFolder+"placeholders/vehicleOption.png"));
+    }
+    void mouseClicked(int mx, int my, int button){
+        if(over(mx,my)){
+            nextMap();
+        }
+    }
+}
 class InterScreen extends Level {
     InterScreen(int sWidth, int sHeight){
         super(sWidth, sHeight);
@@ -1271,7 +1294,7 @@ class InterScreenLayer extends LevelLayer {
     InterScreenLayer(Level owner){
         super(owner);
         setBackgroundColor(color(197, 233, 203));
-        alert("Inter screen here");
+        addInputInteractor(new VehicleOption(1));
     }
 }
 /**

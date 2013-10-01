@@ -8,11 +8,16 @@ void newMap(){
     addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
     setActiveScreen("Campaign Level");
     resetHUD();
+        $(".inCanvas").show();
+    $("#topBar").children().show();
+
 }
 /*
     Intermediate screen for campaign
 */
 void interMap(){
+    $(".inCanvas").hide();
+    $("#topBar").children().hide();
     //addScreen("Inter Screen"),new InterScreen(screenWidth,screenHeight));
     setActiveScreen("Inter Screen");
 }

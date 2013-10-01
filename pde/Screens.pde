@@ -33,6 +33,23 @@ class GameOverScreen extends LevelLayer {
 /*
  *  Intermediate campaign screen
  */
+class VehicleOption extends InputInteractor{
+    var type;
+    VehicleOption(_type){
+        super("Vehicle Option");
+        type=_type;
+        setPosition(type*200,200);
+        setStates();
+    }
+    void setStates(){
+        addState(new State("default",assetsFolder+"placeholders/vehicleOption.png"));
+    }
+    void mouseClicked(int mx, int my, int button){
+        if(over(mx,my)){
+            nextMap();
+        }
+    }
+}
 class InterScreen extends Level {
     InterScreen(int sWidth, int sHeight){
         super(sWidth, sHeight);
@@ -43,6 +60,6 @@ class InterScreenLayer extends LevelLayer {
     InterScreenLayer(Level owner){
         super(owner);
         setBackgroundColor(color(197, 233, 203));
-        alert("Inter screen here");
+        addInputInteractor(new VehicleOption(1));
     }
 }
