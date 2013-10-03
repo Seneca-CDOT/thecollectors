@@ -25,3 +25,52 @@ Fraction.prototype.genAltDisplay = function() {
 		this.displayDenom=possDisplays[i].denominator;
 	}
 }
+
+Function.prototype.method=function(name,func){
+	if(!this.prototype[name]){
+	  this.prototype[name]=func;
+	  return this;
+	}
+}
+/*simplify creation of integer behaviors*/
+Number.method('int',function(){
+  return Math[this < 0?'ceil':'floor'](this);
+});
+
+function GCD(a, b){
+  var tmp;
+  var quotient;
+  var remainder;
+  //b must be the smaller number, a the bigger, swap if this is
+  //not the case
+  if(a < b){
+    tmp = a;
+    a = b;
+    b = tmp;
+  }
+
+  quotient = (a/b).int();
+  remainder = a%b;
+  while(remainder != 0){
+    a = b;
+    b = remainder;
+    quotient = (a/b).int();
+    remainder = a%b;
+  }
+  return b;
+}
+
+/*reduces a function to its simplest form*/
+Fraction.prototype.reduce = function(){
+  var gcd = GCD(this.numerator, this.denominator);
+  this.numerator = this.numerator / gcd;
+  this.denominator = this.denominator / gcd;
+}
+
+/*adds other to Fraction object*/
+Fraction.prototype.add = function(other){
+  this.numerator = this.numerator*other.denominator + other.numerator*this.denominator;
+  this.denominator = this.denominator*other.denominator;
+  this.reduce();
+}
+
