@@ -558,6 +558,9 @@ MapGenerator.prototype.findFuel = function(nodeFrom,nodeIn, fuelAmt){
 MapGenerator.prototype.placeFuelStation = function(nodeID, fuelDist){
 	var rv = this.findStructure(-1,nodeID,fuelDist,true);
 	var rv2 = this.findFuel(-1,nodeID,fuelDist);
+	var structureAtNode = this.getStructureFromList(nodeID);
+	if(structureAtNode)
+		return false;
 	if(!rv && rv2!==true){
 		if(!this.getStructureFromList(nodeID)){
 			this.structureList.push(new Structure(nodeID,"fuel_stn"));
