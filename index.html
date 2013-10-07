@@ -50,22 +50,36 @@
   <div id="gameWrap" style="position:absolute;height:644px;">
     <!-- Begin top bar -->
     <div id="topBar">
-      <div id="cashImg">
-          <img src="./assets/items/money.svg" alt="Money Bag" width="40px" height="40px" />
+      <!--Wrap all HUD elements that will need to be hidden -->
+      <div class="HUD">
+        <div id="cashImg">
+            <img src="./assets/items/money.svg" alt="Money Bag" width="40px" height="40px" />
+        </div>
+        <div id="cashText" class="labelBox">
+            <p id="cashElement" style="font-size:28px;margin:5px;">
+            </p>
+        </div>
+        <div id="parcelImg">
+            <img src="./assets/items/parcel.svg" alt="Parcel" width="40px" height="40px" />
+        </div>
+        <div id="parcelText" class="labelBox">
+            <p id="parcelElement" style="font-size:28px;margin:5px;">
+            </p>
+        </div>
+        <button style="position:absolute;left:350px;top:10px;" onclick="sketch.newMap()">New Map</button>
+        <button style="position:absolute;left:550px;top:10px;" onclick="sketch.resetMap()">Reset</button>
       </div>
-      <div id="cashText" class="labelBox">
-          <p id="cashElement" style="font-size:28px;margin:5px;">
-          </p>
+      <!--Top bar HUD for intermediate screens -->
+      <div class="interHUD">
+          <div id="campaignCash">
+            <img src="./assets/items/money.svg" alt="Money Bag" width="40px" height="40px" />
+        </div>
+        <div id="cashText" class="labelBox">
+            <p id="campaignCashText" style="font-size:28px;margin:5px;">
+            </p>
+        </div>
+        <button style="position:absolute;right:50px;top:10px;" onclick="sketch.newMap()">Continue</button>
       </div>
-      <div id="parcelImg">
-          <img src="./assets/items/parcel.svg" alt="Parcel" width="40px" height="40px" />
-      </div>
-      <div id="parcelText" class="labelBox">
-          <p id="parcelElement" style="font-size:28px;margin:5px;">
-          </p>
-      </div>
-      <button id="newMapButton" style="position:absolute;left:350px;top:10px;" onclick="sketch.newMap()">New Map</button>
-      <button id="resetButton" style="position:absolute;left:550px;top:10px;" onclick="sketch.resetMap()">Reset</button>
     </div>
     <!-- End top bar -->
     <!-- Begin tooltips -->
@@ -127,7 +141,7 @@
     </div>
 
     <!-- Begin fuel gauge -->
-    <div id="fuelWrap">
+    <div id="fuelWrap" class="HUD">
       <div id="fuelText" class="fuelBox visible inCanvas">
           <p id="fuelElement2" class="center">
           </p>

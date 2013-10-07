@@ -234,8 +234,7 @@ class Driver extends Player{
     }
     void drawObject() {
         if(deliveriesLeft <= 0){
-            interMap();
-            //nextMap();
+            nextMap();
             return;
         }
         currentPosition.x = getX();

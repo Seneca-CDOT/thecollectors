@@ -35,18 +35,20 @@ class GameOverScreen extends LevelLayer {
  */
 class VehicleOption extends InputInteractor{
     var type;
-    VehicleOption(_type){
+    int x;
+    VehicleOption(var _type){
         super("Vehicle Option");
         type=_type;
-        setPosition(type*200,200);
+        x = (type-1)*(150+38)+19+(150/2);
+        setPosition(x,300);
         setStates();
     }
     void setStates(){
-        addState(new State("default",assetsFolder+"placeholders/vehicleOption.png"));
+        addState(new State("default",assetsFolder+"vehicles/"+vehicleTypes[this.type][1]));
     }
     void mouseClicked(int mx, int my, int button){
         if(over(mx,my)){
-            nextMap();
+            //do some buying stuff
         }
     }
 }
@@ -61,5 +63,10 @@ class InterScreenLayer extends LevelLayer {
         super(owner);
         setBackgroundColor(color(197, 233, 203));
         addInputInteractor(new VehicleOption(1));
+        addInputInteractor(new VehicleOption(2));
+        addInputInteractor(new VehicleOption(3));
+        addInputInteractor(new VehicleOption(4));
+        addInputInteractor(new VehicleOption(5));
+
     }
 }

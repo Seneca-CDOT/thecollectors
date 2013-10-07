@@ -8,16 +8,17 @@ void newMap(){
     addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
     setActiveScreen("Campaign Level");
     resetHUD();
-        $(".inCanvas").show();
-    $("#topBar").children().show();
+    $(".HUD").show();
 
 }
 /*
     Intermediate screen for campaign
 */
 void interMap(){
-    $(".inCanvas").hide();
-    $("#topBar").children().hide();
+
+    $(".HUD").hide();
+    $("#campaignCashText").text("$"+campaignCash);
+    $(".interHUD").show();
     //addScreen("Inter Screen"),new InterScreen(screenWidth,screenHeight));
     setActiveScreen("Inter Screen");
 }
@@ -28,7 +29,7 @@ void nextMap(){
     if(currentLevel<5){
         currentLevel++;
         campaignCash+=levelCash;
-        newMap();
+        interMap();
     }
     else{
         //end of campaign logic here

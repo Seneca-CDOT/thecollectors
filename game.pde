@@ -422,8 +422,7 @@ class Driver extends Player{
     }
     void drawObject() {
         if(deliveriesLeft <= 0){
-            interMap();
-            //nextMap();
+            nextMap();
             return;
         }
         currentPosition.x = getX();
@@ -1190,16 +1189,17 @@ void newMap(){
     addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
     setActiveScreen("Campaign Level");
     resetHUD();
-        $(".inCanvas").show();
-    $("#topBar").children().show();
+    $(".HUD").show();
 
 }
 /*
     Intermediate screen for campaign
 */
 void interMap(){
-    $(".inCanvas").hide();
-    $("#topBar").children().hide();
+
+    $(".HUD").hide();
+    $("#campaignCashText").text("$"+campaignCash);
+    $(".interHUD").show();
     //addScreen("Inter Screen"),new InterScreen(screenWidth,screenHeight));
     setActiveScreen("Inter Screen");
 }
@@ -1210,7 +1210,7 @@ void nextMap(){
     if(currentLevel<5){
         currentLevel++;
         campaignCash+=levelCash;
-        newMap();
+        interMap();
     }
     else{
         //end of campaign logic here
@@ -1269,14 +1269,16 @@ class GameOverScreen extends LevelLayer {
  */
 class VehicleOption extends InputInteractor{
     var type;
-    VehicleOption(_type){
+    int x;
+    VehicleOption(var _type){
         super("Vehicle Option");
         type=_type;
-        setPosition(type*200,200);
+        x = (type-1)*(150+38)+19+(150/2);
+        setPosition(x,300);
         setStates();
     }
     void setStates(){
-        addState(new State("default",assetsFolder+"placeholders/vehicleOption.png"));
+        addState(new State("default",assetsFolder+"vehicles/"+vehicleTypes[this.type][1]));
     }
     void mouseClicked(int mx, int my, int button){
         if(over(mx,my)){
@@ -1295,6 +1297,11 @@ class InterScreenLayer extends LevelLayer {
         super(owner);
         setBackgroundColor(color(197, 233, 203));
         addInputInteractor(new VehicleOption(1));
+        addInputInteractor(new VehicleOption(2));
+        addInputInteractor(new VehicleOption(3));
+        addInputInteractor(new VehicleOption(4));
+        addInputInteractor(new VehicleOption(5));
+
     }
 }
 /**

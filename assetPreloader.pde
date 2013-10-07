@@ -31,5 +31,10 @@ assets/buildings_png/hospital_50.png,
 assets/buildings_png/house_50.png,
 assets/buildings_png/powerplant_50.png,
 assets/buildings_png/restaurant_50.png,
-assets/buildings_png/train_stn_50.png
+assets/buildings_png/train_stn_50.png,
+assets/vehicles/bike_top_long.png,
+assets/vehicles/car_top_long.png,
+assets/vehicles/suv_top_long.png,
+assets/vehicles/mini_top_long.png,
+assets/vehicles/convert_top_long.png
 ";*/
