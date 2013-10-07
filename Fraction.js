@@ -74,3 +74,17 @@ Fraction.prototype.add = function(other){
   this.reduce();
 }
 
+
+/*compares other against current object
+  return true if they are the same, false otherwise*/
+Fraction.prototype.cmp = function(other){
+  this.reduce();
+  other.reduce();
+  if(this.denominator==other.denominator 
+          && this.numerator == other.numerator){
+    return true;
+  }
+  else{
+    return false;
+  }
+}
