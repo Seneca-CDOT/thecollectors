@@ -8,14 +8,13 @@ void newMap(){
     addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
     setActiveScreen("Campaign Level");
     resetHUD();
+    $(".interHUD").hide();
     $(".HUD").show();
-
 }
 /*
     Intermediate screen for campaign
 */
 void interMap(){
-
     $(".HUD").hide();
     $("#campaignCashText").text("$"+campaignCash);
     $(".interHUD").show();

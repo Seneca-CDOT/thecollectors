@@ -600,7 +600,7 @@ class Driver extends Player{
     }
     void setStates() {
         setScale(0.6);
-        addState(new State("Player", vehicleFolder+"bike_top.png"));
+        addState(new State("Player", assetsFolder+"vehicles/"+vehicleTypes[currentVehicle][0]));
     }
     void stopVehicle() {
         stop();

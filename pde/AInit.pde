@@ -25,6 +25,7 @@ var mapScreen = false;
 var gameOver = false;
 var refueled = false;
 var driveFlag;
+var carInventory = [1] , currentVehicle = 1;
 
 //line width
 strokeWeight(4);

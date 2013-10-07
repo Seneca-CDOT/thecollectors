@@ -36,5 +36,11 @@ assets/vehicles/bike_top_long.png,
 assets/vehicles/car_top_long.png,
 assets/vehicles/suv_top_long.png,
 assets/vehicles/mini_top_long.png,
-assets/vehicles/convert_top_long.png
+assets/vehicles/convert_top_long.png,
+assets/vehicles/bike_top.png,
+assets/vehicles/car_top.png,
+assets/vehicles/suv_top.png,
+assets/vehicles/mini_top.png,
+assets/vehicles/convert_top.png,
+assets/placeholders/buyButton.png
 ";*/
