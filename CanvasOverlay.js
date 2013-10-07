@@ -102,6 +102,14 @@ $(document).ready(function(){
   $("#fractionBonusImg").hide();
   initTooltips();
 });
+function backToMap() {
+  $("#fractionBonusImg").hide();
+  $("#fractionBoxDiv").hide();
+  $("#fractionBackImg").hide();
+  $("#numInvalidTooltip").hide();
+  $("#denomInvalidTooltip").hide();
+  showFractionBox = false;
+}
 /*Sets up all the tooltips and their functionality*/
 function initTooltips(){
   /*Cash tooltip init*/
@@ -149,4 +157,10 @@ function initTooltips(){
     $("#fuelTooltip").hide();
   });
   $("#fuelTooltip").hide();
+  /*Numerator input invalid tooltip init*/
+  $("#numInvalidTooltip").html(pageText.inputInvalidTooltip);
+  $("#numInvalidTooltip").hide();
+  /*Denominator input invalid tooltip init*/
+  $("#denomInvalidTooltip").html(pageText.inputInvalidTooltip);
+  $("#denomInvalidTooltip").hide();
 }

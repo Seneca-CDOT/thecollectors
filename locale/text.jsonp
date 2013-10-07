@@ -10,5 +10,6 @@ en_us = '{'
 +	'"parcelTooltip":"Number of parcels that still need to be delivered",'
 +	'"newMapTooltip":"Click to generate a different map",'
 +	'"resetTooltip":"Start the current map over",'
-+	'"fuelTooltip":"This is how much gas you have left. If this reaches 0, you lose!"'
++	'"fuelTooltip":"This is how much fuel you have left. If this reaches 0, you lose!",'
++	'"inputInvalidTooltip":"Input is invalid! Only digits are allowed!"'
 +'}';
