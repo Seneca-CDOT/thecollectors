@@ -243,11 +243,12 @@
               var playerNumerator = document.getElementById("fracSumNum");
               var playerDenominator = document.getElementById("fracSumDenom");
               var inputFraction = new Fraction(playerNumerator.value, playerDenominator.value);
+              var sum = new Fraction(fractionArray[0].numerator, fractionArray[0].denominator);
 
               for (var i = 1; i < fractionArray.length; i++) {
-                  fractionArray[0].add(fractionArray[i]);
+                  sum.add(fractionArray[i]);
               }
-              if (bonusTracker.initialBonusIndex > -1 && inputFraction.cmp(fractionArray[0])) {
+              if (bonusTracker.initialBonusIndex > -1 && inputFraction.cmp(sum)) {
                   bonusFlag = true;
                   $("#bonusAnimDiv").show();
                   animateBonusText();

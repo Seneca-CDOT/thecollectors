@@ -120,6 +120,12 @@ function initTooltips(){
   $("#cashImg").bind("mouseout",function(event){
     $("#cashTooltip").hide();
   });
+  $("#cashText").bind("mouseover",function(event){
+    $("#cashTooltip").show();
+  });
+  $("#cashText").bind("mouseout",function(event){
+    $("#cashTooltip").hide();
+  });
   $("#cashTooltip").hide();
   /*Parcel tooltip init*/
   $("#parcelTooltip").html(pageText.parcelTooltip);
@@ -127,6 +133,12 @@ function initTooltips(){
     $("#parcelTooltip").show();
   });
   $("#parcelImg").bind("mouseout",function(event){
+    $("#parcelTooltip").hide();
+  });
+  $("#parcelText").bind("mouseover",function(event){
+    $("#parcelTooltip").show();
+  });
+  $("#parcelText").bind("mouseout",function(event){
     $("#parcelTooltip").hide();
   });
   $("#parcelTooltip").hide();
