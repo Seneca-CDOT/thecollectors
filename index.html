@@ -32,6 +32,7 @@
     <script src="locale/text.jsonp"></script>
     <script type="text/javascript">
     var fractionCT;
+
 	try {
 	  var language = window.navigator.userLanguage || window.navigator.language;
 	  //Load the tutorial text from the json file
@@ -73,6 +74,8 @@
     <div id="newMapTooltip" class="tooltip"> </div>
     <div id="resetTooltip" class="tooltip"> </div>
     <div id="fuelTooltip" class="tooltip"></div>
+    <div id="numInvalidTooltip" class="tooltip"></div>
+    <div id="denomInvalidTooltip" class="tooltip"></div>
     <!-- End tooltips -->
     <canvas onmouseenter="$('canvas').focus()" data-processing-sources="codebase.pde assetPreloader.pde game.pde"></canvas>
     <div id="cashAnimDiv" class="inCanvas cashAnimBox hidden" >
@@ -107,12 +110,15 @@
 	document.getElementById("hardButton").innerHTML = pageText.hardButton;
     </script>
     <div id="fractionWrap">
-      <div id="fractionBonusImg" class="inCanvas" style="position:absolute;left:120px;top:44px;">
-        <img src="./assets/items/solve_img.svg" alt="Solve for Bonus!" class="inCanvas" width="700px" height="400px" />
+      <div id="fractionBonusImg" class="hidden" style="position:absolute;left:0px;top:44px;">
+        <img src="./assets/items/solve_bonus.png" alt="Solve for Bonus!" width="940px" height="600px" />
       </div>
       <div id="fractionBoxDiv" class="addBox fractionBox">
         <div id="fractionTextDiv" style="position:relative;">
         </div>
+      </div>
+      <div id="fractionBackImg" class="hidden" style="position:absolute;left:370px;top:423px;" onclick="backToMap()">
+        <img src="./assets/items/alter_btn.png" alt="Alter Route" width="200px" height="50px" />
       </div>
     </div>
     <div id="tutorialTextDiv" class="textBox hidden inCanvas" style="position:fixed;left:200px;top:500px;width:500px;height:110px;">
@@ -227,34 +233,47 @@
         }
       }
 
-      var numeratorArray = [];
+      var fractionArray = [], ignoreInput = true;
       var inputRegEx = new RegExp("^[0-9]+$");
       var bonusFlag = false, showFractionBox = false;
       var numTest = false, denomTest = false;
-      function checkFractionSum() {
-          var sum = 0;
-          var playerNumerator = document.getElementById("fracSumNum");
 
+      function checkFractionSum() {
           if (numTest && denomTest) {
-              for (var i = numeratorArray.length; i--;) {
-                  sum += numeratorArray[i];
+              var playerNumerator = document.getElementById("fracSumNum");
+              var playerDenominator = document.getElementById("fracSumDenom");
+              var inputFraction = new Fraction(playerNumerator.value, playerDenominator.value);
+              var sum = new Fraction(fractionArray[0].numerator, fractionArray[0].denominator);
+
+              for (var i = 1; i < fractionArray.length; i++) {
+                  sum.add(fractionArray[i]);
               }
-              numeratorArray.length = 0;
-              if (bonusTracker.initialBonusIndex > -1 && parseInt(playerNumerator.value) === sum) {
+              if (bonusTracker.initialBonusIndex > -1 && inputFraction.cmp(sum)) {
                   bonusFlag = true;
                   $("#bonusAnimDiv").show();
                   animateBonusText();
-                  console.log("Bonus applied");
+                  console.log("DEBUG: Bonus applied");
               } else {
-                  console.log("Incorrect answer.");
+                  console.log("DEBUG: Incorrect answer.");
               }
+              fractionArray.length = 0;
               $("#fractionBoxDiv").hide();
               $("#fractionBonusImg").hide();
+              $("#fuelWrap").show();
+              $("#fractionBackImg").hide();
               player.driveToDestination();
           } else {
-               //document.getElementById("fractionSum").parentNode.style.backgroundColor = "red";
+              if (ignoreInput) {
+                  ignoreInput = true;
+                  $("#fractionBoxDiv").hide();
+                  $("#fractionBonusImg").hide();
+                  $("#fuelWrap").show();
+                  $("#fractionBackImg").hide();
+                  player.driveToDestination();
+              }
           }
       }
+
       function testInput(element) {
           var testResult = inputRegEx.test(element.value);
           if (testResult) {
@@ -268,15 +287,32 @@
                       break;
               }
           } else {
-              element.parentNode.style.backgroundColor = "red";
               switch (element.name) {
                   case "numerator":
                       numTest = false;
+                      if (element.value != "") {
+                          ignoreInput = false;
+                          $("#numInvalidTooltip").show();
+                      }
                       break;
                   case "denominator":
                       denomTest = false;
+                      if (element.value != "") {
+                          ignoreInput = false;
+                          $("#denomInvalidTooltip").show();
+                      }
                       break;
               }
+          }
+      }
+      function fracHideTooltip(element) {
+          switch (element.name) {
+              case "numerator":
+                  $("#numInvalidTooltip").hide();
+                  break;
+              case "denominator":
+                  $("#denomInvalidTooltip").hide();
+                  break;
           }
       }
     </script>

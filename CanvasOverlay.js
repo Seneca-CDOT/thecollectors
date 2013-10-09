@@ -102,6 +102,14 @@ $(document).ready(function(){
   $("#fractionBonusImg").hide();
   initTooltips();
 });
+function backToMap() {
+  $("#fractionBonusImg").hide();
+  $("#fractionBoxDiv").hide();
+  $("#fractionBackImg").hide();
+  $("#numInvalidTooltip").hide();
+  $("#denomInvalidTooltip").hide();
+  showFractionBox = false;
+}
 /*Sets up all the tooltips and their functionality*/
 function initTooltips(){
   /*Cash tooltip init*/
@@ -112,6 +120,12 @@ function initTooltips(){
   $("#cashImg").bind("mouseout",function(event){
     $("#cashTooltip").hide();
   });
+  $("#cashText").bind("mouseover",function(event){
+    $("#cashTooltip").show();
+  });
+  $("#cashText").bind("mouseout",function(event){
+    $("#cashTooltip").hide();
+  });
   $("#cashTooltip").hide();
   /*Parcel tooltip init*/
   $("#parcelTooltip").html(pageText.parcelTooltip);
@@ -119,6 +133,12 @@ function initTooltips(){
     $("#parcelTooltip").show();
   });
   $("#parcelImg").bind("mouseout",function(event){
+    $("#parcelTooltip").hide();
+  });
+  $("#parcelText").bind("mouseover",function(event){
+    $("#parcelTooltip").show();
+  });
+  $("#parcelText").bind("mouseout",function(event){
     $("#parcelTooltip").hide();
   });
   $("#parcelTooltip").hide();
@@ -149,4 +169,10 @@ function initTooltips(){
     $("#fuelTooltip").hide();
   });
   $("#fuelTooltip").hide();
+  /*Numerator input invalid tooltip init*/
+  $("#numInvalidTooltip").html(pageText.inputInvalidTooltip);
+  $("#numInvalidTooltip").hide();
+  /*Denominator input invalid tooltip init*/
+  $("#denomInvalidTooltip").html(pageText.inputInvalidTooltip);
+  $("#denomInvalidTooltip").hide();
 }

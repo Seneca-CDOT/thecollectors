@@ -5,7 +5,8 @@ var screenSizeY=600;
 
 //	Assets Folder		//
 var assetsFolder = "assets/";
-var structureFolder	= "assets/buildings/";
+var structureFolder	= "assets/buildings_png/";
+var vehicleFolder	= "assets/vehicles_png/";
 
 //	Static Game Values 	//
 var StructureValues={
