@@ -570,6 +570,7 @@ class Driver extends Player{
                     $("#fractionBoxDiv").show();
                     $("#fractionBonusImg").show();
                     $("#fractionBackImg").show();
+                    $("#fracSumNum").focus();
                     $("#fuelWrap").hide();
                     showFractionBox = true;
                 } else if (destination.length > 0 && showFractionBox) {
@@ -921,6 +922,7 @@ class MapLevel extends LevelLayer {
     void initializePlayer() {
         player = new Driver(generatedMap);
         addPlayer(player);
+        parent.viewbox.track(parent,player);
         var depot = new Depot(generatedMap.startPoint.clone());
         addInteractor(depot);
         initializeStructures(player.fuelCost);
@@ -948,6 +950,9 @@ class MapLevel extends LevelLayer {
             generatedMap.pjsStructureList[index].structObject.visited=false;
             generatedMap.pjsStructureList[index].setTransparency(255);
         }
+        setScale(1);
+        zoomLevel=1;
+        parent.viewbox.track(parent,player);
     }
 }
 /**

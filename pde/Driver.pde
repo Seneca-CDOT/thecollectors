@@ -381,6 +381,7 @@ class Driver extends Player{
                     $("#fractionBoxDiv").show();
                     $("#fractionBonusImg").show();
                     $("#fractionBackImg").show();
+                    $("#fracSumNum").focus();
                     $("#fuelWrap").hide();
                     showFractionBox = true;
                 } else if (destination.length > 0 && showFractionBox) {
