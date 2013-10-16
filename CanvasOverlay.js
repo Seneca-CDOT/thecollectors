@@ -109,6 +109,8 @@ function backToMap() {
   $("#fractionBackImg").hide();
   $("#numInvalidTooltip").hide();
   $("#denomInvalidTooltip").hide();
+  $("#fracSumNum").val("");
+  $("#fracSumDenom").val("");
   showFractionBox = false;
 }
 /*Sets up all the tooltips and their functionality*/

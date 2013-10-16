@@ -41,6 +41,9 @@ void nextMap(){
 void resetHUD(){
 	$("#fuelElement2").css("color","white");
 	$("#fuelNeedle").css("transform","rotate(0deg)");
+    if(showFractionBox){
+        backToMap();
+    }
 }
 /*
     Returns a map to its original state, returns the player to the start point,
