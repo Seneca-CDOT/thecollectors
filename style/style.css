@@ -93,6 +93,13 @@ div.bonusAnimBox
     width: 40px;
     height: 44px;
 }
+#campaignCash
+{
+    position: absolute;
+    left: 0px;
+    width: 40px;
+    height: 44px;
+}
 #cashText
 {
     position: absolute;

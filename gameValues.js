@@ -53,7 +53,20 @@ var clearMultipliers={
 var answerBonus={
 						//dont really know about this one yet
 };
-
+var vehicleTypes={
+	1:["bike_top.png","bike_top_long.png"],
+	2:["car_top.png","car_top_long.png"],
+	3:["suv_top.png","suv_top_long.png"],
+	4:["mini_top.png","mini_top_long.png"],
+	5:["convert_top.png","convert_top_long.png"]
+};
+var vehicleCosts={
+	1:1000,
+	2:2000,
+	3:3000,
+	4:4000,
+	5:5000
+};
 //	Map Generator Values //
 var roadsPerStructure = 4;
 var baseRoadLength = 100;

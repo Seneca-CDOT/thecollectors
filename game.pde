@@ -25,6 +25,7 @@ var mapScreen = false;
 var gameOver = false;
 var refueled = false;
 var driveFlag;
+var carInventory = [1] , currentVehicle = 1;
 
 //line width
 strokeWeight(4);
@@ -106,7 +107,10 @@ void initialize() {
         addScreen("Title Screen", new TitleScreen(screenWidth, screenHeight));
         setActiveScreen("Title Screen"); // useful for when more screens are added
     }
-    addScreen("testing",new CampaignMap(screenWidth*2,screenHeight*2));
+    
+    addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
+    setActiveScreen("Campaign Level");
+    addScreen("Inter Screen",new InterScreen(screenWidth,screenHeight));
 }
 /**
  *  Handles setup of campaign maps.
@@ -566,6 +570,7 @@ class Driver extends Player{
                     $("#fractionBoxDiv").show();
                     $("#fractionBonusImg").show();
                     $("#fractionBackImg").show();
+                    $("#fracSumNum").focus();
                     $("#fuelWrap").hide();
                     showFractionBox = true;
                 } else if (destination.length > 0 && showFractionBox) {
@@ -785,7 +790,7 @@ class Driver extends Player{
     }
     void setStates() {
         setScale(0.6);
-        addState(new State("Player", vehicleFolder+"bike_top.png"));
+        addState(new State("Player", assetsFolder+"vehicles/"+vehicleTypes[currentVehicle][0]));
     }
     void stopVehicle() {
         stop();
@@ -917,6 +922,7 @@ class MapLevel extends LevelLayer {
     void initializePlayer() {
         player = new Driver(generatedMap);
         addPlayer(player);
+        parent.viewbox.track(parent,player);
         var depot = new Depot(generatedMap.startPoint.clone());
         addInteractor(depot);
         initializeStructures(player.fuelCost);
@@ -944,6 +950,9 @@ class MapLevel extends LevelLayer {
             generatedMap.pjsStructureList[index].structObject.visited=false;
             generatedMap.pjsStructureList[index].setTransparency(255);
         }
+        setScale(1);
+        zoomLevel=1;
+        parent.viewbox.track(parent,player);
     }
 }
 /**
@@ -1186,6 +1195,18 @@ void newMap(){
     addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
     setActiveScreen("Campaign Level");
     resetHUD();
+    $(".interHUD").hide();
+    $(".HUD").show();
+}
+/*
+    Intermediate screen for campaign
+*/
+void interMap(){
+    $(".HUD").hide();
+    $("#campaignCashText").text("$"+campaignCash);
+    $(".interHUD").show();
+    //addScreen("Inter Screen"),new InterScreen(screenWidth,screenHeight));
+    setActiveScreen("Inter Screen");
 }
 /*
     Increment the current level and creates a new map.
@@ -1194,7 +1215,7 @@ void nextMap(){
     if(currentLevel<5){
         currentLevel++;
         campaignCash+=levelCash;
-        newMap();
+        interMap();
     }
     else{
         //end of campaign logic here
@@ -1246,6 +1267,108 @@ class GameOverScreen extends LevelLayer {
     GameOverScreen(Level owner) {
         super(owner);
         alert("Game Over. Try Again!");
+    }
+}
+/*
+ *  Intermediate campaign screen
+ */
+class VehicleOption extends InputInteractor{
+    static int height = 300;
+    static int width = 150;
+    static int padding = 19;
+    var type;
+    int x;
+    boolean selected;
+    VehicleOption(var _type){
+        super("Vehicle Option");
+        type=_type;
+        x = (type-1)*(width+padding*2)+padding+(width/2);
+        setPosition(x,height);
+        selected = false;
+        setStates();
+    }
+    void setStates(){
+        addState(new State("default",assetsFolder+"vehicles/"+vehicleTypes[type][1]));
+    }
+    void mouseClicked(int mx, int my, int button){
+        if(over(mx,my) && carInventory.indexOf(type) > -1){
+            currentVehicle = type;
+        }
+    }
+    void purchase(){
+        if(campaignCash - vehicleCosts[type] > 0){
+            campaignCash = campaignCash - vehicleCosts[type];
+            carInventory.push(type);
+            currentVehicle = type;
+            $("#campaignCashText").text("$"+campaignCash);
+        }
+    }
+    void drawObject() {
+        super.drawObject();
+        if(currentVehicle == type){
+            noFill();
+            rect(-width/2,-height/2,width,height);
+        }
+    }
+}
+class buyVehicle extends InputInteractor{
+    int x, y;
+    var vehicle;
+    buyVehicle(var _vehicle){
+        super("Buy Button");
+        vehicle = _vehicle;
+        x = vehicle.x;
+        y = vehicle.height+vehicle.height/2+vehicle.padding;
+        setPosition(x,y);
+        setStates();
+    }
+    void setStates(){
+        addState(new State("default",assetsFolder+"placeholders/buyButton.png"));
+    }
+    void mouseClicked(int mx, int my, int button){
+        if(over(mx,my) && carInventory.indexOf(vehicle.type)==-1){
+            vehicle.purchase();
+        }
+    }
+    void drawObject(){
+        super.drawObject();
+        if(carInventory.indexOf(vehicle.type)>-1)
+            text("Purchased",0,0);
+        else
+            text("$"+vehicleCosts[vehicle.type],0,0);
+    }
+}
+class InterScreen extends Level {
+    InterScreen(int sWidth, int sHeight){
+        super(sWidth, sHeight);
+        InterScreenLayer layer = new InterScreenLayer(this);
+        addLevelLayer("Inter Screen Layer", layer);
+        layer.onReady();
+    }
+}
+class InterScreenLayer extends LevelLayer {
+    InterScreenLayer(Level owner){
+        super(owner);
+        setBackgroundColor(color(197, 233, 203));
+    }
+    void onReady(){
+        VehicleOption v1 = new VehicleOption(1),
+        v2 = new VehicleOption(2),
+        v3 = new VehicleOption(3),
+        v4 = new VehicleOption(4),
+        v5 = new VehicleOption(5);
+        addInputInteractor(v1);
+        addInputInteractor(v2);
+        addInputInteractor(v3);
+        addInputInteractor(v4);
+        addInputInteractor(v5);
+        //Add purchase buttons
+        addInputInteractor(new buyVehicle(v1));
+        addInputInteractor(new buyVehicle(v2));
+        addInputInteractor(new buyVehicle(v3));
+        addInputInteractor(new buyVehicle(v4));
+        addInputInteractor(new buyVehicle(v5));
+
     }
 }
 /**

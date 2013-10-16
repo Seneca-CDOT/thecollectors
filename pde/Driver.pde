@@ -381,6 +381,7 @@ class Driver extends Player{
                     $("#fractionBoxDiv").show();
                     $("#fractionBonusImg").show();
                     $("#fractionBackImg").show();
+                    $("#fracSumNum").focus();
                     $("#fuelWrap").hide();
                     showFractionBox = true;
                 } else if (destination.length > 0 && showFractionBox) {
@@ -600,7 +601,7 @@ class Driver extends Player{
     }
     void setStates() {
         setScale(0.6);
-        addState(new State("Player", vehicleFolder+"bike_top.png"));
+        addState(new State("Player", assetsFolder+"vehicles/"+vehicleTypes[currentVehicle][0]));
     }
     void stopVehicle() {
         stop();

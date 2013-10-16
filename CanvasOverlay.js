@@ -100,6 +100,7 @@ $(document).ready(function(){
   $("#legendDiv").hide();
   $("#fractionBoxDiv").hide();
   $("#fractionBonusImg").hide();
+  $(".interHUD").hide();
   initTooltips();
 });
 function backToMap() {
