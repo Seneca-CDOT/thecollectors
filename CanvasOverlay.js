@@ -102,6 +102,7 @@ $(document).ready(function(){
   $("#fractionBonusImg").hide();
   $(".interHUD").hide();
   initTooltips();
+  $("#mainMenuWrap").hide();
 });
 function backToMap() {
   $("#fractionBonusImg").hide();

@@ -17,7 +17,7 @@ int arrowSpeed=10;
 
 //tracking game values
 int gameDifficulty = 1;
-int currentLevel = 1;       //change difficuly or level from 1 & 1 to generate a map, rather then the tutorial
+int currentLevel = 1;
 int levelCash = 0;
 int campaignCash = 0;
 int deliveriesLeft = 0;
@@ -33,7 +33,7 @@ strokeWeight(4);
 /*debugging tools*/
 boolean debugging=true;
 var GEN_TUTORIAL=false;
-var showMenus=false;
+var showMenus=true;
 
 var DISPLAY_SHADOWMAP = false;
 var mouseOffsetX = 0;
@@ -70,45 +70,33 @@ void mouseOut() {
     stopDragging = true;
     canvasHasFocus = false;
 }
-
-/*  NEEDS TO BE REWRITTEN
-void loadDifficulty(diffVal, gameMode) {
-    gameDifficulty = diffVal;
-
-    if (gameMode == "Campaign") {
-        if (diffVal == 1) {
-            // Change to correct screen later
-            //addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map("map.xml")));
-            addScreen("testing", new CampaignMap(screenWidth * 2, screenHeight * 2));
-            setActiveScreen("testing");
-        } else if (diffVal == 2) {
-            // Change to correct screen later
-            addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(0,0,"map.xml")));
-            setActiveScreen("testing");
-        } else if (diffVal == 3) {
-            // Change to correct screen later
-            addScreen("testing",new XMLLevel(screenWidth*2,screenHeight*2,new Map(0,0,"map.xml")));
-            setActiveScreen("testing");
-        } else {
-            console.error("Invalid difficulty! Cannot load map.");
-        }
-    } else if (gameMode == "Quick Play") {
-        alert("Not implemented yet!");
-    } else {
-        console.error("Undefined game mode!");
-    }
+void startCampaign(int diff){
+    gameDifficulty = diff;
+    currentLevel = 1;
+    campaignCash = 0;
+    carInventory = [1];
+    currentVehicle = 1;
+    sketch.newMap();
+    $("#mainMenuWrap").hide();
 }
-*/
-
+void startQuickplay(int diff, int size){
+    gameDifficulty = diff;
+    currentLevel = size;
+    campaignCash = 0;
+    carInventory = [1];
+    currentVehicle = 1;
+    sketch.newMap();
+    $("#mainMenuWrap").hide();
+}
 void initialize() {
     sketch = Processing.instances[0];
     clearScreens(); // reset the screen
     if(showMenus){
-        addScreen("Title Screen", new TitleScreen(screenWidth, screenHeight));
-        setActiveScreen("Title Screen"); // useful for when more screens are added
+        initMainMenu();
     }
-    
-    addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
-    setActiveScreen("Campaign Level");
-    addScreen("Inter Screen",new InterScreen(screenWidth,screenHeight));
+    else{
+        addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
+        setActiveScreen("Campaign Level");
+        addScreen("Inter Screen",new InterScreen(screenWidth,screenHeight));
+    }
 }

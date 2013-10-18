@@ -4,7 +4,8 @@
 void newMap(){
     console.log("==========================================");
     levelCash=0;
-	removeScreen("Campaign Level");
+    if(getScreen("Campaign Level"))
+	   removeScreen("Campaign Level");
     addScreen("Campaign Level",new CampaignMap(screenWidth*2,screenHeight*2));
     setActiveScreen("Campaign Level");
     resetHUD();
@@ -18,7 +19,8 @@ void interMap(){
     $(".HUD").hide();
     $("#campaignCashText").text("$"+campaignCash);
     $(".interHUD").show();
-    //addScreen("Inter Screen"),new InterScreen(screenWidth,screenHeight));
+    if(!getScreen("Inter Screen"))
+        addScreen("Inter Screen",new InterScreen(screenWidth,screenHeight));
     setActiveScreen("Inter Screen");
 }
 /*
