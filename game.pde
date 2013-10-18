@@ -79,6 +79,15 @@ void startCampaign(int diff){
     sketch.newMap();
     $("#mainMenuWrap").hide();
 }
+void startQuickplay(int diff, int size){
+    gameDifficulty = diff;
+    currentLevel = size;
+    campaignCash = 0;
+    carInventory = [1];
+    currentVehicle = 1;
+    sketch.newMap();
+    $("#mainMenuWrap").hide();
+}
 void initialize() {
     sketch = Processing.instances[0];
     clearScreens(); // reset the screen

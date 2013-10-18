@@ -14,6 +14,6 @@ function initQuickplayMenu(){
 	$("#quickplayMenu").show();
 }
 function startQuickplay(){
-	document.getElementById("quickDiffSelect").selectedIndex;
-	document.getElementById("quickLevelSelect").selectedIndex;
+	sketch.startQuickplay(document.getElementById("quickDiffSelect").selectedIndex+1,
+	document.getElementById("quickLevelSelect").selectedIndex+1);
 }
