@@ -5,6 +5,7 @@
 	<meta charset="utf-8">
 
     <link rel="stylesheet" type="text/css" href="style/style.css">
+    <link rel="stylesheet" type="text/css" href="style/menu.css">
 
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
 
@@ -16,6 +17,7 @@
     <script type="text/javascript" src="canvasFocus.js"></script>
 
     <!--Custom utility scripts and global variables-->
+    <script type="text/javascript" src="menuController.js"></script>
     <script type="text/javascript" src="CanvasOverlay.js"></script>
     <script type="text/javascript" src="Utilities.js"></script>
     <script type="text/javascript" src="gameValues.js"></script>
@@ -48,6 +50,36 @@
   </head>
   <body>
   <div id="gameWrap" style="position:absolute;height:644px;">
+    <!-- Begin Main Menu -->
+    <div id="mainMenuWrap" style="z-index:9;position:absolute;height:100%;width:100%;background-image:url('assets/bgs/menu_bkg.png');">
+      <div id="mainMenu">
+        <button onclick="initCampaignMenu()">Campaign</button>
+        <button onclick="initQuickplayMenu()">Quick Play</button>
+      </div>
+      <div id="campaignMenu">
+        <button onclick="sketch.startCampaign(1)">Easy</button>
+        <button onclick="sketch.startCampaign(2)">Medium</button>
+        <button onclick="sketch.startCampaign(3)">Hard</button>
+        <button onclick="initMainMenu()">Back</button>
+      </div>
+      <div id="quickplayMenu">
+        <select id="quickDiffSelect">
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+        <select id="quickLevelSelect">
+          <option value="1">Tiny</option>
+          <option value="2">Small</option>
+          <option value="3">Medium</option>
+          <option value="4">Large</option>
+          <option value="5">Huge</option>          
+        </select>
+        <button onclick="startQuickplay()">Play</button>
+        <button onclick="initMainMenu()">Back</button>
+      </div>
+    </div>
+    <!-- End Main Menu -->
     <!-- Begin top bar -->
     <div id="topBar">
       <!--Wrap all HUD elements that will need to be hidden -->
@@ -66,8 +98,10 @@
             <p id="parcelElement" style="font-size:28px;margin:5px;">
             </p>
         </div>
-        <button style="position:absolute;left:350px;top:10px;" onclick="sketch.newMap()">New Map</button>
-        <button style="position:absolute;left:550px;top:10px;" onclick="sketch.resetMap()">Reset</button>
+        <button id="newMapButton" style="position:absolute;left:350px;top:10px;" onclick="sketch.newMap()"> New Map</button>
+        <button id="resetButton" style="position:absolute;left:550px;top:10px;" onclick="sketch.resetMap()">  Reset</button>
+        <button id="returnButton" style="position:absolute;left:750px;top:10px;" onclick='initMainMenu();'>
+        Return</button>
       </div>
       <!--Top bar HUD for intermediate screens -->
       <div class="interHUD">
@@ -80,6 +114,7 @@
         </div>
         <button style="position:absolute;right:50px;top:10px;" onclick="sketch.newMap()">Continue</button>
       </div>
+
     </div>
     <!-- End top bar -->
     <!-- Begin tooltips -->
@@ -104,24 +139,6 @@
         Bonus!
         </p>
     </div>
-    <div id="menuDiv" style="display:none;position:fixed;top:650px;left:0px;">
-        <button id="campaignButton"></button><br />
-        <button id="quickPlayButton"></button><br />
-        <button id="optionsButton"></button>
-    </div>
-    <div id="difficultyDiv" style="display:none;position:fixed;top:100px;left:250px;">
-        <button id="easyButton"></button><br />
-        <button id="mediumButton"></button><br />
-        <button id="hardButton"></button><br />
-    </div>
-    <script type="text/javascript" >
-	document.getElementById("campaignButton").innerHTML = pageText.campaignButton;
-	document.getElementById("quickPlayButton").innerHTML = pageText.quickPlayButton;
-	document.getElementById("optionsButton").innerHTML = pageText.optionsButton;
-	document.getElementById("easyButton").innerHTML = pageText.easyButton;
-	document.getElementById("mediumButton").innerHTML = pageText.mediumButton;
-	document.getElementById("hardButton").innerHTML = pageText.hardButton;
-    </script>
     <div id="fractionWrap">
       <div id="fractionBonusImg" class="hidden" style="position:absolute;left:0px;top:44px;">
         <img src="./assets/items/solve_bonus.png" alt="Solve for Bonus!" width="940px" height="600px" />
@@ -184,70 +201,7 @@
           e.preventDefault();
         }
       }, false);
-      // Event listener for the div containing the main menu buttons
-      document.getElementById("menuDiv").addEventListener("click", function(event) {
-        switch (event.target.id) {
-          case "campaignButton":
-            buttonClick(1);
-            break;
-          case "quickPlayButton":
-            buttonClick(2);
-            break;
-          case "optionsButton":
-            buttonClick(3);
-            break;
-        }
-      }, false);
-      // Event listener for the div containing the difficulty menu buttons
-      document.getElementById("difficultyDiv").addEventListener("click", function(event) {
-        switch (event.target.id) {
-          case "easyButton":
-            buttonClick(4);
-            break;
-          case "mediumButton":
-            buttonClick(5);
-            break;
-          case "hardButton":
-            buttonClick(6);
-            break;
-        }
-      }, false);
-
-      function buttonClick(buttonVal) {
-        switch (buttonVal) {
-          case 1:
-            menuDiv.style.display = "none";
-            difficultyDiv.style.display = "block";
-            gameMode = "Campaign";
-            break;
-          case 2:
-            menuDiv.style.display = "none";
-            difficultyDiv.style.display = "block";
-            gameMode = "Quick Play";
-            break;
-          case 3:
-            player.driveToDestination();
-            break;
-          case 4:
-            difficultyDiv.style.display = "none";
-            var sketch = Processing.instances[0];
-            console.log(sketch);
-            sketch.loadDifficulty(1, gameMode);
-            break;
-          case 5:
-            difficultyDiv.style.display = "none";
-            sketch.loadDifficulty(2, gameMode);
-            break;
-          case 6:
-            difficultyDiv.style.display = "none";
-            sketch.loadDifficulty(3, gameMode);
-            break;
-          default:
-            alert("Invalid button value!");
-            break;
-        }
-      }
-
+      
       var fractionArray = [], ignoreInput = true;
       var inputRegEx = new RegExp("^[0-9]+$");
       var bonusFlag = false, showFractionBox = false;

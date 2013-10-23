@@ -101,7 +101,9 @@ $(document).ready(function(){
   $("#fractionBoxDiv").hide();
   $("#fractionBonusImg").hide();
   $(".interHUD").hide();
+  $(".HUD").hide();
   initTooltips();
+  $("#mainMenuWrap").hide();
 });
 function backToMap() {
   $("#fractionBonusImg").hide();
