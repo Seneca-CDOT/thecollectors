@@ -31,7 +31,7 @@ var carInventory = [1] , currentVehicle = 1;
 strokeWeight(4);
 
 /*debugging tools*/
-boolean debugging=true;
+boolean debugging=false;
 var GEN_TUTORIAL=false;
 var showMenus=true;
 

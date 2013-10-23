@@ -2,7 +2,6 @@
 	Generates a new map. This does not increment the current level.
 */
 void newMap(){
-    console.log("==========================================");
     levelCash=0;
     if(getScreen("Campaign Level"))
 	   removeScreen("Campaign Level");

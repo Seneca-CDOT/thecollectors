@@ -31,7 +31,7 @@ var carInventory = [1] , currentVehicle = 1;
 strokeWeight(4);
 
 /*debugging tools*/
-boolean debugging=true;
+boolean debugging=false;
 var GEN_TUTORIAL=false;
 var showMenus=true;
 
@@ -1177,7 +1177,6 @@ class Road extends Interactor {
 	Generates a new map. This does not increment the current level.
 */
 void newMap(){
-    console.log("==========================================");
     levelCash=0;
     if(getScreen("Campaign Level"))
 	   removeScreen("Campaign Level");

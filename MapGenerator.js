@@ -14,7 +14,6 @@ function MapGenerator(numStructs, difficulty){
 	this.maxWidth = screenSizeX * (1+deliveriesToLevel(numStructs)/10);
 	this.maxHeight = screenSizeY * (1+deliveriesToLevel(numStructs)/5);
 	this.generateMapGraph();
-	console.log(this.mapGraph);
 }
 /*
 	All steps necessary to generate a map.
@@ -305,9 +304,7 @@ MapGenerator.prototype.cleanGraph = function(tmpGraph){
 				if(node1.vertex.extendedSlope(node2.vertex) != node1.vertex.extendedSlope(node3.vertex)){
 					//remove the middle node and connect the other two nodes
 					tmpGraph.removeConnection(node1.id,node2.id);
-					console.log("removed connection between "+node1.id+" and "+node2.id);
 					tmpGraph.removeConnection(node1.id,node3.id);
-					console.log("removed connection between "+node1.id+" and "+node3.id);
 
 					tmpGraph.addConnection(node2.id, node3.id,
 						new Fraction(distance(node2.vertex, node3.vertex)/baseRoadLength,this.fuel));
@@ -349,7 +346,6 @@ MapGenerator.prototype.colinearRemove = function(_graph,node1,node2,node3){
 			var dist2=distance(node1.vertex,node3.vertex);
 			if(dist1<dist2){
 				_graph.removeConnection(node1.id, node3.id);
-				console.log("removed connection between "+node1.id+" and "+node3.id);
 				if(node1.connectionsLength==0) _graph.removeNode(node1.id);
 				_graph.addConnection(node2.id, node3.id,
 					new Fraction(distance(node2.vertex, node3.vertex)/baseRoadLength,this.fuel));
