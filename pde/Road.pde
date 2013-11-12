@@ -202,6 +202,7 @@ class Road extends Interactor {
         fill(126);
         if (!driveFlag && (mouseOffsetX >= roadBounds[0] && mouseOffsetX <= roadBounds[2] &&
                 mouseOffsetY >= roadBounds[1] && mouseOffsetY <= roadBounds[3])) {
+
             if (futurePosition.x == vertex1.x && futurePosition.y == vertex1.y) {
                 noStroke();
                 if (!vFlippedX && !vFlippedY) {

@@ -17,10 +17,10 @@
     <script type="text/javascript" src="canvasFocus.js"></script>
 
     <!--Custom utility scripts and global variables-->
+    <script type="text/javascript" src="gameValues.js"></script>
     <script type="text/javascript" src="menuController.js"></script>
     <script type="text/javascript" src="CanvasOverlay.js"></script>
     <script type="text/javascript" src="Utilities.js"></script>
-    <script type="text/javascript" src="gameValues.js"></script>
 
     <!--Custom JavaScript object definitions. Consolidate into one file at the end-->
     <script type="text/javascript" src="Fraction.js"></script>
@@ -57,6 +57,7 @@
         <button onclick="initQuickplayMenu()">Quick Play</button>
       </div>
       <div id="campaignMenu">
+        <button onclick="sketch.startTutorial()">Tutorial</button>
         <button onclick="sketch.startCampaign(1)">Easy</button>
         <button onclick="sketch.startCampaign(2)">Medium</button>
         <button onclick="sketch.startCampaign(3)">Hard</button>
@@ -153,8 +154,12 @@
       <div id="numInvalidTooltip" class="tooltip"></div>
       <div id="denomInvalidTooltip" class="tooltip"></div>
     </div>
-    <div id="tutorialTextDiv" class="textBox hidden inCanvas" style="position:fixed;left:200px;top:500px;width:500px;height:110px;">
+    <div id="tutorialTextDiv" class="textBox hidden inCanvas" style="position:absolute;left:10px;top:520px;width:500px;min-height:110px;height:auto;">
         <p id="tutorialTextElement">
+        </p>
+    </div>
+    <div id="instructionTextDiv" class="textBox hidden inCanvas" style="position:absolute;left:460px;top:60px;width:auto;height:auto;">
+        <p id="instructionTextElement">
         </p>
     </div>
 
@@ -175,18 +180,81 @@
     <!-- End fuel gauge -->
 
     <script type="text/javascript">
-	var tutorialText = pageText.tutorial;
-	var tutorialIndex = 1;
+    var tutorialText = pageText.tutorial;
+    var instructionText = pageText.instructions;
+    var tutorialIndex = 0;
+    var instructionIndex = 0;
     var bonusTracker = {};
-        document.getElementById("tutorialTextElement").innerHTML = tutorialText[tutorialIndex];
-
         // Event listener for the <p> element containing tutorial instructions.
         document.getElementById("tutorialTextDiv").addEventListener("click", function(event) {
           advanceTutorial();
         }, false);
         function advanceTutorial() {
+          // Don't advance tutorial text at certain indices
+          if (tutorialIndex == 22) return;
+          if (tutorialIndex == 27) return;
+          if (tutorialIndex == 35) return;
+          // End of tutorial clean-up
+          if (tutorialIndex == 36) {
+              initMainMenu();
+          }
           if (tutorialIndex < tutorialText.length - 1) {
             document.getElementById("tutorialTextElement").innerHTML = tutorialText[++tutorialIndex];
+            if (tutorialIndex == 3) {
+                $("#tutorialTextDiv").hide();
+                $("#instructionTextDiv").show();
+            } else if (tutorialIndex == 6) {
+                $("#tutorialTextDiv").hide();
+                $("#instructionTextDiv").show();
+            } else if (tutorialIndex == 11) {
+                $("#tutorialTextDiv").hide();
+                $("#instructionTextDiv").show();
+            } else if (tutorialIndex == 12) {
+                $("#fuelText").css("border-color", "yellow");
+            } else if (tutorialIndex == 13) {
+                $("#fuelText").css("border-color", "black");
+            } else if (tutorialIndex == 16) {
+                $("#tutorialTextDiv").hide();
+                $("#instructionTextDiv").show();
+            } else if (tutorialIndex == 17) {
+                var highlightDiv = document.createElement('div');
+                highlightDiv.setAttribute('id', 'highlightBox');
+                document.getElementById('gameWrap').appendChild(highlightDiv);
+                $("#highlightBox").css("position", "absolute");
+                $("#highlightBox").css("left", "40px");
+                $("#highlightBox").css("top", "0px");
+                $("#highlightBox").css("width", "100px");
+                $("#highlightBox").css("height", "36px");
+                $("#highlightBox").css("border-width", "4px");
+                $("#highlightBox").css("border-radius", "3px");
+                $("#highlightBox").css("border-style", "solid");
+                $("#highlightBox").css("border-color", "yellow");
+            } else if (tutorialIndex == 18) {
+                $("#highlightBox").css("left", "230px");
+                $("#highlightBox").css("width", "50px");
+            } else if (tutorialIndex == 19) {
+                $("#highlightBox").hide();
+            } else if (tutorialIndex == 24) {
+                $("#highlightBox").css("left", "700px");
+                $("#highlightBox").css("top", "344px");
+                $("#highlightBox").css("width", "135px");
+                $("#highlightBox").css("height", "70px");
+            } else if (tutorialIndex == 25) {
+                $("#highlightBox").hide();
+            } else if (tutorialIndex == 26) {
+                $("#highlightBox").css("left", "370px");
+                $("#highlightBox").css("top", "423px");
+                $("#highlightBox").css("width", "200px");
+                $("#highlightBox").css("height", "50px");
+                $("#highlightBox").show();
+            } else if (tutorialIndex == 27) {
+                $("#highlightBox").hide();
+            } else if (tutorialIndex == 29) {
+                $("#highlightBox").hide();
+            } else if (tutorialIndex == 31) {
+                $("#tutorialTextDiv").hide();
+                $("#instructionTextDiv").show();
+            }
           }
         }
     </script>
@@ -208,10 +276,17 @@
       var numTest = false, denomTest = false;
 
       function checkFractionSum() {
+          // Clicking the Wheel button before the tutorial
+          // has reached a certain point does nothing
+          if (GEN_TUTORIAL && tutorialIndex < 27) return;
+          if (GEN_TUTORIAL && tutorialIndex == 27 && (!numTest || !denomTest)) return;
           if (numTest && denomTest) {
               var playerNumerator = document.getElementById("fracSumNum");
               var playerDenominator = document.getElementById("fracSumDenom");
               var inputFraction = new Fraction(playerNumerator.value, playerDenominator.value);
+              // Player has to input 2/6 during tutorial
+              if (GEN_TUTORIAL && tutorialIndex == 27 &&
+                      (inputFraction.numerator != 2 || inputFraction.denominator != 6)) return;
               var sum = new Fraction(fractionArray[0].numerator, fractionArray[0].denominator);
 
               for (var i = 1; i < fractionArray.length; i++) {
@@ -221,15 +296,17 @@
                   bonusFlag = true;
                   $("#bonusAnimDiv").show();
                   animateBonusText();
-                  console.log("DEBUG: Bonus applied");
-              } else {
-                  console.log("DEBUG: Incorrect answer.");
               }
               fractionArray.length = 0;
               $("#fractionBoxDiv").hide();
               $("#fractionBonusImg").hide();
               $("#fuelWrap").show();
               $("#fractionBackImg").hide();
+              // Revert opacity of tutorial text div
+              if (GEN_TUTORIAL && tutorialIndex == 27) {
+                  $("#tutorialTextDiv").hide();
+                  $("#tutorialTextDiv").css("opacity", "0.6");
+              }
               player.driveToDestination();
           } else {
               if (ignoreInput) {

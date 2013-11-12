@@ -32,7 +32,6 @@ strokeWeight(4);
 
 /*debugging tools*/
 boolean debugging=true;
-var GEN_TUTORIAL=false;
 var showMenus=true;
 
 var DISPLAY_SHADOWMAP = false;
@@ -69,6 +68,14 @@ void mouseOver() {
 void mouseOut() {
     stopDragging = true;
     canvasHasFocus = false;
+}
+void startTutorial() {
+    GEN_TUTORIAL = true;
+    tutorialIndex = 0;
+    instructionIndex = 0;
+    document.getElementById("tutorialTextElement").innerHTML = tutorialText[tutorialIndex];
+    document.getElementById("instructionTextElement").innerHTML = instructionText[instructionIndex];
+    startCampaign(1);
 }
 void startCampaign(int diff){
     gameDifficulty = diff;
@@ -122,7 +129,7 @@ class CampaignMap extends Level {
     // imported from an XML file.
     void generateTutorial() {
         var map = null;
-        deliveriesLeft = 4;
+        deliveriesLeft = 3;
         map = new Map(0,0,"tutorial.xml");
         renderMap(map);
         overlayTutorialInterface();
@@ -243,8 +250,8 @@ class Driver extends Player{
                     _x+=arrowSpeed;
                 }
                 if (keyCode==ENTER) {
-                    newMap();
-                    //advanceTutorial();
+                }
+                if (keyCode==BACKSPACE) {
                 }
                 box.translate(_x,_y,layer.parent,layer.xScale, layer.yScale);
             }
@@ -274,6 +281,7 @@ class Driver extends Player{
         var impulseX = 0, impulseY = 0;
 
         refueled = false;
+        fractionArray.length = 0;
         if (bonusTracker.array.length > 0) {
             bonusTracker.array.length = 0;
             bonusTracker.initialBonusIndex = -1;
@@ -411,7 +419,9 @@ class Driver extends Player{
     }
     void drawObject() {
         if(deliveriesLeft <= 0){
-            nextMap();
+            if (!GEN_TUTORIAL) {
+                nextMap();
+            }
             return;
         }
         currentPosition.x = getX();
@@ -561,13 +571,6 @@ class Driver extends Player{
                     $("#fracSumNum").focus();
                     $("#fuelWrap").hide();
                     showFractionBox = true;
-                } else if (destination.length > 0 && showFractionBox) {
-                    $("#fractionBoxDiv").hide();
-                    $("#fractionBonusImg").hide();
-                    $("#fractionBackImg").hide();
-                    $("#fuelWrap").show();
-                    showFractionBox = false;
-                    driveToDestination();
                 }
             }
         } else if (destination.length < 10 || button == RIGHT) {
@@ -589,14 +592,6 @@ class Driver extends Player{
                 var fraction = null;
 
                 if (shadowMapColorDictionary[c][0].vertex.equals(futurePosition)) {
-                    // Hide the bonus system overlay
-                    if (showFractionBox) {
-                        $("#fractionBoxDiv").hide();
-                        $("#fractionBonusImg").hide();
-                        $("#fuelWrap").show();
-                        showFractionBox = false;
-                    }
-
                     destination.push(shadowMapColorDictionary[c][1]);
                     if (!flippedVertexX && !flippedVertexY) {
                         roadSelectedDictionary[c][0] += 1;
@@ -636,14 +631,6 @@ class Driver extends Player{
                         fractionArray.push(fraction);
                     }
                 } else if (shadowMapColorDictionary[c][1].vertex.equals(futurePosition)) {
-                    // Hide the bonus system overlay
-                    if (showFractionBox) {
-                        $("#fractionBoxDiv").hide();
-                        $("#fractionBonusImg").hide();
-                        $("#fuelWrap").show();
-                        showFractionBox = false;
-                    }
-
                     destination.push(shadowMapColorDictionary[c][0]);
                     if (!flippedVertexX && !flippedVertexY) {
                         roadSelectedDictionary[c][1] += 1;
@@ -741,14 +728,6 @@ class Driver extends Player{
                 if (roadSelectedDictionary[c][index] > 0 &&
                         c == currDestColorID[currDestColorID.length - 1]) {
 
-                    // Hide the bonus system overlay
-                    if (showFractionBox) {
-                        $("#fractionBoxDiv").hide();
-                        $("#fractionBonusImg").hide();
-                        $("#fuelWrap").show();
-                        showFractionBox = false;
-                    }
-
                     roadSelectedDictionary[c][index] -= 1;
                     destination.pop();
                     fractionArray.pop();
@@ -785,6 +764,421 @@ class Driver extends Player{
         edgeDelta = 0;
     }
 }
+
+class TutorialDriver extends Driver {
+    TutorialDriver(map) {
+        super(map);
+        console.log(pageText.tutorial);
+    }
+    void drawObject() {
+        // Tutorial position tests
+        if (GEN_TUTORIAL && tutorialIndex == 11 && currentPosition.x == 400 && currentPosition.y == 200) {
+            $("#tutorialTextDiv").show();
+            $("#instructionTextDiv").hide();
+            document.getElementById("instructionTextElement").innerHTML = instructionText[++instructionIndex];
+            advanceTutorial();
+        } else if (GEN_TUTORIAL && tutorialIndex == 16 && currentPosition.x == 300 && currentPosition.y == 200) {
+            $("#tutorialTextDiv").show();
+            $("#instructionTextDiv").hide();
+            document.getElementById("instructionTextElement").innerHTML = instructionText[++instructionIndex];
+            advanceTutorial();
+        } else if (GEN_TUTORIAL && tutorialIndex == 27 && currentPosition.x == 300 && currentPosition.y == 400) {
+            document.getElementById("tutorialTextElement").innerHTML = tutorialText[++tutorialIndex];
+            $("#tutorialTextDiv").show();
+            $("#highlightBox").css("left", "40px");
+            $("#highlightBox").css("top", "0px");
+            $("#highlightBox").css("width", "100px");
+            $("#highlightBox").css("height", "36px");
+            $("#highlightBox").show();
+        } else if (GEN_TUTORIAL && tutorialIndex == 31 && currentPosition.x == 400 && currentPosition.y == 500) {
+            $("#tutorialTextDiv").show();
+            $("#instructionTextDiv").hide();
+            document.getElementById("instructionTextElement").innerHTML = instructionText[++instructionIndex];
+            advanceTutorial();
+        } else if (GEN_TUTORIAL && tutorialIndex == 35 && currentPosition.x == 400 && currentPosition.y == 800) {
+            document.getElementById("tutorialTextElement").innerHTML = tutorialText[++tutorialIndex];
+        }
+
+        super.drawObject();
+    }
+    void handleInput() {
+        if (canvasHasFocus && mapScreen) {
+            if (keyCode){
+                ViewBox box=layer.parent.viewbox;
+                int _x=0, _y=0;
+                if(keyCode==UP){
+                    if (GEN_TUTORIAL && tutorialIndex < 3) {
+                        // do nothing
+                    } else {
+                    _y-=arrowSpeed;
+                    }
+                }
+                if(keyCode==DOWN){
+                    if (GEN_TUTORIAL && tutorialIndex < 3) {
+                        // do nothing
+                    } else {
+                    _y+=arrowSpeed;
+                    }
+                }
+                if(keyCode==LEFT){
+                    if (GEN_TUTORIAL && tutorialIndex < 3) {
+                        // do nothing
+                    } else {
+                    _x-=arrowSpeed;
+                    }
+                }
+                if(keyCode==RIGHT){
+                    if (GEN_TUTORIAL && tutorialIndex < 3) {
+                        // do nothing
+                    } else {
+                    _x+=arrowSpeed;
+                    }
+                }
+                if (keyCode==ENTER) {
+                    if (GEN_TUTORIAL && (tutorialIndex == 3 || tutorialIndex == 6 || tutorialIndex == 11 ||
+                                tutorialIndex == 16 || tutorialIndex == 22 ||
+                                tutorialIndex == 27 || tutorialIndex == 31 || tutorialIndex == 35)) {
+                        keyCode = undefined;
+                        return;
+                    }
+                    advanceTutorial();
+                }
+                if (keyCode==BACKSPACE) {
+                }
+                box.translate(_x,_y,layer.parent,layer.xScale, layer.yScale);
+
+                // Test to see if player scrolled the map in the downward direction
+                ViewBox box = layer.parent.viewbox;
+                if (box.x <= 265 && box.y >= 260 && tutorialIndex == 3) {
+                    $("#tutorialTextDiv").show();
+                    $("#instructionTextDiv").hide();
+                    document.getElementById("instructionTextElement").innerHTML = instructionText[++instructionIndex];
+                    advanceTutorial();
+                }
+            }
+            if(mouseScroll!=0){
+                if (GEN_TUTORIAL && tutorialIndex < 6) {
+                    // do nothing
+                } else {
+                    layer.zoom(mouseScroll/10);
+                    mouseScroll=0;
+                }
+            }
+            if(isKeyDown('+') || isKeyDown('=')){
+                if (GEN_TUTORIAL && tutorialIndex < 6) {
+                    // do nothing
+                } else {
+                    layer.zoom(1/3/10);
+                }
+            }
+            if(isKeyDown('-')){
+                if (GEN_TUTORIAL && tutorialIndex < 6) {
+                    // do nothing
+                } else {
+                    layer.zoom(-1/3/10);
+                }
+            }
+            if(isKeyDown(' ')){                     //key is subject to change
+                ViewBox box=layer.parent.viewbox;
+                box.track(layer.parent,this);
+            }
+        }
+        mouseScroll=0;
+        keyCode=undefined;
+    }
+    void mouseDragged(int mx, int my, int button) {
+        // If playing tutorial, disable scrolling until the tutorial explicitly
+        // asks player to perform it and when the tutorial has concluded.
+        if (GEN_TUTORIAL && (tutorialIndex < 3 || tutorialIndex == 36))
+            return;
+        else if (GEN_TUTORIAL && tutorialIndex == 3) {
+            // Test to see if player scrolled the map in the downward direction
+            ViewBox box = layer.parent.viewbox;
+            if (box.x <= 265 && box.y >= 260) {
+                $("#tutorialTextDiv").show();
+                $("#instructionTextDiv").hide();
+                document.getElementById("instructionTextElement").innerHTML = instructionText[++instructionIndex];
+                advanceTutorial();
+            }
+        }
+        super.mouseDragged(mx, my, button);
+    }
+    void mouseClicked(int mx, int my, int button) {
+        // To prevent user from selecting and driving down roads
+        // before a specific point in the tutorial is reached
+        if (GEN_TUTORIAL && tutorialIndex < 37 && tutorialIndex != 31 && tutorialIndex != 11 &&
+                tutorialIndex != 16 && tutorialIndex != 22 && tutorialIndex != 27 &&
+                tutorialIndex != 35) return;
+
+        if (!mapScreen) return;
+        if (driveFlag) return;
+
+        // The mouse co-ordinates must be offset by the position of the ViewBox
+        // for scrolling and zooming to work properly
+        var layerCoords = layer.mapCoordinateFromScreen(mx, my);
+        mx = layerCoords[0];
+        my = layerCoords[1];
+
+        // Did we click on the vehicle? If not, check if we clicked on a road
+        if (button == LEFT && over(mx,my)) {
+            // Don't let the vehicle drive unless a number of roads have been selected
+            // during the correct sections of the tutorial
+            if (GEN_TUTORIAL && tutorialIndex == 22 && destination.length < 2) return;
+            if (GEN_TUTORIAL && tutorialIndex == 27 && destination.length < 2) return;
+            if (GEN_TUTORIAL && tutorialIndex == 31 && destination.length < 2) return;
+            if (destination.length == 1 ||
+                    (destination.length > 0 && bonusTracker.initialBonusIndex == -1)) {
+                driveToDestination();
+            } else {
+                if (destination.length > 0 && !showFractionBox) {
+                    $("#fractionBoxDiv").show();
+                    $("#fractionBonusImg").show();
+                    $("#fractionBackImg").show();
+                    $("#fracSumNum").focus();
+                    $("#fuelWrap").hide();
+                    showFractionBox = true;
+                }
+                // Change opacity of tutorial text div during the bonus overlay
+                if (GEN_TUTORIAL && tutorialIndex == 22 && destination.length == 2) {
+                    document.getElementById("tutorialTextElement").innerHTML = tutorialText[++tutorialIndex];
+                    $("#tutorialTextDiv").css("opacity", "1.0");
+                    $("#highlightBox").css("left", "100px");
+                    $("#highlightBox").css("top", "344px");
+                    $("#highlightBox").css("width", "600px");
+                    $("#highlightBox").css("height", "70px");
+                    $("#highlightBox").show();
+                }
+            }
+        // Prevents selecting more than 10 roads but allows right-clicks to
+        // execute de-selection
+        } else if (destination.length < 10 || button == RIGHT) {
+            if (GEN_TUTORIAL && tutorialIndex == 11 && destination.length == 1) return;
+            if (GEN_TUTORIAL && tutorialIndex == 16 && destination.length == 1) return;
+            if (GEN_TUTORIAL && tutorialIndex == 22 && destination.length == 2) return;
+            if (GEN_TUTORIAL && tutorialIndex == 27 && destination.length == 2) return;
+            if (GEN_TUTORIAL && tutorialIndex == 31 && destination.length == 2) return;
+            if (GEN_TUTORIAL && tutorialIndex == 35 && destination.length == 1) return;
+            // Get the hexadecimal colour code at the clicked point on the shadowMap
+            color c = shadowMap.get(mx, my);
+            c = hex(c);
+            if (DISPLAY_SHADOWMAP) console.log(c);
+
+            /* Clicking the left mouse button on a valid road segment highlights that segment and
+             * updates the final destination for the vehicle to travel to. Clicking the right
+             * mouse button on a valid road segment removes its highlight and updates the vehicle's
+             * final destination to the previous node in the route.
+             */
+            if (shadowMapColorDictionary[c] != null && button == LEFT) {
+                var flippedVertexX = shadowMapColorDictionary[c][0].vertex.x -
+                    shadowMapColorDictionary[c][1].vertex.x > 0 ? true : false;
+                var flippedVertexY = shadowMapColorDictionary[c][0].vertex.y -
+                    shadowMapColorDictionary[c][1].vertex.y > 0 ? true : false;
+                var fraction = null;
+
+                if (shadowMapColorDictionary[c][0].vertex.equals(futurePosition)) {
+                    // Tutorial checks
+                    var vtx = shadowMapColorDictionary[c][1].vertex;
+                    if (GEN_TUTORIAL && tutorialIndex == 16 && (vtx.x != 300 || vtx.y != 200)) return;
+                    if (GEN_TUTORIAL && tutorialIndex == 22 && destination.length == 0 &&
+                            (vtx.x != 300 || vtx.y != 300)) return;
+                    if (GEN_TUTORIAL && tutorialIndex == 22 && destination.length == 1 &&
+                            (vtx.x != 300 || vtx.y != 400)) return;
+                    if (GEN_TUTORIAL && tutorialIndex == 27 && destination.length == 0 &&
+                            (vtx.x != 300 || vtx.y != 300)) return;
+                    if (GEN_TUTORIAL && tutorialIndex == 27 && destination.length == 1 &&
+                            (vtx.x != 300 || vtx.y != 400)) return;
+                    if (GEN_TUTORIAL && tutorialIndex == 31 && destination.length == 0 &&
+                            (vtx.x != 400 || vtx.y != 400)) return;
+                    if (GEN_TUTORIAL && tutorialIndex == 31 && destination.length == 1 &&
+                            (vtx.x != 400 || vtx.y != 500)) return;
+                    if (GEN_TUTORIAL && tutorialIndex == 35 && destination.length == 0 &&
+                            (vtx.x != 400 || vtx.y != 800)) return;
+
+                    destination.push(shadowMapColorDictionary[c][1]);
+                    if (!flippedVertexX && !flippedVertexY) {
+                        roadSelectedDictionary[c][0] += 1;
+                    } else if (flippedVertexX || flippedVertexY) {
+                        roadSelectedDictionary[c][1] += 1;
+                    }
+                    fraction = shadowMapColorDictionary[c][0].connections[destination[destination.length - 1].id];
+                    futurePosition = shadowMapColorDictionary[c][1].vertex;
+                    var st = nodeMap.pjsStructureList[shadowMapColorDictionary[c][1].id];
+                    if (st) {
+                        if (st.structObject.StructType != "fuel_stn" && !st.structObject.visited) {
+                            bonusTracker.array.push(true);
+                            if (bonusTracker.initialBonusIndex == -1) {
+                                bonusTracker.initialBonusIndex = bonusTracker.array.length - 1;
+                            }
+                        } else {
+                            bonusTracker.array.push(false);
+                        }
+                    } else {
+                        bonusTracker.array.push(false);
+                    }
+                    currDestColorID.push(c);
+
+                    if (destination.length > 1) {
+                        fractionCT.innerHTML += "<div style=\"float:left;padding-top:29px;\">+</div>" +
+                            "<div style=\"margin:1px;float:left;width:45px;\">" +
+                            "<div id=\"fraction" + destination.length +
+                            "\" style=\"text-align:center;margin:10px;\"></div></div>";
+
+                        var fracElement = document.getElementById("fraction" + destination.length);
+                        fracElement.innerHTML = fraction.displayNum != undefined ? fraction.displayNum.toString() :
+                            fraction.numerator.toString();
+                        fracElement.innerHTML += "<br /><hr />";
+                        fracElement.innerHTML += fraction.displayDenom != undefined ?
+                            fraction.displayDenom.toString() : fraction.denominator.toString();
+
+                        fractionArray.push(fraction);
+                    }
+                } else if (shadowMapColorDictionary[c][1].vertex.equals(futurePosition)) {
+                    // Tutorial checks
+                    var vtx = shadowMapColorDictionary[c][0].vertex;
+                    if (GEN_TUTORIAL && tutorialIndex == 16 && (vtx.x != 300 || vtx.y != 200)) return;
+                    if (GEN_TUTORIAL && tutorialIndex == 22 && destination.length == 0 &&
+                            (vtx.x != 300 || vtx.y != 300)) return;
+                    if (GEN_TUTORIAL && tutorialIndex == 22 && destination.length == 1 &&
+                            (vtx.x != 300 || vtx.y != 400)) return;
+                    if (GEN_TUTORIAL && tutorialIndex == 27 && destination.length == 0 &&
+                            (vtx.x != 300 || vtx.y != 300)) return;
+                    if (GEN_TUTORIAL && tutorialIndex == 27 && destination.length == 1 &&
+                            (vtx.x != 300 || vtx.y != 400)) return;
+                    if (GEN_TUTORIAL && tutorialIndex == 31 && destination.length == 0 &&
+                            (vtx.x != 400 || vtx.y != 400)) return;
+                    if (GEN_TUTORIAL && tutorialIndex == 31 && destination.length == 1 &&
+                            (vtx.x != 400 || vtx.y != 500)) return;
+                    if (GEN_TUTORIAL && tutorialIndex == 35 && destination.length == 0 &&
+                            (vtx.x != 400 || vtx.y != 800)) return;
+
+                    destination.push(shadowMapColorDictionary[c][0]);
+                    if (!flippedVertexX && !flippedVertexY) {
+                        roadSelectedDictionary[c][1] += 1;
+                    } else if (flippedVertexX || flippedVertexY) {
+                        roadSelectedDictionary[c][0] += 1;
+                    }
+                    fraction = shadowMapColorDictionary[c][1].connections[destination[destination.length - 1].id];
+                    futurePosition = shadowMapColorDictionary[c][0].vertex;
+                    var st = nodeMap.pjsStructureList[shadowMapColorDictionary[c][0].id];
+                    if (st) {
+                        if (st.structObject.StructType != "fuel_stn" && !st.structObject.visited) {
+                            bonusTracker.array.push(true);
+                            if (bonusTracker.initialBonusIndex == -1) {
+                                bonusTracker.initialBonusIndex = bonusTracker.array.length - 1;
+                            }
+                        } else {
+                            bonusTracker.array.push(false);
+                        }
+                    } else {
+                        bonusTracker.array.push(false);
+                    }
+                    currDestColorID.push(c);
+
+                    if (destination.length > 1) {
+                        fractionCT.innerHTML += "<div style=\"float:left;padding-top:29px;\">+</div>" +
+                            "<div style=\"margin:1px;float:left;width:45px;\">" +
+                            "<div id=\"fraction" + destination.length +
+                            "\" style=\"text-align:center;margin:10px;\"></div></div>";
+
+                        var fracElement = document.getElementById("fraction" + destination.length);
+                        fracElement.innerHTML = fraction.displayNum != undefined ? fraction.displayNum.toString() :
+                            fraction.numerator.toString();
+                        fracElement.innerHTML += "<br /><hr />";
+                        fracElement.innerHTML += fraction.displayDenom != undefined ?
+                            fraction.displayDenom.toString() : fraction.denominator.toString();
+
+                        fractionArray.push(fraction);
+                    }
+                }
+                if (fraction != null && destination.length == 1) {
+                    if (GEN_TUTORIAL && tutorialIndex == 11) {
+                        document.getElementById("instructionTextElement").innerHTML = instructionText[++instructionIndex];
+                    }
+                    fractionText.innerHTML = "<div id=\"fractionCT\" class=\"inCanvas\"" +
+                        "style=\"position:absolute;width:80%;\"></div><div id=\"submitDiv\"" +
+                        "style=\"position:absolute;left:80%;width:20%;\"></div>";
+                    fractionCT = document.getElementById("fractionCT");
+                    fractionCT.innerHTML = "<div style=\"margin:1px;float:left;width:45px;\">" +
+                        "<div id=\"fraction" + destination.length +
+                        "\" style=\"text-align:center;margin:10px;\"></div></div>";
+
+                    // Add the div containing the input textboxes to the overlay
+                    var submitBox = document.getElementById("submitDiv");
+                    submitBox.innerHTML += "<div style=\"margin:1px;float:right;width:70px;\">" +
+                        "<div id=\"fractionSubmit\"" +
+                        "style=\"width:64px;height:64px;background-color:white;margin:5px;\"" +
+                        "onclick=\"checkFractionSum()\" >" +
+                        "<img src=\"./assets/items/drive_btn.png\" width=\"64px\" height=\"64px\"/></div></div>" +
+                        "<div style=\"margin:1px;float:right;width:45px;\">" +
+                        "<div id=\"fractionSum\" style=\"text-align:center;\"></div></div>" +
+                        "<div style=\"float:right;padding-top:29px;\">=</div>";
+
+                    var fracElement = document.getElementById("fraction" + destination.length);
+                    fracElement.innerHTML = fraction.displayNum != undefined ? fraction.displayNum.toString() :
+                        fraction.numerator.toString();
+                    fracElement.innerHTML += "<br /><hr />";
+                    fracElement.innerHTML += fraction.displayDenom != undefined ?
+                        fraction.displayDenom.toString() : fraction.denominator.toString();
+
+                    fractionArray.push(fraction);
+
+                    var fracSum = document.getElementById("fractionSum");
+                    fracSum.innerHTML = "<div id=\"fractionNum\" style=\"padding:1px;margin:3px;border-radius:3px;\"><input type=\"text\" id=\"fracSumNum\" name=\"numerator\" autocomplete=\"off\" onblur=\"testInput(this)\"" +
+                        "onfocus=\"fracHideTooltip(this)\" style=\"width:23px\" /></div>" +
+                        "<hr />" +
+                        "<div id=\"fractionDenom\" style=\"margin:3px;border-radius:3px;\"><input type=\"text\" id=\"fracSumDenom\" name=\"denominator\" autocomplete=\"off\" onblur=\"testInput(this)\"" +
+                        "onfocus=\"fracHideTooltip(this)\" style=\"width:23px\" /></div>";
+                }
+            } else if (shadowMapColorDictionary[c] != null && button == RIGHT) {
+                var prevDest, index, delta = 0;
+
+                if (destination.length > 1) {
+                    prevDest = destination[destination.length - 2].vertex;
+                } else if (destination.length == 1) {
+                    prevDest = currentPosition;
+                } else {
+                    return;
+                }
+
+                if (futurePosition.x - prevDest.x == 0) {
+                    delta = futurePosition.y - prevDest.y;
+                    index = delta < 0 ? 1 : 0;
+                } else if (futurePosition.y - prevDest.y == 0) {
+                    delta = futurePosition.x - prevDest.x;
+                    index = delta < 0 ? 1 : 0;
+                }
+
+                if (roadSelectedDictionary[c][index] > 0 &&
+                        c == currDestColorID[currDestColorID.length - 1]) {
+
+                    roadSelectedDictionary[c][index] -= 1;
+                    destination.pop();
+                    fractionArray.pop();
+                    bonusTracker.array.pop();
+                    if (bonusTracker.array.length <= bonusTracker.initialBonusIndex) {
+                        bonusTracker.initialBonusIndex = -1;
+                    }
+                    if (destination.length > 0) {
+                        futurePosition = destination[destination.length - 1].vertex;
+
+                        // Remove the div elements containing the fraction and the "+" sign
+                        var node = fractionCT.children[fractionCT.childElementCount - 1];
+                        node.parentNode.removeChild(node);
+                        node = fractionCT.children[fractionCT.childElementCount - 1];
+                        node.parentNode.removeChild(node);
+                    } else {
+                        futurePosition = currentPosition;
+                        $("#fractionBoxDiv").hide();
+                        $("#fractionBonusImg").hide();
+                        $("#fuelWrap").show();
+                        fractionText.innerHTML = "";
+                    }
+                    currDestColorID.pop();
+                }
+            }
+        }
+    }
+}
 class MapLevel extends LevelLayer {
     var generatedMap = null;
     var r = 0, g = 0, b = 0;
@@ -802,6 +1196,12 @@ class MapLevel extends LevelLayer {
         initializeRoads();
     }
     void zoom(float s) {
+        if (GEN_TUTORIAL && tutorialIndex == 6) {
+            $("#tutorialTextDiv").show();
+            $("#instructionTextDiv").hide();
+            document.getElementById("instructionTextElement").innerHTML = instructionText[++instructionIndex];
+            advanceTutorial();
+        }
         if (xScale + s < 0.7) {
             setScale(0.7);
             zoomLevel = 1.3;
@@ -908,7 +1308,7 @@ class MapLevel extends LevelLayer {
         }
     }
     void initializePlayer() {
-        player = new Driver(generatedMap);
+        player = GEN_TUTORIAL ? new TutorialDriver(generatedMap) : new Driver(generatedMap);
         addPlayer(player);
         parent.viewbox.track(parent,player);
         var depot = new Depot(generatedMap.startPoint.clone());
@@ -1147,6 +1547,7 @@ class Road extends Interactor {
         fill(126);
         if (!driveFlag && (mouseOffsetX >= roadBounds[0] && mouseOffsetX <= roadBounds[2] &&
                 mouseOffsetY >= roadBounds[1] && mouseOffsetY <= roadBounds[3])) {
+
             if (futurePosition.x == vertex1.x && futurePosition.y == vertex1.y) {
                 noStroke();
                 if (!vFlippedX && !vFlippedY) {

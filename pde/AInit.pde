@@ -32,7 +32,6 @@ strokeWeight(4);
 
 /*debugging tools*/
 boolean debugging=true;
-var GEN_TUTORIAL=false;
 var showMenus=true;
 
 var DISPLAY_SHADOWMAP = false;
@@ -69,6 +68,14 @@ void mouseOver() {
 void mouseOut() {
     stopDragging = true;
     canvasHasFocus = false;
+}
+void startTutorial() {
+    GEN_TUTORIAL = true;
+    tutorialIndex = 0;
+    instructionIndex = 0;
+    document.getElementById("tutorialTextElement").innerHTML = tutorialText[tutorialIndex];
+    document.getElementById("instructionTextElement").innerHTML = instructionText[instructionIndex];
+    startCampaign(1);
 }
 void startCampaign(int diff){
     gameDifficulty = diff;

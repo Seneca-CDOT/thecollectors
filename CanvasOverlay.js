@@ -89,6 +89,22 @@ function animateNeedle(timeOut, degrees, current, currentStep) {
     }, timeOut);
   }
 }
+function animateHighlight(elementName, indexBreak, currentStep) {
+    step = currentStep || 0;
+    if (tutorialIndex < indexBreak) {
+    if (step % 2 == 0)
+        $(elementName).css("border-color", "black");
+    else
+        $(elementName).css("border-color", "yellow");
+    }
+
+    if (step < 9 && tutorialIndex < indexBreak) {
+        step++;
+        setTimeout(function() {
+          animateHighlight(elementName, indexBreak, step);
+        }, 150);
+    }
+}
 /*  Not sure if this will be necessary, so leaving it here just in case
 $(".inCanvas").css('-moz-user-select','none');
 $(".inCanvas").css('-webkit-user-select','none');
@@ -106,6 +122,8 @@ $(document).ready(function(){
   $("#mainMenuWrap").hide();
 });
 function backToMap() {
+  if (tutorialIndex < 26) return;
+  if (tutorialIndex == 26) $("#highlightBox").hide();
   $("#fractionBonusImg").hide();
   $("#fractionBoxDiv").hide();
   $("#fractionBackImg").hide();
@@ -113,6 +131,7 @@ function backToMap() {
   $("#denomInvalidTooltip").hide();
   $("#fracSumNum").val("");
   $("#fracSumDenom").val("");
+  $("#fuelWrap").show();
   showFractionBox = false;
 }
 /*Sets up all the tooltips and their functionality*/

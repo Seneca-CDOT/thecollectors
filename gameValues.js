@@ -2,6 +2,7 @@
 var sketch, player;
 var screenSizeX=940;
 var screenSizeY=600;
+var GEN_TUTORIAL = false;
 
 //	Assets Folder		//
 var assetsFolder = "assets/";
