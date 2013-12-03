@@ -584,7 +584,6 @@ class Driver extends Player{
 class TutorialDriver extends Driver {
     TutorialDriver(map) {
         super(map);
-        console.log(pageText.tutorial);
     }
     void drawObject() {
         // Tutorial position tests

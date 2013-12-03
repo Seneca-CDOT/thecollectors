@@ -89,6 +89,7 @@ function animateNeedle(timeOut, degrees, current, currentStep) {
     }, timeOut);
   }
 }
+/*
 function animateHighlight(elementName, indexBreak, currentStep) {
     step = currentStep || 0;
     if (tutorialIndex < indexBreak) {
@@ -105,6 +106,7 @@ function animateHighlight(elementName, indexBreak, currentStep) {
         }, 150);
     }
 }
+*/
 /*  Not sure if this will be necessary, so leaving it here just in case
 $(".inCanvas").css('-moz-user-select','none');
 $(".inCanvas").css('-webkit-user-select','none');
@@ -122,8 +124,8 @@ $(document).ready(function(){
   $("#mainMenuWrap").hide();
 });
 function backToMap() {
-  if (tutorialIndex < 26) return;
-  if (tutorialIndex == 26) $("#highlightBox").hide();
+  if (GEN_TUTORIAL && tutorialIndex < 26) return;
+  if (GEN_TUTORIAL && tutorialIndex == 26) $("#highlightBox").hide();
   $("#fractionBonusImg").hide();
   $("#fractionBoxDiv").hide();
   $("#fractionBackImg").hide();
