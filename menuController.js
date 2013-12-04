@@ -1,5 +1,8 @@
 //Controls for the Main Menu
 function initMainMenu(){
+    GEN_TUTORIAL = false;
+    $("#tutorialTextDiv").hide();
+    $("#instructionTextDiv").hide();
 	$("#campaignMenu").hide();
 	$("#quickplayMenu").hide();
 	$("#mainMenuWrap").show();

@@ -15,6 +15,12 @@ class MapLevel extends LevelLayer {
         initializeRoads();
     }
     void zoom(float s) {
+        if (GEN_TUTORIAL && tutorialIndex == 6) {
+            $("#tutorialTextDiv").show();
+            $("#instructionTextDiv").hide();
+            document.getElementById("instructionTextElement").innerHTML = instructionText[++instructionIndex];
+            advanceTutorial();
+        }
         if (xScale + s < 0.7) {
             setScale(0.7);
             zoomLevel = 1.3;
@@ -121,7 +127,7 @@ class MapLevel extends LevelLayer {
         }
     }
     void initializePlayer() {
-        player = new Driver(generatedMap);
+        player = GEN_TUTORIAL ? new TutorialDriver(generatedMap) : new Driver(generatedMap);
         addPlayer(player);
         parent.viewbox.track(parent,player);
         var depot = new Depot(generatedMap.startPoint.clone());
