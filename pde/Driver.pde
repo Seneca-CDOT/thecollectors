@@ -68,6 +68,7 @@ class Driver extends Player{
                 if (keyCode==ENTER) {
                 }
                 if (keyCode==BACKSPACE) {
+                    clearRoute();
                 }
                 box.translate(_x,_y,layer.parent,layer.xScale, layer.yScale);
             }
@@ -88,6 +89,25 @@ class Driver extends Player{
         }
         mouseScroll=0;
         keyCode=undefined;
+    }
+    void clearRoute() {
+        if (GEN_TUTORIAL) return;
+        if (!mapScreen) return;
+        if (showFractionBox) return;
+        if (driveFlag) return;
+
+        bonusTracker.array.length = 0;
+        bonusTracker.initialBonusIndex = -1;
+        fractionArray.length = 0;
+        futurePosition = currentPosition;
+        destination.length = 0;
+        var len = currDestColorID.length;
+        for (var i = 0; i < len; i++) {
+            roadSelectedDictionary[currDestColorID[i]][0] = 0;
+            roadSelectedDictionary[currDestColorID[i]][1] = 0;
+        }
+        currDestColorID.length = 0;
+        fractionText.innerHTML = "";
     }
     void mouseMoved(int mx, int my){
         canvasHasFocus=true;
@@ -561,8 +581,6 @@ class Driver extends Player{
                         node.parentNode.removeChild(node);
                     } else {
                         futurePosition = currentPosition;
-                        $("#fractionBoxDiv").hide();
-                        $("#fractionBonusImg").hide();
                         $("#fuelWrap").show();
                         fractionText.innerHTML = "";
                     }
@@ -657,8 +675,6 @@ class TutorialDriver extends Driver {
                         return;
                     }
                     advanceTutorial();
-                }
-                if (keyCode==BACKSPACE) {
                 }
                 box.translate(_x,_y,layer.parent,layer.xScale, layer.yScale);
 
@@ -983,8 +999,6 @@ class TutorialDriver extends Driver {
                         node.parentNode.removeChild(node);
                     } else {
                         futurePosition = currentPosition;
-                        $("#fractionBoxDiv").hide();
-                        $("#fractionBonusImg").hide();
                         $("#fuelWrap").show();
                         fractionText.innerHTML = "";
                     }

@@ -73,6 +73,7 @@ void startTutorial() {
     GEN_TUTORIAL = true;
     tutorialIndex = 0;
     instructionIndex = 0;
+    $("#clearButton").prop('disabled', true);
     document.getElementById("tutorialTextElement").innerHTML = tutorialText[tutorialIndex];
     document.getElementById("instructionTextElement").innerHTML = instructionText[instructionIndex];
     startCampaign(1);
