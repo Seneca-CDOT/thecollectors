@@ -99,10 +99,10 @@
             <p id="parcelElement" style="font-size:28px;margin:5px;">
             </p>
         </div>
-        <button id="newMapButton" style="position:absolute;left:350px;top:10px;" onclick="sketch.newMap()"> New Map</button>
-        <button id="resetButton" style="position:absolute;left:550px;top:10px;" onclick="sketch.resetMap()">  Reset</button>
-        <button id="returnButton" style="position:absolute;left:750px;top:10px;" onclick='initMainMenu();'>
-        Return</button>
+        <button id="clearButton" style="position:absolute;left:350px;top:10px;" onclick="player.clearRoute()">Clear Route</button>
+        <button id="newMapButton" style="position:absolute;left:500px;top:10px;" onclick="sketch.newMap()"> New Map</button>
+        <button id="resetButton" style="position:absolute;left:650px;top:10px;" onclick="sketch.resetMap()">  Reset</button>
+        <button id="returnButton" style="position:absolute;left:800px;top:10px;" onclick='initMainMenu();'>Return</button>
       </div>
       <!--Top bar HUD for intermediate screens -->
       <div class="interHUD">
@@ -307,6 +307,7 @@
                   $("#tutorialTextDiv").hide();
                   $("#tutorialTextDiv").css("opacity", "0.6");
               }
+              showFractionBox = false;
               player.driveToDestination();
           } else {
               if (ignoreInput) {
@@ -315,6 +316,7 @@
                   $("#fractionBonusImg").hide();
                   $("#fuelWrap").show();
                   $("#fractionBackImg").hide();
+                  showFractionBox = false;
                   player.driveToDestination();
               }
           }

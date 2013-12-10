@@ -1,6 +1,7 @@
 //Controls for the Main Menu
 function initMainMenu(){
     GEN_TUTORIAL = false;
+    $("#clearButton").prop('disabled', false);
     $("#tutorialTextDiv").hide();
     $("#instructionTextDiv").hide();
 	$("#campaignMenu").hide();
