@@ -70,6 +70,21 @@ class Driver extends Player{
                 if (keyCode==BACKSPACE) {
                     clearRoute();
                 }
+                if (keyCode==DELETE) {
+                    if (destination.length == 1 ||
+                            (destination.length > 0 && bonusTracker.initialBonusIndex == -1)) {
+                        driveToDestination();
+                    } else {
+                        if (destination.length > 0 && !showFractionBox) {
+                            $("#fractionBoxDiv").show();
+                            $("#fractionBonusImg").show();
+                            $("#fractionBackImg").show();
+                            $("#fracSumNum").focus();
+                            $("#fuelWrap").hide();
+                            showFractionBox = true;
+                        }
+                    }
+                }
                 box.translate(_x,_y,layer.parent,layer.xScale, layer.yScale);
             }
             if(mouseScroll!=0){
@@ -675,6 +690,31 @@ class TutorialDriver extends Driver {
                         return;
                     }
                     advanceTutorial();
+                }
+                if (keyCode==DELETE) {
+                    if (destination.length == 1 ||
+                            (destination.length > 0 && bonusTracker.initialBonusIndex == -1)) {
+                        driveToDestination();
+                    } else {
+                        if (destination.length > 0 && !showFractionBox) {
+                            $("#fractionBoxDiv").show();
+                            $("#fractionBonusImg").show();
+                            $("#fractionBackImg").show();
+                            $("#fracSumNum").focus();
+                            $("#fuelWrap").hide();
+                            showFractionBox = true;
+                        }
+                    }
+                    // Change opacity of tutorial text div during the bonus overlay
+                    if (GEN_TUTORIAL && tutorialIndex == 22 && destination.length == 2) {
+                        document.getElementById("tutorialTextElement").innerHTML = tutorialText[++tutorialIndex];
+                        $("#tutorialTextDiv").css("opacity", "1.0");
+                        $("#highlightBox").css("left", "100px");
+                        $("#highlightBox").css("top", "344px");
+                        $("#highlightBox").css("width", "600px");
+                        $("#highlightBox").css("height", "70px");
+                        $("#highlightBox").show();
+                    }
                 }
                 box.translate(_x,_y,layer.parent,layer.xScale, layer.yScale);
 
