@@ -8,7 +8,7 @@ class Driver extends Player{
     var currDestColorID, nodeMap, fuelGauge, fuelCost;
     var destinationWeight, deltaPerTick, tickDelta = 0, previousVehicleDelta = 0;
     var fuelGaugeHUD, fuelNeedleHUD, cashHUD, needlePosition = 0, needleDelta = 0;
-    var cashAnimHUD, cashAnimEl;
+    var cashAnimHUD, cashAnimEl, cashAnimEl2;
     Driver(map) {
         super("Driver");
         setStates();
@@ -30,8 +30,8 @@ class Driver extends Player{
         fractionImg = document.getElementById("fractionBonusImg");
         fractionText = document.getElementById("fractionTextDiv");
         fractionCT = null;
-        cashAnimHUD = document.getElementById("cashAnimDiv");
-        cashAnimEl = cashAnimHUD.children[0];
+        cashAnimEl = document.getElementById("cashAnimElement");
+        cashAnimEl2 = document.getElementById("cashAnimElement2");
         fuelGauge = new Fraction(nodeMap.fuel.numerator, nodeMap.fuel.denominator);
         fuelGaugeHUD = document.getElementById("fuelElement2");
         fuelGaugeHUD.innerHTML = fuelGauge.numerator.toString();
@@ -201,7 +201,6 @@ class Driver extends Player{
         if (atStruct.StructType != "fuel_stn" && !atStruct.visited) {
             if (bonusFlag) {
                 levelCash += BONUS_CASH_AMT;
-                var cashAnimEl2 = document.getElementById("cashAnimElement2");
                 cashAnimEl2.innerHTML = "+$" + BONUS_CASH_AMT + " (Bonus)";
                 animateBonus();
             }
@@ -210,12 +209,10 @@ class Driver extends Player{
             deliveriesLeft--;
             cashHUD.innerHTML = "$" + levelCash;
             parcelHUD.innerHTML = "x " + deliveriesLeft;
-            cashAnimEl.classList.add("textColor");
-            cashAnimEl.classList.remove("textColor2");
             cashAnimEl.innerHTML = "+$" + atStruct.Points;
             $("#cashAnimDiv").show();
             animateCash();
-        } 
+        }
         else if (atStruct.StructType == "fuel_stn" && !refueled) {
             refueled = true;
             var fuelMissing = fuelGauge.denominator - fuelGauge.numerator;
@@ -248,11 +245,8 @@ class Driver extends Player{
             }
             if (fuelString > 0) {
                 cashHUD.innerHTML = "$" + levelCash;
-                cashAnimEl.classList.add("textColor2");
-                cashAnimEl.classList.remove("textColor");
-                cashAnimEl.innerHTML = "&nbsp;&#8211;$" + fuelString;
-                $("#cashAnimDiv").show();
-                animateCash();
+                var costString = "&nbsp;&#8211;$" + fuelString;
+                animateCost(costString);
             }
             var fuelLevel = fuelGauge.evaluate();
             if (fuelLevel <= 0.2) {

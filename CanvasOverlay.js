@@ -53,6 +53,30 @@ function animateCash() {
     $("#cashAnimDiv").css("opacity", 1.0);
   });
 }
+var divAvailable = true;
+function animateCost(costString) {
+  var div = divAvailable ? "#cashAnimDiv3" : "#cashAnimDiv4";
+  if (div.indexOf("cashAnimDiv3") > -1) {
+      document.getElementById("cashAnimElement3").innerHTML = costString;
+  } else {
+      document.getElementById("cashAnimElement4").innerHTML = costString;
+  }
+  divAvailable = false;
+  $(div).show();
+
+  $(div).animate({
+    opacity: "toggle",
+    top: "64px"
+  }, 1500, function() {
+    // On completion
+    $(div).hide();
+    $(div).css("top", "4px");
+    $(div).css("opacity", 1.0);
+    if (div.indexOf("cashAnimDiv3") > -1) {
+      divAvailable = true;
+    }
+  });
+}
 function animateBonus() {
   $("#cashAnimDiv2").delay(400).animate({
     opacity: "toggle",
