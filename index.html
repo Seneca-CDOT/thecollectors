@@ -1,9 +1,10 @@
 <!doctype html>
 <html>
   <head>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Thecollectors by Seneca-CDOT</title>
+    <title>The Collectors by Seneca-CDOT</title>
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
@@ -15,6 +16,45 @@
     <link rel="stylesheet" href="stylesheets/ie.css">
     <![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="style/style.css">
+    <link rel="stylesheet" type="text/css" href="style/menu.css">
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+
+    <script type="text/javascript" src="minim.js"></script>
+    <script type="text/javascript" src="syntaxHighlight.js"></script>
+    <script type="text/javascript" src="XMLWriter-1.0.0-min.js"></script>
+    <script type="text/javascript" src="processing.js"></script>
+    <script type="text/javascript" src="processing-lazyload.js"></script>
+    <script type="text/javascript" src="canvasFocus.js"></script>
+
+    <!--Custom utility scripts and global variables-->
+    <script type="text/javascript" src="gameValues.js"></script>
+    <script type="text/javascript" src="menuController.js"></script>
+    <script type="text/javascript" src="CanvasOverlay.js"></script>
+    <script type="text/javascript" src="Utilities.js"></script>
+
+    <!--Custom JavaScript object definitions. Consolidate into one file at the end-->
+    <script type="text/javascript" src="Fraction.js"></script>
+    <script type="text/javascript" src="Vertex.js"></script>
+    <script type="text/javascript" src="Node.js"></script>
+    <script type="text/javascript" src="Structure.js"></script>
+    <script type="text/javascript" src="Graph.js"></script>
+    <script type="text/javascript" src="Map.js"></script>
+    <script type="text/javascript" src="MapGenerator.js"></script>
+    
+    <script src="locale/text.jsonp"></script>
+    <script type="text/javascript">
+    var fractionCT;
+
+  try {
+    var language = window.navigator.userLanguage || window.navigator.language;
+    //Load the tutorial text from the json file
+    var pageText = JSON.parse(language);
+  } catch(err) {
+    var pageText = JSON.parse(en_us);
+  }
+    </script>
 
   </head>
   <body>
@@ -31,44 +71,346 @@
 
       <section>
         <div id="title">
-          <h1>Thecollectors</h1>
+          <h1>The Collectors</h1>
           <p>Math Driving Game - a port of a flash math learning object to html5</p>
           <hr>
           <span class="credits left">Project maintained by <a href="https://github.com/Seneca-CDOT">Seneca-CDOT</a></span>
           <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
         </div>
 
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+  <div id="gameWrap" style="position:absolute;height:644px;">
+    <!-- Begin Main Menu -->
+    <div id="mainMenuWrap" style="z-index:9;position:absolute;height:100%;width:100%;background-image:url('assets/bgs/menu_bkg.png');">
+      <div id="mainMenu">
+        <button onclick="initCampaignMenu()">Campaign</button>
+        <button onclick="initQuickplayMenu()">Quick Play</button>
+      </div>
+      <div id="campaignMenu">
+        <button onclick="sketch.startTutorial()">Tutorial</button>
+        <button onclick="sketch.startCampaign(1)">Easy</button>
+        <button onclick="sketch.startCampaign(2)">Medium</button>
+        <button onclick="sketch.startCampaign(3)">Hard</button>
+        <button onclick="initMainMenu()">Back</button>
+      </div>
+      <div id="quickplayMenu">
+        <select id="quickDiffSelect">
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+        <select id="quickLevelSelect">
+          <option value="1">Tiny</option>
+          <option value="2">Small</option>
+          <option value="3">Medium</option>
+          <option value="4">Large</option>
+          <option value="5">Huge</option>          
+        </select>
+        <button onclick="startQuickplay()">Play</button>
+        <button onclick="initMainMenu()">Back</button>
+      </div>
+    </div>
+    <!-- End Main Menu -->
+    <!-- Begin top bar -->
+    <div id="topBar">
+      <!--Wrap all HUD elements that will need to be hidden -->
+      <div class="HUD">
+        <div id="cashImg">
+            <img src="./assets/items/money.svg" alt="Money Bag" width="40px" height="40px" />
+        </div>
+        <div id="cashText" class="labelBox">
+            <p id="cashElement" style="font-size:28px;margin:5px;">
+            </p>
+        </div>
+        <div id="parcelImg">
+            <img src="./assets/items/parcel.svg" alt="Parcel" width="40px" height="40px" />
+        </div>
+        <div id="parcelText" class="labelBox">
+            <p id="parcelElement" style="font-size:28px;margin:5px;">
+            </p>
+        </div>
+        <button id="clearButton" style="position:absolute;left:350px;top:10px;" onclick="player.clearRoute()">Clear Route</button>
+        <button id="newMapButton" style="position:absolute;left:500px;top:10px;" onclick="sketch.newMap()"> New Map</button>
+        <button id="resetButton" style="position:absolute;left:650px;top:10px;" onclick="sketch.resetMap()">  Reset</button>
+        <button id="returnButton" style="position:absolute;left:800px;top:10px;" onclick='initMainMenu();'>Return</button>
+      </div>
+      <!--Top bar HUD for intermediate screens -->
+      <div class="interHUD">
+          <div id="campaignCash">
+            <img src="./assets/items/money.svg" alt="Money Bag" width="40px" height="40px" />
+        </div>
+        <div id="cashText" class="labelBox">
+            <p id="campaignCashText" style="font-size:28px;margin:5px;">
+            </p>
+        </div>
+        <button style="position:absolute;right:50px;top:10px;" onclick="sketch.newMap()">Continue</button>
+      </div>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+    </div>
+    <!-- End top bar -->
+    <!-- Begin tooltips -->
+    <div id="cashTooltip" class="tooltip"> </div>
+    <div id="parcelTooltip" class="tooltip"> </div>
+    <div id="newMapTooltip" class="tooltip"> </div>
+    <div id="resetTooltip" class="tooltip"> </div>
+    <div id="fuelTooltip" class="tooltip"></div>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+    <!-- End tooltips -->
+    <canvas onmouseenter="$('canvas').focus()" data-processing-sources="codebase.pde assetPreloader.pde game.pde"></canvas>
+    <div id="cashAnimDiv" class="inCanvas cashAnimBox hidden textColor" >
+        <p id="cashAnimElement" class="inCanvas" style="font-size:28px;margin:5px;">
+        </p>
+    </div>
+    <div id="cashAnimDiv2" class="inCanvas cashAnimBox2 hidden textColor" >
+        <p id="cashAnimElement2" class="inCanvas textColor" style="font-size:28px;margin:5px;">
+        </p>
+    </div>
+    <div id="cashAnimDiv3" class="inCanvas cashAnimBox hidden textColor2" >
+        <p id="cashAnimElement3" class="inCanvas" style="font-size:28px;margin:5px;">
+        </p>
+    </div>
+    <div id="cashAnimDiv4" class="inCanvas cashAnimBox hidden textColor2" >
+        <p id="cashAnimElement4" class="inCanvas" style="font-size:28px;margin:5px;">
+        </p>
+    </div>
+    <div id="bonusAnimDiv" class="inCanvas bonusAnimBox hidden" >
+        <p id="bonusAnimElement" class="inCanvas" style="font-size:28px;margin:5px;color:green;">
+        Bonus!
+        </p>
+    </div>
+    <div id="fractionWrap">
+      <div id="fractionBonusImg" class="hidden" style="position:absolute;left:0px;top:44px;">
+        <img src="./assets/items/solve_bonus.png" alt="Solve for Bonus!" width="940px" height="600px" />
+      </div>
+      <div id="fractionBoxDiv" class="addBox fractionBox">
+        <div id="fractionTextDiv" style="position:relative;">
+        </div>
+      </div>
+      <div id="fractionBackImg" class="hidden" style="position:absolute;left:370px;top:423px;" onclick="backToMap()">
+        <img src="./assets/items/alter_btn.png" alt="Alter Route" width="200px" height="50px" />
+      </div>
+      <div id="numInvalidTooltip" class="tooltip"></div>
+      <div id="denomInvalidTooltip" class="tooltip"></div>
+    </div>
+    <div id="tutorialTextDiv" class="textBox hidden inCanvas" style="position:absolute;left:10px;top:520px;width:500px;min-height:110px;height:auto;">
+        <p id="tutorialTextElement">
+        </p>
+    </div>
+    <div id="instructionTextDiv" class="textBox hidden inCanvas" style="position:absolute;left:460px;top:60px;width:auto;height:auto;">
+        <p id="instructionTextElement">
+        </p>
+    </div>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+    <!-- Begin fuel gauge -->
+    <div id="fuelWrap" class="HUD">
+      <div id="fuelText" class="fuelBox visible inCanvas">
+          <p id="fuelElement2" class="center">
+          </p>
+      </div>
+  
+      <div id="fuelGauge" class="inCanvas">
+          <img src="assets/items/fuel_gauge.svg" alt="Fuel Gauge" width="192px" height="192px" />
+      </div>
+      <div id="fuelNeedle" class="inCanvas">
+          <img src="assets/items/fuel_tick.svg" alt="Fuel Needle" width="48px" height="400px" />
+      </div>
+    </div>
+    <!-- End fuel gauge -->
 
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+    <script type="text/javascript">
+    var tutorialText = pageText.tutorial;
+    var instructionText = pageText.instructions;
+    var tutorialIndex = 0;
+    var instructionIndex = 0;
+    var bonusTracker = {};
+        // Event listener for the <p> element containing tutorial instructions.
+        document.getElementById("tutorialTextDiv").addEventListener("click", function(event) {
+          advanceTutorial();
+        }, false);
+        function advanceTutorial() {
+          // Don't advance tutorial text at certain indices
+          if (tutorialIndex == 22) return;
+          if (tutorialIndex == 27) return;
+          if (tutorialIndex == 35) return;
+          // End of tutorial clean-up
+          if (tutorialIndex == 36) {
+              initMainMenu();
+          }
+          if (tutorialIndex < tutorialText.length - 1) {
+            document.getElementById("tutorialTextElement").innerHTML = tutorialText[++tutorialIndex];
+            if (tutorialIndex == 3) {
+                $("#tutorialTextDiv").hide();
+                $("#instructionTextDiv").show();
+            } else if (tutorialIndex == 6) {
+                $("#tutorialTextDiv").hide();
+                $("#instructionTextDiv").show();
+            } else if (tutorialIndex == 11) {
+                $("#tutorialTextDiv").hide();
+                $("#instructionTextDiv").show();
+            } else if (tutorialIndex == 12) {
+                $("#fuelText").css("border-color", "yellow");
+            } else if (tutorialIndex == 13) {
+                $("#fuelText").css("border-color", "black");
+            } else if (tutorialIndex == 16) {
+                $("#tutorialTextDiv").hide();
+                $("#instructionTextDiv").show();
+            } else if (tutorialIndex == 17) {
+                var highlightDiv = document.createElement('div');
+                highlightDiv.setAttribute('id', 'highlightBox');
+                document.getElementById('gameWrap').appendChild(highlightDiv);
+                $("#highlightBox").css("position", "absolute");
+                $("#highlightBox").css("left", "40px");
+                $("#highlightBox").css("top", "0px");
+                $("#highlightBox").css("width", "100px");
+                $("#highlightBox").css("height", "36px");
+                $("#highlightBox").css("border-width", "4px");
+                $("#highlightBox").css("border-radius", "3px");
+                $("#highlightBox").css("border-style", "solid");
+                $("#highlightBox").css("border-color", "yellow");
+            } else if (tutorialIndex == 18) {
+                $("#highlightBox").css("left", "230px");
+                $("#highlightBox").css("width", "50px");
+            } else if (tutorialIndex == 19) {
+                $("#highlightBox").hide();
+            } else if (tutorialIndex == 24) {
+                $("#highlightBox").css("left", "700px");
+                $("#highlightBox").css("top", "344px");
+                $("#highlightBox").css("width", "135px");
+                $("#highlightBox").css("height", "70px");
+            } else if (tutorialIndex == 25) {
+                $("#highlightBox").hide();
+            } else if (tutorialIndex == 26) {
+                $("#highlightBox").css("left", "370px");
+                $("#highlightBox").css("top", "423px");
+                $("#highlightBox").css("width", "200px");
+                $("#highlightBox").css("height", "50px");
+                $("#highlightBox").show();
+            } else if (tutorialIndex == 27) {
+                $("#highlightBox").hide();
+            } else if (tutorialIndex == 29) {
+                $("#highlightBox").hide();
+            } else if (tutorialIndex == 31) {
+                $("#tutorialTextDiv").hide();
+                $("#instructionTextDiv").show();
+            }
+          }
+        }
+    </script>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+    <script type="text/javascript">
 
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+      var gameMode = null;
+      var canvasHasFocus = false;
+      
+      document.addEventListener("DOMMouseScroll", function(e) {
+        if (canvasHasFocus) {
+          e.preventDefault();
+        }
+      }, false);
+      
+      var fractionArray = [], ignoreInput = true;
+      var inputRegEx = new RegExp("^[0-9]+$");
+      var bonusFlag = false, showFractionBox = false;
+      var numTest = false, denomTest = false;
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+      function checkFractionSum() {
+          // Clicking the Wheel button before the tutorial
+          // has reached a certain point does nothing
+          if (GEN_TUTORIAL && tutorialIndex < 27) return;
+          if (GEN_TUTORIAL && tutorialIndex == 27 && (!numTest || !denomTest)) return;
+          if (numTest && denomTest) {
+              var playerNumerator = document.getElementById("fracSumNum");
+              var playerDenominator = document.getElementById("fracSumDenom");
+              var inputFraction = new Fraction(playerNumerator.value, playerDenominator.value);
+              // Player has to input 2/6 during tutorial
+              if (GEN_TUTORIAL && tutorialIndex == 27 &&
+                      (inputFraction.numerator != 2 || inputFraction.denominator != 6)) return;
+              var sum = new Fraction(fractionArray[0].numerator, fractionArray[0].denominator);
+
+              for (var i = 1; i < fractionArray.length; i++) {
+                  sum.add(fractionArray[i]);
+              }
+              if (bonusTracker.initialBonusIndex > -1 && inputFraction.cmp(sum)) {
+                  bonusFlag = true;
+                  $("#bonusAnimDiv").show();
+                  animateBonusText();
+              }
+              fractionArray.length = 0;
+              $("#fractionBoxDiv").hide();
+              $("#fractionBonusImg").hide();
+              $("#fuelWrap").show();
+              $("#fractionBackImg").hide();
+              // Revert opacity of tutorial text div
+              if (GEN_TUTORIAL && tutorialIndex == 27) {
+                  $("#tutorialTextDiv").hide();
+                  $("#tutorialTextDiv").css("opacity", "0.6");
+              }
+              showFractionBox = false;
+              player.driveToDestination();
+          } else {
+              if (ignoreInput) {
+                  ignoreInput = true;
+                  $("#fractionBoxDiv").hide();
+                  $("#fractionBonusImg").hide();
+                  $("#fuelWrap").show();
+                  $("#fractionBackImg").hide();
+                  showFractionBox = false;
+                  player.driveToDestination();
+              }
+          }
+      }
+
+      function testInput(element) {
+          var testResult = inputRegEx.test(element.value);
+          if (testResult) {
+              element.parentNode.style.backgroundColor = "black";
+              switch (element.name) {
+                  case "numerator":
+                      numTest = true;
+                      break;
+                  case "denominator":
+                      denomTest = true;
+                      break;
+              }
+          } else {
+              switch (element.name) {
+                  case "numerator":
+                      numTest = false;
+                      if (element.value != "") {
+                          ignoreInput = false;
+                          $("#numInvalidTooltip").show();
+                      }
+                      break;
+                  case "denominator":
+                      denomTest = false;
+                      if (element.value != "") {
+                          ignoreInput = false;
+                          $("#denomInvalidTooltip").show();
+                      }
+                      break;
+              }
+          }
+      }
+      function fracHideTooltip(element) {
+          switch (element.name) {
+              case "numerator":
+                  $("#numInvalidTooltip").hide();
+                  break;
+              case "denominator":
+                  $("#denomInvalidTooltip").hide();
+                  break;
+          }
+      }
+    </script>
+  </div>
 
 <h3>
 <a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<p>You can <a href="https://github.com/andrei-kopytov" class="user-mention">@andrei-kopytov</a> </p>
 
 <h3>
 <a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
       </section>
 
     </div>
@@ -76,3 +418,4 @@ $ git checkout gh-pages
     
   </body>
 </html>
+

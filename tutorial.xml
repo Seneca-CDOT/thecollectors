@@ -1,0 +1,52 @@
+<maps>
+    <level>
+        <map>
+        <fuel numerator="6" denominator="6" />
+        <point x="400" y="100" />
+        <roads>
+            <road numerator="1" denominator="6">
+                <point x="400" y="100" />
+                <point x="400" y="200" />
+            </road>
+            <road numerator="1" denominator="6">
+                <point x="400" y="200" />
+                <point x="300" y="200" />
+            </road>
+            <road numerator="1" denominator="6">
+                <point x="300" y="200" />
+                <point x="300" y="300" />
+            </road>
+            <road numerator="1" denominator="6">
+                <point x="300" y="300" />
+                <point x="300" y="400" />
+            </road>
+            <road numerator="1" denominator="6">
+                <point x="300" y="400" />
+                <point x="400" y="400" />
+            </road>
+            <road numerator="1" denominator="6">
+                <point x="400" y="400" />
+                <point x="400" y="500" />
+            </road>
+            <road numerator="3" denominator="6">
+                <point x="400" y="500" />
+                <point x="400" y="800" />
+            </road>
+        </roads>
+        <places>
+            <place type="powerplant" caption="Power Plant" value="1100">
+                <point x="300" y="200" />
+            </place>
+            <place type="train_stn" caption="Train Station" value="1000">
+                <point x="300" y="400" />
+            </place>
+            <place type="fuel_stn" caption="Fuel Station" value="-1">
+                <point x="400" y="500" />
+            </place>
+            <place type="restaurant" caption="Restaurant" value="850">
+                <point x="400" y="800" />
+            </place>
+        </places>
+        </map>
+    </level>
+</maps>
