@@ -206,13 +206,13 @@ div.bonusAnimBox
 #newMapTooltip
 {
     position: absolute;
-    left: 350px;
+    left: 480px;
     top: 44px;
 }
 #resetTooltip
 {
     position: absolute;
-    left: 550px;
+    left: 640px;
     top: 44px;
 }
 #fuelTooltip
