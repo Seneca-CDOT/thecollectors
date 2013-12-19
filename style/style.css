@@ -3,15 +3,25 @@ button { width:120px; }
 div.textBox
 {
     background-color: #000000;
+    color:#ffffff;
     opacity:0.6;
+}
+div.fractionBox
+{
+    background-color: #000000;
+    color:#ffffff;
+    opacity:0.7;
 }
 div.fuelBox
 {
     background-color: #000000;
     opacity:0.6;
+    border-radius: 3px;
 }
 div.visible { display:block; }
 div.hidden { display:none; }
+.textColor { color:blue; }
+.textColor2 { color:red; }
 div.labelBox p
 {
     color:#000000;
@@ -33,6 +43,39 @@ p.center
     font-weight:bold;
     font-size:28px;
 }
+div.addBox
+{
+    position:absolute;
+    left:100px;
+    top:344px;
+    width:740px;
+    height:78px;
+    border-radius: 3px;
+}
+div.cashAnimBox
+{
+    position:absolute;
+    left:17px;
+    top:4px;
+    width:125px;
+    height:44px;
+}
+div.cashAnimBox2
+{
+    position:absolute;
+    left:17px;
+    top:4px;
+    width:230px;
+    height:44px;
+}
+div.bonusAnimBox
+{
+    position:absolute;
+    left:415px;
+    top:230px;
+    width:150px;
+    height:44px;
+}
 /*
     Top bar, and all elements contained by it.
 */
@@ -44,6 +87,13 @@ p.center
     background-color: #A9DEB9;
 }
 #cashImg
+{
+    position: absolute;
+    left: 0px;
+    width: 40px;
+    height: 44px;
+}
+#campaignCash
 {
     position: absolute;
     left: 0px;
@@ -102,8 +152,95 @@ p.center
 #fuelText
 {
     position: absolute;
+    border-style:solid;
+    border-width:4px;
     left: 0px;
     bottom:0px;
     width: 80px;
     height: 110px;
+}
+/*
+    Tooltip elements.
+*/
+.tooltip
+{
+    position: absolute;
+    width: 120px;
+    height: auto;
+    line-height: 20px;
+    padding: 5px 10px;
+    font-size: 14px;
+    text-align: center;
+    color: white;
+    background: rgb(0, 0, 0);
+    border: 4px solid rgb(0, 0, 0);
+    border-radius: 5px;
+    text-shadow: rgba(0, 0, 0, 0.0980392) 1px 1px 1px;
+    box-shadow: rgba(0, 0, 0, 0.0980392) 1px 1px 2px 0px;
+    z-index: 3;
+}
+.tooltip:after
+{
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent transparent black transparent;
+    top: -24px;
+    left: 60px;
+}
+#cashTooltip
+{
+    position: absolute;
+    left: 0px;
+    top: 44px;
+}
+#parcelTooltip
+{
+    position: absolute;
+    left: 175px;
+    top: 44px;
+}
+#newMapTooltip
+{
+    position: absolute;
+    left: 480px;
+    top: 44px;
+}
+#resetTooltip
+{
+    position: absolute;
+    left: 640px;
+    top: 44px;
+}
+#fuelTooltip
+{
+    position: absolute;
+    left:483px;
+    bottom:0px;
+}
+#fuelTooltip:after
+{
+    border-color: transparent transparent transparent black;
+    top: 22px;
+    left: 144px;
+}
+#numInvalidTooltip
+{
+    position: absolute;
+    left:670px;
+    top:260px;
+}
+#numInvalidTooltip:after
+{
+    border-color: black transparent transparent transparent;
+    top:74px;
+}
+#denomInvalidTooltip
+{
+    position: absolute;
+    left:670px;
+    top:428px;
 }

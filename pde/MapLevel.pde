@@ -15,6 +15,12 @@ class MapLevel extends LevelLayer {
         initializeRoads();
     }
     void zoom(float s) {
+        if (GEN_TUTORIAL && tutorialIndex == 6) {
+            $("#tutorialTextDiv").show();
+            $("#instructionTextDiv").hide();
+            document.getElementById("instructionTextElement").innerHTML = instructionText[++instructionIndex];
+            advanceTutorial();
+        }
         if (xScale + s < 0.7) {
             setScale(0.7);
             zoomLevel = 1.3;
@@ -113,24 +119,26 @@ class MapLevel extends LevelLayer {
         for(var i = 0; i < structureListLength; i++) {
             var structObject = generatedMap.structureList[i];
             var vert = generatedMap.mapGraph.findNodeArray(structObject.nodeID).vertex;
-            if (debugging)
-                StructDebug structure = new StructDebug(vert,structObject);
-            else
-                Struct structure = new Struct(vert,structObject, generatedMap.fuel.denominator, fuelCost);
+
+            Struct structure = new Struct(vert,structObject, generatedMap.fuel.denominator, fuelCost);
             addInputInteractor(structure);
             structList.push(structure);
             generatedMap.pjsStructureList[structObject.nodeID]=structure;
         }
     }
     void initializePlayer() {
-        player = new Driver(generatedMap);
+        player = GEN_TUTORIAL ? new TutorialDriver(generatedMap) : new Driver(generatedMap);
         addPlayer(player);
+        parent.viewbox.track(parent,player);
         var depot = new Depot(generatedMap.startPoint.clone());
         addInteractor(depot);
         initializeStructures(player.fuelCost);
     }
     void resetMap(){
         gameOver = false;
+        $("#fractionBoxDiv").hide();
+        $("#fractionBonusImg").hide();
+        $("#fractionBackImg").hide();
         for (var i in roadSelectedDictionary) {
             roadSelectedDictionary[i][0] = 0;
             roadSelectedDictionary[i][1] = 0;
@@ -140,6 +148,7 @@ class MapLevel extends LevelLayer {
             structList[i].resetState();
         }
         levelCash = 0;
+        fractionArray.length = 0;
         deliveriesLeft = levelToDeliveries(currentLevel);
         clearPlayers();
         player = new Driver(generatedMap);
@@ -148,5 +157,8 @@ class MapLevel extends LevelLayer {
             generatedMap.pjsStructureList[index].structObject.visited=false;
             generatedMap.pjsStructureList[index].setTransparency(255);
         }
+        setScale(1);
+        zoomLevel=1;
+        parent.viewbox.track(parent,player);
     }
 }

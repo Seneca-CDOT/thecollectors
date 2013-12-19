@@ -10,9 +10,11 @@ function MapGenerator(numStructs, difficulty){
 			pool=pool.concat(DenominatorPool.hard);	
 	}
 	this.fuel=pool[rng(0,pool.length-1)];
+	//Width and height scale based on the level number
 	this.maxWidth = screenSizeX * (1+deliveriesToLevel(numStructs)/10);
 	this.maxHeight = screenSizeY * (1+deliveriesToLevel(numStructs)/5);
 	this.generateMapGraph();
+	//console.log(this.mapGraph);
 }
 /*
 	All steps necessary to generate a map.
@@ -38,7 +40,7 @@ MapGenerator.prototype.generateRawGraph = function(){
 	var prevHeading=0;
 
 	//distanceCap is the # of different road distances possible
-	var distanceCap=Math.round(this.fuel / 2);
+	var distanceCap=Math.floor(this.fuel / 2);
 	for(var i=1; i<=roadCap;i++){	
 		var x,y;
 		var distance=rng(1,distanceCap);
@@ -128,6 +130,7 @@ MapGenerator.prototype.mapIntersections = function(){
 		var node1=nodes[index];
 		for (var i = edges[index].length - 1; i >= 0; i--) {
 			var node2=nodes[edges[index][i]];
+			//Check if the line represented by node1 and node2 intersects with another line
 			var intersectCheck=this.mapGraph.edgeIntersects(node1.vertex.x,node1.vertex.y,node2.vertex.x,node2.vertex.y)
 			if(intersectCheck){			
 				var node1ID=new Node(j, node1.vertex.x, node1.vertex.y);
@@ -135,6 +138,7 @@ MapGenerator.prototype.mapIntersections = function(){
 				if(node1ID==j)j++;
 				var node2ID=new Node(j, node2.vertex.x, node2.vertex.y);
 				node2ID=tmpGraph.addNode(node2ID); if(node2ID==j)j++;
+				//Create new nodes at each point of intersection 
 				for (var i = intersectCheck.length - 1; i >= 0; i--) {
 					if(!intersectCheck[i].colinear){
 						var intNode=new Node(j, intersectCheck[i].x, intersectCheck[i].y);
@@ -162,8 +166,103 @@ MapGenerator.prototype.mapIntersections = function(){
 	this.cleanGraph(tmpGraph);
 	this.cleanGraph(tmpGraph);
 
-
+	
+	this.fixOverlappingLines(tmpGraph);
 	this.mapGraph=tmpGraph;
+}
+/*
+	An entire function just to fix one bug regarding line overlap.
+	How sad :(
+*/
+MapGenerator.prototype.fixOverlappingLines=function(tmpGraph){
+	var nodes=tmpGraph.nodeDictionary;
+	var edges=tmpGraph.getEdgeList();
+	for(var index in edges){
+		var node1=nodes[index];
+		for (var i = edges[index].length - 1; i >= 0; i--) {
+			var node2=nodes[edges[index][i]];
+			var intersectCheck=tmpGraph.edgeIntersects(node1.vertex.x,node1.vertex.y,node2.vertex.x,node2.vertex.y);
+			for (var i = intersectCheck.length - 1; i >= 0; i--) {
+				if(intersectCheck[i].colinear){
+					var node3 = tmpGraph.vertexExists(new Vertex(intersectCheck[i].x1,intersectCheck[i].y1));
+					var node4 = tmpGraph.vertexExists(new Vertex(intersectCheck[i].x2,intersectCheck[i].y2));
+					//check if these lines are overlapping, and do not share a node point
+					if(node3 != node1.id && node3 != node2.id && node4 != node1.id && node4 != node2.id){
+						node3 = nodes[node3];
+						node4 = nodes[node4];
+						var min,min2,max,max2;
+						tmpGraph.removeConnection(node1.id,node2.id);
+						tmpGraph.removeConnection(node3.id,node4.id);
+						//lines are on the x-plane
+						if(node1.vertex.x == node2.vertex.x){
+							if(node1.vertex.y < node2.vertex.y){
+								min = node1;
+								max = node2;
+							}
+							else{
+								min = node2;
+								max = node1;
+							}
+							if(node3.vertex.y < node4.vertex.y){
+								min2 = node3;
+								max2 = node4;
+							}
+							else{
+								min2 = node4;
+								max2 = node3;
+							}
+						}
+						//lines are on the y-plane
+						else if(node1.vertex.y == node2.vertex.y){
+							if(node1.vertex.x < node2.vertex.x){
+								min = node1;
+								max = node2;
+							}
+							else{
+								min = node2;
+								max = node1;
+							}
+							if(node3.vertex.x < node4.vertex.x){
+								min2 = node3;
+								max2 = node4;
+							}
+							else{
+								min2 = node4;
+								max2 = node3;
+							}
+						}
+						//fix connections using overlapRemove(). Change the order of the arguments based on the situation
+						if(min2 < min && max2 > max) this.overlapRemove(min2,min,max,max2,tmpGraph);
+						else if(min2 < min && max2 < max) this.overlapRemove(min2,min,max2,max,tmpGraph);
+						else if(min2 > min && max2 < max) this.overlapRemove(min,min2,max2,max,tmpGraph);
+						else if(min2 > min && max2 > max) this.overlapRemove(min, min2, max, max2, tmpGraph);
+						
+					}
+				}
+			}
+		}
+	}
+}
+/*
+	Used by fixOverlappingLines to fix connections of overlapping lines
+	The order of the nodes is important, and mirrors the order they appear in 2d space
+*/
+MapGenerator.prototype.overlapRemove = function(min, rmvNode1, rmvNode2, max, tmpGraph){
+	if(rmvNode1.connectionsLength==0 && rmvNode2.connectionsLength==0) 
+		tmpGraph.addConnection(min.id, max.id, new Fraction(distance(min.vertex, max.vertex)/baseRoadLength,this.fuel));
+	else if(rmvNode1.connectionsLength>0 && rmvNode2.connectionsLength>0){
+		tmpGraph.addConnection(min.id, rmvNode1.id, new Fraction(distance(min.vertex, rmvNode1.vertex)/baseRoadLength,this.fuel));
+		tmpGraph.addConnection(rmvNode1.id, rmvNode2.id, new Fraction(distance(rmvNode1.vertex, rmvNode2.vertex)/baseRoadLength,this.fuel));
+		tmpGraph.addConnection(rmvNode2.id, max.id, new Fraction(distance(rmvNode2.vertex, max.vertex)/baseRoadLength,this.fuel));
+	}
+	else if(rmvNode1.connectionsLength>0){
+		tmpGraph.addConnection(min.id, rmvNode1.id, new Fraction(distance(min.vertex, rmvNode1.vertex)/baseRoadLength,this.fuel));
+		tmpGraph.addConnection(rmvNode1.id, max.id, new Fraction(distance(rmvNode1.vertex, max.vertex)/baseRoadLength,this.fuel));
+	}
+	else if(rmvNode2.connectionsLength>0){
+		tmpGraph.addConnection(min.id, rmvNode2.id, new Fraction(distance(min.vertex, rmvNode2.vertex)/baseRoadLength,this.fuel));
+		tmpGraph.addConnection(rmvNode2.id, max.id, new Fraction(distance(rmvNode2.vertex, max.vertex)/baseRoadLength,this.fuel));
+	}
 }
 /*
 	Searches for colinear and overlapping connections and fixes them.
@@ -185,6 +284,7 @@ MapGenerator.prototype.cleanGraph = function(tmpGraph){
 		}
 	}
 	// Looks for nodes between 2 other nodes
+	// Maybe this belongs in colinearRemove as the else{} 
 	for(var index in nodes){
 		var node1=nodes[index];
 		var node2=null, node3=null;
@@ -205,7 +305,10 @@ MapGenerator.prototype.cleanGraph = function(tmpGraph){
 				if(node1.vertex.extendedSlope(node2.vertex) != node1.vertex.extendedSlope(node3.vertex)){
 					//remove the middle node and connect the other two nodes
 					tmpGraph.removeConnection(node1.id,node2.id);
+					//console.log("removed connection between "+node1.id+" and "+node2.id);
 					tmpGraph.removeConnection(node1.id,node3.id);
+					//console.log("removed connection between "+node1.id+" and "+node3.id);
+
 					tmpGraph.addConnection(node2.id, node3.id,
 						new Fraction(distance(node2.vertex, node3.vertex)/baseRoadLength,this.fuel));
 					tmpGraph.removeNode(node1.id);
@@ -239,13 +342,14 @@ MapGenerator.prototype.colinearRemove = function(_graph,node1,node2,node3){
 										node1.vertex.x, node1.vertex.y,
 										node3.vertex.x, node3.vertex.y);
 	//colinear lines found that connect to the same node
-	if(intersectCheck.colinear){
+	if(intersectCheck && intersectCheck.colinear){
 		//if both lines have the same "direction", remove the connection with the farther node
 		if(node1.vertex.extendedSlope(node2.vertex) == node1.vertex.extendedSlope(node3.vertex)){
 			var dist1=distance(node1.vertex,node2.vertex);
 			var dist2=distance(node1.vertex,node3.vertex);
 			if(dist1<dist2){
 				_graph.removeConnection(node1.id, node3.id);
+				//console.log("removed connection between "+node1.id+" and "+node3.id);
 				if(node1.connectionsLength==0) _graph.removeNode(node1.id);
 				_graph.addConnection(node2.id, node3.id,
 					new Fraction(distance(node2.vertex, node3.vertex)/baseRoadLength,this.fuel));
@@ -259,21 +363,33 @@ MapGenerator.prototype.colinearRemove = function(_graph,node1,node2,node3){
 	Makes sure no road has a length greater than half the fuel tank.
 */
 MapGenerator.prototype.validateMap = function(){
+	var invalid = false;
 	//remove any nodes without connections left over
 	for(var index in this.mapGraph.nodeDictionary){
 		if(this.mapGraph.nodeDictionary[index].connectionsLength==0)
 			this.mapGraph.removeNode(index);
 	}
+	//if there are too few nodes after removal, generate a new map
 	if(this.mapGraph.length < this.numStructs * (roadsPerStructure-1))
-		this.generateMapGraph();
+		invalid = true;
 	//run minConnections() on each Node to see if a one-direction path has been generated
 	//if minConnections() is not satisfied, generate a new map
-	var invalid=false;
-	for(var index in this.mapGraph.nodeDictionary){
-		if(!this.minConnections(-1,index,0)){
-			invalid=true;
-			break;
-		} 
+	if(!invalid){
+		for(var index in this.mapGraph.nodeDictionary){
+			if(!this.minConnections(-1,index,0)){
+				invalid=true;
+				break;
+			} 
+			//check if the node has a connection with a weight greater than half the fuel tank
+			var node = this.mapGraph.nodeDictionary[index];
+			for(var idx in node.connections){
+				if(node.connections[idx].numerator > this.fuel/2){
+
+					invalid=true;
+					break;
+				}
+			}
+		}
 	}
 	if(invalid) this.generateMapGraph();
 }
@@ -322,18 +438,59 @@ MapGenerator.prototype.generateStructures = function(){
 	//	This makes it easier to return false, and then generate a structure
 	var loops = 0;
 	while(structCount != this.numStructs){
-		for(var index in nodes){
-			if(structCount == this.numStructs) break;
+		for(var index in nodes){	
 			if(!this.findStructure(-1,index, this.fuel-loops)){
 				this.structureList.push(new Structure(index,
 					this.randomStructureType(hopSize*structCount%numStructureTypes)));
 				structCount++;
+				if(structCount == this.numStructs) break;
 			}
 		}
 		loops++;
 	}
-	for(var index in nodes){
-		this.placeFuelStation(index);
+	var fuelCount = 0;
+	for(var i = 0; fuelCount < this.numStructs; i++){
+		var fuelDist = fuelToStructMin(this.fuel) - i;
+		if(fuelDist <= 1){
+			for (var i = this.structureList.length - 1; i >= 0 && fuelCount<this.numStructs; i--) {
+				if(this.structureList[i].StructType != "fuel_stn"){
+					var structNode = nodes[this.structureList[i].nodeID];
+					var possNodes = [];
+					for(var index in structNode.connections){
+						var connectedStruct = this.getStructureFromList(index);
+						if(connectedStruct && connectedStruct.StructType == "fuel_stn")
+						{	possNodes = null; break;	}
+						if(!connectedStruct)
+							possNodes.push(index);
+					}
+					if(possNodes){
+						var greatestNodes = [];
+						for (var i = possNodes.length - 1; i >= 0; i--) {
+							if(!greatestNodes.length) greatestNodes.push(possNodes[i]);
+							else if(structNode.connections[possNodes[i]] > greatestNodes[0]){
+								greatestNodes = [];
+								greatestNodes.push(possNodes[i]);
+							}
+							else if(structNode.connections[possNodes[i]] == greatestNodes[0])
+								greatestNodes.push(possNodes[i]);
+						}
+						var nodeToPush=0;
+						if(greatestNodes.length>1){
+							nodeToPush = rng(0,greatestNodes.length-1);
+						}
+						this.structureList.push(new Structure(greatestNodes[nodeToPush],"fuel_stn"));
+						fuelCount++;
+					}
+				}
+			}
+		}
+		else{
+			for(var index in nodes){
+				if(this.placeFuelStation(index, fuelDist)){
+					fuelCount++;
+				}
+			}
+		}
 	}
 	//	Randomizing a start point for the player
 	//	Want to make sure the start point isn't on or too close to a structure
@@ -351,9 +508,9 @@ MapGenerator.prototype.generateStructures = function(){
 	Recursive check for a nearby structure that can be reached with
 	the fuel specified by fuelAmt
 */
-MapGenerator.prototype.findStructure = function(nodeFrom, nodeIn, fuelAmt){
+MapGenerator.prototype.findStructure = function(nodeFrom, nodeIn, fuelAmt,genFuelFlag){
 	var node=this.mapGraph.nodeDictionary[nodeIn];
-	if(nodeFrom==-1){
+	if(nodeFrom==-1 && !genFuelFlag){
 		for(var index in node.connections){
 			var tmpStruct = this.getStructureFromList(index);
 			if(tmpStruct && tmpStruct.StructType != "fuel_stn")
@@ -374,7 +531,7 @@ MapGenerator.prototype.findStructure = function(nodeFrom, nodeIn, fuelAmt){
 	return false;
 }
 MapGenerator.prototype.findFuel = function(nodeFrom,nodeIn, fuelAmt){
-	if(fuelAmt < 0)
+	if(fuelAmt <= 0)
 		return nodeIn;
 	var structureAtNode = this.getStructureFromList(nodeIn);
 	if(structureAtNode && structureAtNode.StructType == "fuel_stn")
@@ -389,7 +546,7 @@ MapGenerator.prototype.findFuel = function(nodeFrom,nodeIn, fuelAmt){
 				if(getType(rv) == "Array"){
 					nodeArray = nodeArray.concat(rv);
 				}
-				else if(rv != true)
+				else if(rv !== true)
 					nodeArray.push(rv);
 				else return rv;
 			}
@@ -397,10 +554,14 @@ MapGenerator.prototype.findFuel = function(nodeFrom,nodeIn, fuelAmt){
 	}
 	return nodeArray;
 }
-MapGenerator.prototype.placeFuelStation = function(nodeID){
-	var rv = this.findStructure(-1,nodeID,fuelToStructMin(this.fuel));
-	var rv2 = this.findFuel(-1,nodeID,fuelToFuelMin(this.fuel));
-	if(!rv && rv2!=true){
+//this can be restructured to be more efficient
+MapGenerator.prototype.placeFuelStation = function(nodeID, fuelDist){
+	var rv = this.findStructure(-1,nodeID,fuelDist,true);
+	var rv2 = this.findFuel(-1,nodeID,fuelDist);
+	var structureAtNode = this.getStructureFromList(nodeID);
+	if(structureAtNode)
+		return false;
+	if(!rv && rv2!==true){
 		if(!this.getStructureFromList(nodeID)){
 			this.structureList.push(new Structure(nodeID,"fuel_stn"));
 			return true;

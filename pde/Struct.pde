@@ -12,7 +12,7 @@ class Depot extends Interactor {
     }
     void setStates(){
         setScale(0.5);
-        addState(new State("default",structureFolder+"depot_default.svg"));
+        addState(new State("default",structureFolder+"depot_default.png"));
     }
 }
 class Struct extends InputInteractor {
@@ -34,8 +34,8 @@ class Struct extends InputInteractor {
     void setStates() {
         setScale(0.5);
         delivered = false;
-        addState(new State("delivered",structureFolder+structObject.StructType+"_delivered.svg"));
-        addState(new State("default",structureFolder+structObject.StructType+".svg"));
+        addState(new State("delivered",structureFolder+structObject.StructType+"_50.png"));
+        addState(new State("default",structureFolder+structObject.StructType+".png"));
     }
     void resetState() {
         delivered = false;
@@ -104,22 +104,6 @@ class Struct extends InputInteractor {
 /*
 **  Debugging Classes. Remove at release.
  */
-class StructDebug extends Struct{
-
-    StructDebug(vert,structObject){
-        super(vert,structObject);
-    }
-    void draw(float v1x,float v1y,float v2x, float v2y){
-        pushMatrix();
-        //scale(zoomLevel);
-        if(structObject.StructType=="fuel_stn")
-            stroke(0,255,0);
-        else
-            stroke(255,0,0);
-        ellipse(vertex.x,vertex.y,8,8);
-        popMatrix();
-    }
-}
 class NodeDebug extends Interactor{
     var vertex,flag;
     NodeDebug(vert,flagin){

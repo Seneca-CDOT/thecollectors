@@ -20,7 +20,7 @@ class CampaignMap extends Level {
     // imported from an XML file.
     void generateTutorial() {
         var map = null;
-        deliveriesLeft = 4;
+        deliveriesLeft = 3;
         map = new Map(0,0,"tutorial.xml");
         renderMap(map);
         overlayTutorialInterface();

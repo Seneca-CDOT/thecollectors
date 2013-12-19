@@ -5,6 +5,7 @@
 	<meta charset="utf-8">
 
     <link rel="stylesheet" type="text/css" href="style/style.css">
+    <link rel="stylesheet" type="text/css" href="style/menu.css">
 
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
 
@@ -16,9 +17,10 @@
     <script type="text/javascript" src="canvasFocus.js"></script>
 
     <!--Custom utility scripts and global variables-->
+    <script type="text/javascript" src="gameValues.js"></script>
+    <script type="text/javascript" src="menuController.js"></script>
     <script type="text/javascript" src="CanvasOverlay.js"></script>
     <script type="text/javascript" src="Utilities.js"></script>
-    <script type="text/javascript" src="gameValues.js"></script>
 
     <!--Custom JavaScript object definitions. Consolidate into one file at the end-->
     <script type="text/javascript" src="Fraction.js"></script>
@@ -31,6 +33,8 @@
     
     <script src="locale/text.jsonp"></script>
     <script type="text/javascript">
+    var fractionCT;
+
 	try {
 	  var language = window.navigator.userLanguage || window.navigator.language;
 	  //Load the tutorial text from the json file
@@ -46,53 +50,129 @@
   </head>
   <body>
   <div id="gameWrap" style="position:absolute;height:644px;">
+    <!-- Begin Main Menu -->
+    <div id="mainMenuWrap" style="z-index:9;position:absolute;height:100%;width:100%;background-image:url('assets/bgs/menu_bkg.png');">
+      <div id="mainMenu">
+        <button onclick="initCampaignMenu()">Campaign</button>
+        <button onclick="initQuickplayMenu()">Quick Play</button>
+      </div>
+      <div id="campaignMenu">
+        <button onclick="sketch.startTutorial()">Tutorial</button>
+        <button onclick="sketch.startCampaign(1)">Easy</button>
+        <button onclick="sketch.startCampaign(2)">Medium</button>
+        <button onclick="sketch.startCampaign(3)">Hard</button>
+        <button onclick="initMainMenu()">Back</button>
+      </div>
+      <div id="quickplayMenu">
+        <select id="quickDiffSelect">
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+        <select id="quickLevelSelect">
+          <option value="1">Tiny</option>
+          <option value="2">Small</option>
+          <option value="3">Medium</option>
+          <option value="4">Large</option>
+          <option value="5">Huge</option>          
+        </select>
+        <button onclick="startQuickplay()">Play</button>
+        <button onclick="initMainMenu()">Back</button>
+      </div>
+    </div>
+    <!-- End Main Menu -->
     <!-- Begin top bar -->
     <div id="topBar">
-      <div id="cashImg">
-          <img src="./assets/items/money.svg" alt="Money Bag" width="40px" height="40px" />
+      <!--Wrap all HUD elements that will need to be hidden -->
+      <div class="HUD">
+        <div id="cashImg">
+            <img src="./assets/items/money.svg" alt="Money Bag" width="40px" height="40px" />
+        </div>
+        <div id="cashText" class="labelBox">
+            <p id="cashElement" style="font-size:28px;margin:5px;">
+            </p>
+        </div>
+        <div id="parcelImg">
+            <img src="./assets/items/parcel.svg" alt="Parcel" width="40px" height="40px" />
+        </div>
+        <div id="parcelText" class="labelBox">
+            <p id="parcelElement" style="font-size:28px;margin:5px;">
+            </p>
+        </div>
+        <button id="clearButton" style="position:absolute;left:350px;top:10px;" onclick="player.clearRoute()">Clear Route</button>
+        <button id="newMapButton" style="position:absolute;left:500px;top:10px;" onclick="sketch.newMap()"> New Map</button>
+        <button id="resetButton" style="position:absolute;left:650px;top:10px;" onclick="sketch.resetMap()">  Reset</button>
+        <button id="returnButton" style="position:absolute;left:800px;top:10px;" onclick='initMainMenu();'>Return</button>
       </div>
-      <div id="cashText" class="labelBox">
-          <p id="cashElement" style="font-size:28px;margin:5px;">
-          </p>
+      <!--Top bar HUD for intermediate screens -->
+      <div class="interHUD">
+          <div id="campaignCash">
+            <img src="./assets/items/money.svg" alt="Money Bag" width="40px" height="40px" />
+        </div>
+        <div id="cashText" class="labelBox">
+            <p id="campaignCashText" style="font-size:28px;margin:5px;">
+            </p>
+        </div>
+        <button style="position:absolute;right:50px;top:10px;" onclick="sketch.newMap()">Continue</button>
       </div>
-      <div id="parcelImg">
-          <img src="./assets/items/parcel.svg" alt="Parcel" width="40px" height="40px" />
-      </div>
-      <div id="parcelText" class="labelBox">
-          <p id="parcelElement" style="font-size:28px;margin:5px;">
-          </p>
-      </div>
-      <button style="position:absolute;left:350px;top:10px;" onclick="sketch.newMap()">New Map</button>
-      <button style="position:absolute;left:550px;top:10px;" onclick="sketch.resetMap()">Reset</button>
+
     </div>
     <!-- End top bar -->
+    <!-- Begin tooltips -->
+    <div id="cashTooltip" class="tooltip"> </div>
+    <div id="parcelTooltip" class="tooltip"> </div>
+    <div id="newMapTooltip" class="tooltip"> </div>
+    <div id="resetTooltip" class="tooltip"> </div>
+    <div id="fuelTooltip" class="tooltip"></div>
 
+    <!-- End tooltips -->
     <canvas onmouseenter="$('canvas').focus()" data-processing-sources="codebase.pde assetPreloader.pde game.pde"></canvas>
-    <div id="menuDiv" style="display:none;position:fixed;top:650px;left:0px;">
-        <button id="campaignButton"></button><br />
-        <button id="quickPlayButton"></button><br />
-        <button id="optionsButton"></button>
+    <div id="cashAnimDiv" class="inCanvas cashAnimBox hidden textColor" >
+        <p id="cashAnimElement" class="inCanvas" style="font-size:28px;margin:5px;">
+        </p>
     </div>
-    <div id="difficultyDiv" style="display:none;position:fixed;top:100px;left:250px;">
-        <button id="easyButton"></button><br />
-        <button id="mediumButton"></button><br />
-        <button id="hardButton"></button><br />
+    <div id="cashAnimDiv2" class="inCanvas cashAnimBox2 hidden textColor" >
+        <p id="cashAnimElement2" class="inCanvas textColor" style="font-size:28px;margin:5px;">
+        </p>
     </div>
-    <script type="text/javascript" >
-	document.getElementById("campaignButton").innerHTML = pageText.campaignButton;
-	document.getElementById("quickPlayButton").innerHTML = pageText.quickPlayButton;
-	document.getElementById("optionsButton").innerHTML = pageText.optionsButton;
-	document.getElementById("easyButton").innerHTML = pageText.easyButton;
-	document.getElementById("mediumButton").innerHTML = pageText.mediumButton;
-	document.getElementById("hardButton").innerHTML = pageText.hardButton;
-    </script>
-    <div id="tutorialTextDiv" class="textBox hidden inCanvas" style="position:fixed;left:200px;top:500px;width:500px;height:110px;">
+    <div id="cashAnimDiv3" class="inCanvas cashAnimBox hidden textColor2" >
+        <p id="cashAnimElement3" class="inCanvas" style="font-size:28px;margin:5px;">
+        </p>
+    </div>
+    <div id="cashAnimDiv4" class="inCanvas cashAnimBox hidden textColor2" >
+        <p id="cashAnimElement4" class="inCanvas" style="font-size:28px;margin:5px;">
+        </p>
+    </div>
+    <div id="bonusAnimDiv" class="inCanvas bonusAnimBox hidden" >
+        <p id="bonusAnimElement" class="inCanvas" style="font-size:28px;margin:5px;color:green;">
+        Bonus!
+        </p>
+    </div>
+    <div id="fractionWrap">
+      <div id="fractionBonusImg" class="hidden" style="position:absolute;left:0px;top:44px;">
+        <img src="./assets/items/solve_bonus.png" alt="Solve for Bonus!" width="940px" height="600px" />
+      </div>
+      <div id="fractionBoxDiv" class="addBox fractionBox">
+        <div id="fractionTextDiv" style="position:relative;">
+        </div>
+      </div>
+      <div id="fractionBackImg" class="hidden" style="position:absolute;left:370px;top:423px;" onclick="backToMap()">
+        <img src="./assets/items/alter_btn.png" alt="Alter Route" width="200px" height="50px" />
+      </div>
+      <div id="numInvalidTooltip" class="tooltip"></div>
+      <div id="denomInvalidTooltip" class="tooltip"></div>
+    </div>
+    <div id="tutorialTextDiv" class="textBox hidden inCanvas" style="position:absolute;left:10px;top:520px;width:500px;min-height:110px;height:auto;">
         <p id="tutorialTextElement">
+        </p>
+    </div>
+    <div id="instructionTextDiv" class="textBox hidden inCanvas" style="position:absolute;left:460px;top:60px;width:auto;height:auto;">
+        <p id="instructionTextElement">
         </p>
     </div>
 
     <!-- Begin fuel gauge -->
-    <div id="fuelWrap">
+    <div id="fuelWrap" class="HUD">
       <div id="fuelText" class="fuelBox visible inCanvas">
           <p id="fuelElement2" class="center">
           </p>
@@ -108,17 +188,81 @@
     <!-- End fuel gauge -->
 
     <script type="text/javascript">
-	var tutorialText = pageText.tutorial;
-	var tutorialIndex = 1;
-        document.getElementById("tutorialTextElement").innerHTML = tutorialText[tutorialIndex];
-
+    var tutorialText = pageText.tutorial;
+    var instructionText = pageText.instructions;
+    var tutorialIndex = 0;
+    var instructionIndex = 0;
+    var bonusTracker = {};
         // Event listener for the <p> element containing tutorial instructions.
         document.getElementById("tutorialTextDiv").addEventListener("click", function(event) {
           advanceTutorial();
         }, false);
         function advanceTutorial() {
+          // Don't advance tutorial text at certain indices
+          if (tutorialIndex == 22) return;
+          if (tutorialIndex == 27) return;
+          if (tutorialIndex == 35) return;
+          // End of tutorial clean-up
+          if (tutorialIndex == 36) {
+              initMainMenu();
+          }
           if (tutorialIndex < tutorialText.length - 1) {
             document.getElementById("tutorialTextElement").innerHTML = tutorialText[++tutorialIndex];
+            if (tutorialIndex == 3) {
+                $("#tutorialTextDiv").hide();
+                $("#instructionTextDiv").show();
+            } else if (tutorialIndex == 6) {
+                $("#tutorialTextDiv").hide();
+                $("#instructionTextDiv").show();
+            } else if (tutorialIndex == 11) {
+                $("#tutorialTextDiv").hide();
+                $("#instructionTextDiv").show();
+            } else if (tutorialIndex == 12) {
+                $("#fuelText").css("border-color", "yellow");
+            } else if (tutorialIndex == 13) {
+                $("#fuelText").css("border-color", "black");
+            } else if (tutorialIndex == 16) {
+                $("#tutorialTextDiv").hide();
+                $("#instructionTextDiv").show();
+            } else if (tutorialIndex == 17) {
+                var highlightDiv = document.createElement('div');
+                highlightDiv.setAttribute('id', 'highlightBox');
+                document.getElementById('gameWrap').appendChild(highlightDiv);
+                $("#highlightBox").css("position", "absolute");
+                $("#highlightBox").css("left", "40px");
+                $("#highlightBox").css("top", "0px");
+                $("#highlightBox").css("width", "100px");
+                $("#highlightBox").css("height", "36px");
+                $("#highlightBox").css("border-width", "4px");
+                $("#highlightBox").css("border-radius", "3px");
+                $("#highlightBox").css("border-style", "solid");
+                $("#highlightBox").css("border-color", "yellow");
+            } else if (tutorialIndex == 18) {
+                $("#highlightBox").css("left", "230px");
+                $("#highlightBox").css("width", "50px");
+            } else if (tutorialIndex == 19) {
+                $("#highlightBox").hide();
+            } else if (tutorialIndex == 24) {
+                $("#highlightBox").css("left", "700px");
+                $("#highlightBox").css("top", "344px");
+                $("#highlightBox").css("width", "135px");
+                $("#highlightBox").css("height", "70px");
+            } else if (tutorialIndex == 25) {
+                $("#highlightBox").hide();
+            } else if (tutorialIndex == 26) {
+                $("#highlightBox").css("left", "370px");
+                $("#highlightBox").css("top", "423px");
+                $("#highlightBox").css("width", "200px");
+                $("#highlightBox").css("height", "50px");
+                $("#highlightBox").show();
+            } else if (tutorialIndex == 27) {
+                $("#highlightBox").hide();
+            } else if (tutorialIndex == 29) {
+                $("#highlightBox").hide();
+            } else if (tutorialIndex == 31) {
+                $("#tutorialTextDiv").hide();
+                $("#instructionTextDiv").show();
+            }
           }
         }
     </script>
@@ -133,68 +277,99 @@
           e.preventDefault();
         }
       }, false);
-      // Event listener for the div containing the main menu buttons
-      document.getElementById("menuDiv").addEventListener("click", function(event) {
-        switch (event.target.id) {
-          case "campaignButton":
-            buttonClick(1);
-            break;
-          case "quickPlayButton":
-            buttonClick(2);
-            break;
-          case "optionsButton":
-            buttonClick(3);
-            break;
-        }
-      }, false);
-      // Event listener for the div containing the difficulty menu buttons
-      document.getElementById("difficultyDiv").addEventListener("click", function(event) {
-        switch (event.target.id) {
-          case "easyButton":
-            buttonClick(4);
-            break;
-          case "mediumButton":
-            buttonClick(5);
-            break;
-          case "hardButton":
-            buttonClick(6);
-            break;
-        }
-      }, false);
+      
+      var fractionArray = [], ignoreInput = true;
+      var inputRegEx = new RegExp("^[0-9]+$");
+      var bonusFlag = false, showFractionBox = false;
+      var numTest = false, denomTest = false;
 
-      function buttonClick(buttonVal) {
-        switch (buttonVal) {
-          case 1:
-            menuDiv.style.display = "none";
-            difficultyDiv.style.display = "block";
-            gameMode = "Campaign";
-            break;
-          case 2:
-            menuDiv.style.display = "none";
-            difficultyDiv.style.display = "block";
-            gameMode = "Quick Play";
-            break;
-          case 3:
-            player.driveToDestination();
-            break;
-          case 4:
-            difficultyDiv.style.display = "none";
-            var sketch = Processing.instances[0];
-            console.log(sketch);
-            sketch.loadDifficulty(1, gameMode);
-            break;
-          case 5:
-            difficultyDiv.style.display = "none";
-            sketch.loadDifficulty(2, gameMode);
-            break;
-          case 6:
-            difficultyDiv.style.display = "none";
-            sketch.loadDifficulty(3, gameMode);
-            break;
-          default:
-            alert("Invalid button value!");
-            break;
-        }
+      function checkFractionSum() {
+          // Clicking the Wheel button before the tutorial
+          // has reached a certain point does nothing
+          if (GEN_TUTORIAL && tutorialIndex < 27) return;
+          if (GEN_TUTORIAL && tutorialIndex == 27 && (!numTest || !denomTest)) return;
+          if (numTest && denomTest) {
+              var playerNumerator = document.getElementById("fracSumNum");
+              var playerDenominator = document.getElementById("fracSumDenom");
+              var inputFraction = new Fraction(playerNumerator.value, playerDenominator.value);
+              // Player has to input 2/6 during tutorial
+              if (GEN_TUTORIAL && tutorialIndex == 27 &&
+                      (inputFraction.numerator != 2 || inputFraction.denominator != 6)) return;
+              var sum = new Fraction(fractionArray[0].numerator, fractionArray[0].denominator);
+
+              for (var i = 1; i < fractionArray.length; i++) {
+                  sum.add(fractionArray[i]);
+              }
+              if (bonusTracker.initialBonusIndex > -1 && inputFraction.cmp(sum)) {
+                  bonusFlag = true;
+                  $("#bonusAnimDiv").show();
+                  animateBonusText();
+              }
+              fractionArray.length = 0;
+              $("#fractionBoxDiv").hide();
+              $("#fractionBonusImg").hide();
+              $("#fuelWrap").show();
+              $("#fractionBackImg").hide();
+              // Revert opacity of tutorial text div
+              if (GEN_TUTORIAL && tutorialIndex == 27) {
+                  $("#tutorialTextDiv").hide();
+                  $("#tutorialTextDiv").css("opacity", "0.6");
+              }
+              showFractionBox = false;
+              player.driveToDestination();
+          } else {
+              if (ignoreInput) {
+                  ignoreInput = true;
+                  $("#fractionBoxDiv").hide();
+                  $("#fractionBonusImg").hide();
+                  $("#fuelWrap").show();
+                  $("#fractionBackImg").hide();
+                  showFractionBox = false;
+                  player.driveToDestination();
+              }
+          }
+      }
+
+      function testInput(element) {
+          var testResult = inputRegEx.test(element.value);
+          if (testResult) {
+              element.parentNode.style.backgroundColor = "black";
+              switch (element.name) {
+                  case "numerator":
+                      numTest = true;
+                      break;
+                  case "denominator":
+                      denomTest = true;
+                      break;
+              }
+          } else {
+              switch (element.name) {
+                  case "numerator":
+                      numTest = false;
+                      if (element.value != "") {
+                          ignoreInput = false;
+                          $("#numInvalidTooltip").show();
+                      }
+                      break;
+                  case "denominator":
+                      denomTest = false;
+                      if (element.value != "") {
+                          ignoreInput = false;
+                          $("#denomInvalidTooltip").show();
+                      }
+                      break;
+              }
+          }
+      }
+      function fracHideTooltip(element) {
+          switch (element.name) {
+              case "numerator":
+                  $("#numInvalidTooltip").hide();
+                  break;
+              case "denominator":
+                  $("#denomInvalidTooltip").hide();
+                  break;
+          }
       }
     </script>
   </div>

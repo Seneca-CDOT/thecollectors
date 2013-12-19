@@ -2,10 +2,12 @@
 var sketch, player;
 var screenSizeX=940;
 var screenSizeY=600;
+var GEN_TUTORIAL = false;
 
 //	Assets Folder		//
 var assetsFolder = "assets/";
-var structureFolder	= "assets/buildings/";
+var structureFolder	= "assets/buildings_png/";
+var vehicleFolder	= "assets/vehicles_png/";
 
 //	Static Game Values 	//
 var StructureValues={
@@ -52,7 +54,20 @@ var clearMultipliers={
 var answerBonus={
 						//dont really know about this one yet
 };
-
+var vehicleTypes={
+	1:["bike_top.png","bike_top_long.png"],
+	2:["car_top.png","car_top_long.png"],
+	3:["suv_top.png","suv_top_long.png"],
+	4:["mini_top.png","mini_top_long.png"],
+	5:["convert_top.png","convert_top_long.png"]
+};
+var vehicleCosts={
+	1:1000,
+	2:2000,
+	3:3000,
+	4:4000,
+	5:5000
+};
 //	Map Generator Values //
 var roadsPerStructure = 4;
 var baseRoadLength = 100;
@@ -60,7 +75,7 @@ var	numStructureTypes = 10;
 var structsPerPoints = 2;		//refers to the number of structures with equivalent point values
 
 function fuelToStructMin(fuel){return Math.round(fuel/4);}
-function fuelToFuelMin(fuel){return Math.ceil(fuel/3);}
+function fuelToFuelMin(fuel){return Math.ceil(fuel/4);}
 
 var topPadding = 50;
 var botPadding = 50;

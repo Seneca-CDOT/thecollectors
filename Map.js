@@ -2,7 +2,7 @@ function Map(numStructs, difficulty, filename){
 	this.mapGraph=new Graph();
 	this.structureList=[];
     this.pjsStructureList={};
-	this.fuel=new Fraction(0,0);
+	this.fuel=new Fraction(0,1);
 	this.startPoint;
     //if a filename exists, load the map from an XML file
 	if(filename){
